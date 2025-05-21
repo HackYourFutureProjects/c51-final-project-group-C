@@ -1,4 +1,4 @@
-import User from "../models/User";
+import User from "../../models/User";
 
 export async function verifyEmail(req, res) {
   const { token } = req.body;

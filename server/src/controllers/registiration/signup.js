@@ -1,7 +1,7 @@
-import User from "../models/User";
+import User from "../../models/User";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import { sendVerificationEmail } from "../util/sendVerificationEmail";
+import { sendVerificationEmail } from "../../util/sendVerificationEmail";
 
 export async function registerUser(req, res) {
   try {
