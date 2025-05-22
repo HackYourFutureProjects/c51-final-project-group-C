@@ -1,6 +1,5 @@
 import express from "express";
-
-import userRouter from "./routes/user.js";
+import authRouter from "./routes/authRoutes.js";
 
 // Create an express server
 const app = express();
@@ -13,6 +12,6 @@ app.use(express.json());
  * We use /api/ at the start of every route!
  * As we also host our client code on heroku we want to separate the API endpoints.
  */
-app.use("/api/auth", userRouter);
+app.use("/api/auth", authRouter);
 
 export default app;

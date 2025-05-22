@@ -11,11 +11,10 @@ export async function verifyEmail(req, res) {
     if (!user) return res.status(400).send("Invalid or expired token.");
 
     user.isVerified = true;
-    user.verificationToken = undefined;
     await user.save();
 
     res.send("Email successfully verified! You can now log in.");
-  } catch {
+  } catch (err) {
     // console.error(err);
     res.status(500).send("Server error");
   }
