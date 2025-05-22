@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import Nav from "./components/Nav";
+
 import Home from "./pages/Home/Home";
 import CreateUser from "./pages/User/CreateUser";
 import UserList from "./pages/User/UserList";
+import Header from "./components/Header";
 
 const App = () => {
   return (
     <>
-      <Nav />
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/user" element={<UserList />} />
