@@ -1,4 +1,4 @@
-import User from "../../models/User";
+import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
 
 export async function completeProfile(req, res) {
@@ -12,14 +12,27 @@ export async function completeProfile(req, res) {
     const user = await User.findOne({ verificationToken: token });
 
     if (!user || !user.isVerified) {
-      return res.status(400).json({ message: "Invalid or expired token." });
+      return res.status(400).json({ message: "Invalid token." });
+    }
+
+    if (
+      user.verificationTokenExpiresAt &&
+      new Date() > user.verificationTokenExpiresAt
+    ) {
+      return res.status(400).send("Token has expired.");
     }
 
     user.name = name;
     user.surname = surname;
     user.country = country;
     user.verificationToken = undefined; // clear token after profile completion
+    user.verificationTokenExpiresAt = undefined; // clear expiration time as well
     await user.save();
+
+    // Checking if the JWT_SECRET before generating token
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: "JWT secret not defined" });
+    }
 
     // Generating JWT token
     const authToken = jwt.sign(

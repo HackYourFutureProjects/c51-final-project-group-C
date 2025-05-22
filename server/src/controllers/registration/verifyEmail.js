@@ -1,4 +1,4 @@
-import User from "../../models/User";
+import User from "../../models/User.js";
 
 export async function verifyEmail(req, res) {
   const { token } = req.body;
@@ -8,7 +8,14 @@ export async function verifyEmail(req, res) {
   try {
     const user = await User.findOne({ verificationToken: token });
 
-    if (!user) return res.status(400).send("Invalid or expired token.");
+    if (!user) return res.status(400).send("Invalid token.");
+
+    if (
+      user.verificationTokenExpiresAt &&
+      new Date() > user.verificationTokenExpiresAt
+    ) {
+      return res.status(400).send("Token has expired.");
+    }
 
     user.isVerified = true;
     await user.save();
