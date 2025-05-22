@@ -19,6 +19,10 @@ export async function sendVerificationEmail(email, verificationToken) {
   // generate a new access token using the refresh token
   const accessToken = await oauth2Client.getAccessToken();
 
+  if (!accessToken || !accessToken.token) {
+    throw new Error("Failed to generate access token.");
+  }
+
   // Sending the email verification
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -40,8 +44,8 @@ export async function sendVerificationEmail(email, verificationToken) {
     to: email,
     subject: "Verify your email address",
     html: `
-      <h2>Welcome to Trip App!</h2>
-      <p>Please verify your email by clicking the link below:</p>
+      <h2>Welcome to ELVA</h2>
+      <p>Please verify your email:</p>
       <a href="${verificationLink}">${verificationLink}</a>
     `,
   });

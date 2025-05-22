@@ -1,8 +1,8 @@
 import express from "express";
 // import { createUser, getUsers } from "../controllers/user.js";
-import { registerUser } from "../controllers/registration/signup.js";
-import { verifyEmail } from "../controllers/registration/verifyEmail.js";
-import { completeProfile } from "../controllers/registration/completeProfile.js";
+import { registerUser } from "../controllers/authorization/register.js";
+import { verifyEmail } from "../controllers/authorization/verifyEmail.js";
+import { completeProfile } from "../controllers/authorization/completeProfile.js";
 
 const authRouter = express.Router();
 
