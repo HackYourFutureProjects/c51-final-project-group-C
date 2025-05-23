@@ -1,8 +1,12 @@
 import express from "express";
+import cors from "cors";
 import authRouter from "./routes/authRoutes.js";
 
 // Create an express server
 const app = express();
+
+// Enable CORS for the frontend
+app.use(cors());
 
 // Tell express to use the json middleware
 app.use(express.json());

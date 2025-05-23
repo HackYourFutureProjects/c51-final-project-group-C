@@ -1,5 +1,6 @@
 import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
+import { logError } from "../../util/logging.js";
 
 export async function completeProfile(req, res) {
   const { token, name, surname, country } = req.body;
@@ -19,7 +20,7 @@ export async function completeProfile(req, res) {
       user.verificationTokenExpiresAt &&
       new Date() > user.verificationTokenExpiresAt
     ) {
-      return res.status(400).send("Token has expired.");
+      return res.status(400).json({ message: "Token has expired." });
     }
 
     user.name = name;
@@ -53,7 +54,7 @@ export async function completeProfile(req, res) {
       },
     });
   } catch (err) {
-    // console.error(err);
+    logError(err);
     res.status(500).json({ message: "Server error" });
   }
 }
