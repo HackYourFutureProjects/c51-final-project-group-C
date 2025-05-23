@@ -2,6 +2,7 @@ import DropDownMenu from "./DropDownMenu";
 import Input from "./Input";
 // this for testing
 const test = ["option1", "option2", "option3"];
+// the onClick function for dropdown will be one for all the options in a one if statement (if item===option 1 do this else if item === option 2 do that )
 const HomeSearch = () => {
   return (
     <>
