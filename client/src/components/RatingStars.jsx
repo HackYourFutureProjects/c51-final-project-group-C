@@ -1,5 +1,3 @@
-import React from "react";
-
 function RatingStars({ rating }) {
   const totalStars = 5;
   const filledStars = Math.round(rating);
