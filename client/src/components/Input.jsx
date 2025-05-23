@@ -1,8 +1,11 @@
 function Input({ label, type = "text", placeholder, value, onChange }) {
   return (
-    <div className="flex flex-col mb-4 w-80">
+    <div className="input-container flex flex-col mb-4 w-80">
       {label && (
-        <label className="mb-1 text-text font-medium" htmlFor={label}>
+        <label
+          className=" input-label mb-1 text-text font-medium"
+          htmlFor={label}
+        >
           {label}
         </label>
       )}
@@ -12,7 +15,7 @@ function Input({ label, type = "text", placeholder, value, onChange }) {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full p-2 rounded-xl border border-accent focus:outline-none focus:ring-2 focus:ring-accent transition"
+        className=" input-field w-full p-2 rounded-xl border border-accent focus:outline-none focus:ring-2 focus:ring-accent transition"
       />
     </div>
   );
