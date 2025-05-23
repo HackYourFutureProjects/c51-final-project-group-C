@@ -1,4 +1,5 @@
 import DropDownMenu from "./DropDownMenu";
+import Input from "./Input";
 const test = ["option1", "option2", "option3"];
 const HomeSearch = () => {
   return (
@@ -8,6 +9,7 @@ const HomeSearch = () => {
         <DropDownMenu name="Choose country" items={test} onClick={() => {}} />
         <DropDownMenu name="Choose city" items={test} onClick={() => {}} />
         <DropDownMenu name="Choose duration" items={test} onClick={() => {}} />
+        <Input placeholder="Enter trip name" />
       </div>
     </>
   );

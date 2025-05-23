@@ -22,7 +22,7 @@ function DropDownMenu({ name, items, onClick }) {
     <div ref={menuRef} className="relative inline-block text-left">
       <button
         onClick={() => setOpen(!open)}
-        className="w-90   text-text p-2 rounded-xl border  transform transition-all hover:-translate-y-1 duration-300 "
+        className="w-[240px] text-text p-2 rounded-xl border  transform transition-all hover:-translate-y-1 duration-300 "
       >
         {name}
       </button>
