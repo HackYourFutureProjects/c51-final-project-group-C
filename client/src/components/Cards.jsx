@@ -3,7 +3,7 @@ import RatingStars from "./RatingStars.jsx";
 
 function Cards() {
   return (
-    <div className="cards-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-9 m-20">
+    <div className="cards-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-9 m-20 mt-2">
       {trips.map((trip) => {
         return (
           <div

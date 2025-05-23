@@ -22,14 +22,14 @@ function DropDownMenu({ name, items, onClick }) {
     <div ref={menuRef} className="relative inline-block text-left">
       <button
         onClick={() => setOpen(!open)}
-        className="w-[240px] text-text p-2 rounded-xl border  transform transition-all hover:-translate-y-1 duration-300 "
+        className=" drop-down w-[240px] text-text p-2 rounded-xl border  transform transition-all hover:-translate-y-1 duration-300 "
       >
         {name}
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-          <ul className="py-1 text-sm text-gray-700">
+        <div className="drop-down-menu absolute z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+          <ul className="drop-down-items py-1 text-sm text-gray-700">
             {items.map((item, index) => (
               <li key={index}>
                 <button
