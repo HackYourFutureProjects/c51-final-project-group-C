@@ -1,5 +1,6 @@
 import User from "../../models/User.js";
 import { logError } from "../../util/logging.js";
+import { generateJWT } from "../../util/generateJWT.js";
 
 export async function verifyEmail(req, res) {
   const { token } = req.body;
@@ -22,9 +23,31 @@ export async function verifyEmail(req, res) {
     }
 
     user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpiresAt = undefined;
     await user.save();
 
-    res.json({ message: "Email successfully verified! You can now log in." });
+    const jwtToken = generateJWT(user);
+
+    const isProduction = process.env.NODE_ENV === "production";
+    res.cookie("jwt", jwtToken, {
+      httpOnly: isProduction,
+      secure: isProduction,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 👈 One day
+    });
+
+    res.status(200).json({
+      message: "Email successfully verified. You are now logged in.",
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name || null,
+        surname: user.surname || null,
+        country: user.country || null,
+      },
+      profileComplete: Boolean(user.name && user.surname && user.country),
+    });
   } catch (err) {
     logError(err);
     res.status(500).json({ message: "Server error" });
