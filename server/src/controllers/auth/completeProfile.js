@@ -1,50 +1,46 @@
 import User from "../../models/User.js";
-import jwt from "jsonwebtoken";
 import { logError } from "../../util/logging.js";
+import { generateJWT } from "../../util/generateJWT.js";
 
 export async function completeProfile(req, res) {
-  const { token, name, surname, country } = req.body;
+  const { name, surname, country } = req.body;
+  const userId = req.user?.userId; // 👈 We take it from JWT
 
-  if (!token || !name || !surname || !country) {
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  if (!name || !surname || !country) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
   try {
-    const user = await User.findOne({ verificationToken: token });
+    const user = await User.findById(userId);
 
     if (!user || !user.isVerified) {
-      return res.status(400).json({ message: "Invalid token." });
-    }
-
-    if (
-      user.verificationTokenExpiresAt &&
-      new Date() > user.verificationTokenExpiresAt
-    ) {
-      return res.status(400).json({ message: "Token has expired." });
+      return res
+        .status(400)
+        .json({ message: "User not verified or not found." });
     }
 
     user.name = name;
     user.surname = surname;
     user.country = country;
-    user.verificationToken = undefined; // clear token after profile completion
-    user.verificationTokenExpiresAt = undefined; // clear expiration time as well
+
     await user.save();
 
-    // Checking if the JWT_SECRET before generating token
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: "JWT secret not defined" });
-    }
+    const jwtToken = generateJWT(user);
 
-    // Generating JWT token
-    const authToken = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
+    const isProduction = process.env.NODE_ENV === "production";
+    res.cookie("jwt", jwtToken, {
+      httpOnly: isProduction,
+      secure: isProduction,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       message: "Profile completed successfully.",
-      token: authToken,
       user: {
         id: user._id,
         name: user.name,
