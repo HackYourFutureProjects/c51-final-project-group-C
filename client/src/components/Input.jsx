@@ -1,20 +1,24 @@
-import PropTypes from "prop-types";
-
-const Input = ({ name, value, onChange, ...rest }) => {
+function Input({ label, type = "text", placeholder, value, onChange }) {
   return (
-    <input
-      {...rest}
-      name={name}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
+    <div className="input-container flex flex-col mb-4 w-80">
+      {label && (
+        <label
+          className=" input-label mb-1 text-text font-medium"
+          htmlFor={label}
+        >
+          {label}
+        </label>
+      )}
+      <input
+        id={label}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className=" input-field w-full p-2 rounded-xl border border-accent focus:outline-none focus:ring-2 focus:ring-accent transition"
+      />
+    </div>
   );
-};
-
-Input.propTypes = {
-  name: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
+}
 
 export default Input;
