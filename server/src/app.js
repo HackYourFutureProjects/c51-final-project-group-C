@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoutes.js";
 
 // Create an express server
@@ -7,6 +8,7 @@ const app = express();
 
 // Enable CORS for the frontend
 app.use(cors());
+app.use(cookieParser());
 
 // Tell express to use the json middleware
 app.use(express.json());
