@@ -2,6 +2,7 @@ import User from "../../models/User.js";
 import bcrypt from "bcrypt";
 import { logError } from "../../util/logging.js";
 import { generateJWT } from "../../util/generateJWT.js";
+import { setJWTCookie } from "../../util/setJwtCookie.js";
 
 export async function login(request, response) {
   try {
@@ -32,14 +33,7 @@ export async function login(request, response) {
 
     const jwtToken = generateJWT(user);
 
-    const isProduction = process.env.NODE_ENV === "production";
-
-    response.cookie("jwt", jwtToken, {
-      httpOnly: isProduction,
-      secure: isProduction,
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 👈 One day
-    });
+    setJWTCookie(response, jwtToken);
 
     response.status(200).json({
       message: "Login successful",

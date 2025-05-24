@@ -1,6 +1,7 @@
 import User from "../../models/User.js";
 import { logError } from "../../util/logging.js";
 import { generateJWT } from "../../util/generateJWT.js";
+import { setJWTCookie } from "../../util/setJwtCookie.js";
 
 export async function completeProfile(req, res) {
   const { name, surname, country } = req.body;
@@ -31,13 +32,7 @@ export async function completeProfile(req, res) {
 
     const jwtToken = generateJWT(user);
 
-    const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("jwt", jwtToken, {
-      httpOnly: isProduction,
-      secure: isProduction,
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    setJWTCookie(res, jwtToken);
 
     res.status(200).json({
       message: "Profile completed successfully.",
