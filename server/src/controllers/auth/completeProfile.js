@@ -30,6 +30,7 @@ export async function completeProfile(req, res) {
 
     await user.save();
 
+    //👇 We regenerate JWT here to update `isProfileCompleted` flag in JWT token payload (check generateJWT function)
     const jwtToken = generateJWT(user);
 
     setJWTCookie(res, jwtToken);

@@ -28,6 +28,11 @@ export async function verifyEmail(req, res) {
     user.verificationTokenExpiresAt = undefined;
     await user.save();
 
+    /* 
+      👇  Inside JWT payload we have a flag `isProfileCompleted` (check generateJWT function).
+      👇  Now it's 'false', after completing profile will become 'true'. We will use it in client to redirect user to /complete-profile if `isProfileCompleted` is false.
+      👇  So user MUST complete profile after registration.
+    */
     const jwtToken = generateJWT(user);
 
     setJWTCookie(res, jwtToken);
