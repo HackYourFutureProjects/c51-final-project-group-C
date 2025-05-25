@@ -1,6 +1,6 @@
-import User from "../../models/User";
+import User from "../../models/User.js";
 import bcrypt from "bcrypt";
-import { logError } from "../../util/logging";
+import { logError } from "../../util/logging.js";
 
 export async function resetPassword(req, res) {
   const { token } = req.params;

@@ -1,7 +1,7 @@
-import User from "User";
+import User from "../../models/User.js";
 import crypto from "crypto";
-import { sendResetPassEmail } from "../../util/sendResetPassEmail";
-import { logError } from "../../util/logging";
+import { sendResetPassEmail } from "../../util/sendResetPassEmail.js";
+import { logError } from "../../util/logging.js";
 
 export async function forgotPassword(req, res) {
   const { email } = req.body;
