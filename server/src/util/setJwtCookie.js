@@ -1,4 +1,4 @@
-export function setJWTCookie(res, token) {
+export function setJwtCookie(res, token) {
   const isProduction = process.env.NODE_ENV === "production";
   res.cookie("jwt", token, {
     httpOnly: isProduction,

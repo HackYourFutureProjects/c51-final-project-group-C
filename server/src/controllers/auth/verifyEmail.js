@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 import { logError } from "../../util/logging.js";
 import { generateJWT } from "../../util/generateJWT.js";
-import { setJWTCookie } from "../../util/setJwtCookie.js";
+import { setJwtCookie } from "../../util/setJwtCookie.js";
 
 export async function verifyEmail(req, res) {
   const { token } = req.body;
@@ -35,7 +35,7 @@ export async function verifyEmail(req, res) {
     */
     const jwtToken = generateJWT(user);
 
-    setJWTCookie(res, jwtToken);
+    setJwtCookie(res, jwtToken);
 
     res.status(200).json({
       message: "Email successfully verified. You are now logged in.",

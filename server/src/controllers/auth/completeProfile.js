@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 import { logError } from "../../util/logging.js";
 import { generateJWT } from "../../util/generateJWT.js";
-import { setJWTCookie } from "../../util/setJwtCookie.js";
+import { setJwtCookie } from "../../util/setJwtCookie.js";
 
 export async function completeProfile(req, res) {
   const { name, surname, country } = req.body;
@@ -33,7 +33,7 @@ export async function completeProfile(req, res) {
     //👇 We regenerate JWT here to update `isProfileCompleted` flag in JWT token payload (check generateJWT function)
     const jwtToken = generateJWT(user);
 
-    setJWTCookie(res, jwtToken);
+    setJwtCookie(res, jwtToken);
 
     res.status(200).json({
       message: "Profile completed successfully.",
