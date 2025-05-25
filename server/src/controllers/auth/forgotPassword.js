@@ -24,8 +24,10 @@ export async function forgotPassword(req, res) {
       .update(resetToken)
       .digest("hex");
 
+    // Set the expiration time
     const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
+    // Save it to the database
     user.resetToken = hashedResetToken;
     user.resetTokenExpiresAt = resetTokenExpiresAt;
     await user.save();
