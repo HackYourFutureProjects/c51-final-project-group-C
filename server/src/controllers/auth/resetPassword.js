@@ -7,14 +7,14 @@ export async function resetPassword(req, res) {
   const { token } = req.params;
   const { password } = req.body;
 
+  if (!token || !password) {
+    return res.status(400).json({ message: "Missing token or password." });
+  }
+
   const hashedResetToken = crypto
     .createHash("sha256")
     .update(token)
     .digest("hex");
-
-  if (!token || !password) {
-    return res.status(400).json({ message: "Missing token or password." });
-  }
 
   try {
     const user = await User.findOne({ resetToken: hashedResetToken });

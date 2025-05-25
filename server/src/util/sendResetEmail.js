@@ -20,7 +20,7 @@ export async function sendResetEmail(email, resetToken) {
   const accessToken = await oauth2Client.getAccessToken();
 
   if (!accessToken || !accessToken.token) {
-    throw new Error("Failed to generate reset token.");
+    throw new Error("Failed to generate access token.");
   }
 
   const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;

@@ -13,7 +13,10 @@ export async function forgotPassword(req, res) {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "This email does not exist." });
+      return res.status(200).json({
+        message:
+          "If an account with that email exists, you will receive a password reset link.",
+      });
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
