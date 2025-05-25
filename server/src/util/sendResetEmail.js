@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
 
-export async function sendResetPassEmail(email, resetPassToken) {
+export async function sendResetEmail(email, resetPassToken) {
   // Creating OAuth2 client using credentials
   const OAuth2 = google.auth.OAuth2;
 

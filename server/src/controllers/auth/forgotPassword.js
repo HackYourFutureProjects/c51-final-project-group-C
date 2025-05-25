@@ -1,6 +1,6 @@
 import User from "../../models/User.js";
 import crypto from "crypto";
-import { sendResetPassEmail } from "../../util/sendResetPassEmail.js";
+import { sendResetEmail } from "../../util/sendResetEmail.js";
 import { logError } from "../../util/logging.js";
 
 export async function forgotPassword(req, res) {
@@ -23,7 +23,7 @@ export async function forgotPassword(req, res) {
     user.resetPassTokenExpiresAt = resetPassTokenExpiresAt;
     await user.save();
 
-    await sendResetPassEmail(email, resetPassToken);
+    await sendResetEmail(email, resetPassToken);
 
     res.json({ message: "Please check your email to reset your password" });
   } catch (err) {
