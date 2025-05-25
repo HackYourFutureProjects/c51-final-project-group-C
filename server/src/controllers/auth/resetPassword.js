@@ -1,26 +1,29 @@
 import User from "../../models/User.js";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { logError } from "../../util/logging.js";
 
 export async function resetPassword(req, res) {
   const { token } = req.params;
   const { password } = req.body;
 
+  const hashedResetToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
   if (!token || !password) {
     return res.status(400).json({ message: "Missing token or password." });
   }
 
   try {
-    const user = await User.findOne({ resetPassToken: token });
+    const user = await User.findOne({ resetToken: hashedResetToken });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid token" });
     }
 
-    if (
-      !user.resetPassTokenExpiresAt ||
-      new Date() > user.resetPassTokenExpiresAt
-    ) {
+    if (!user.resetTokenExpiresAt || new Date() > user.resetTokenExpiresAt) {
       return res.status(400).json({ message: "Token has expired." });
     }
 
@@ -33,8 +36,8 @@ export async function resetPassword(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     user.password = hashedPassword;
-    user.resetPassToken = undefined;
-    user.resetPassTokenExpiresAt = undefined;
+    user.resetToken = undefined;
+    user.resetTokenExpiresAt = undefined;
 
     await user.save();
 

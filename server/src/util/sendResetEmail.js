@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
 
-export async function sendResetEmail(email, resetPassToken) {
+export async function sendResetEmail(email, resetToken) {
   // Creating OAuth2 client using credentials
   const OAuth2 = google.auth.OAuth2;
 
@@ -23,7 +23,7 @@ export async function sendResetEmail(email, resetPassToken) {
     throw new Error("Failed to generate reset token.");
   }
 
-  const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetPassToken}`;
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
