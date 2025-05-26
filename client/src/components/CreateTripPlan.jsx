@@ -12,6 +12,7 @@ const CreateTripPlan = () => {
 
   useEffect(() => {
     const fetchCountries = async () => {
+      setError(null);
       try {
         const res = await fetch("/api/country/get-countries", {
           credentials: "include",
@@ -70,6 +71,9 @@ const CreateTripPlan = () => {
     }
   };
 
+  const isFetchError = countries.length === 0 && error;
+  const isSubmitError = countries.length > 0 && error;
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -96,7 +100,7 @@ const CreateTripPlan = () => {
           classNamePrefix="react-select"
           required
         />
-        {countries.length === 0 && error && (
+        {isFetchError && (
           <p className="error-message text-red-600 mt-1">{error}</p>
         )}
       </div>
@@ -117,7 +121,7 @@ const CreateTripPlan = () => {
         >
           Create New Trip Plan
         </button>
-        {countries.length > 0 && error && (
+        {isSubmitError && (
           <p className="error-message text-red-600 text-center mt-2">{error}</p>
         )}
       </div>
