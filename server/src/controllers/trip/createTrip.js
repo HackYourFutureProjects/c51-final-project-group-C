@@ -10,7 +10,7 @@ export const createTrip = async (req, res) => {
       return res.status(401).json({ message: "User not authenticated." });
     }
     if (
-      typeof name !== "string" ||
+      typeof title !== "string" ||
       title.trim() === "" ||
       typeof duration !== "number" ||
       duration < 1 ||
