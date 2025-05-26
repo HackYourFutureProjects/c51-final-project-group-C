@@ -7,6 +7,7 @@ const CreateTripPlan = () => {
   const [countries, setCountries] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [duration, setDuration] = useState("");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +27,7 @@ const CreateTripPlan = () => {
         setCountries(formattedData);
       } catch (err) {
         console.error("Failed to fetch countries: ", err);
+        setError(err.message);
       }
     };
 
@@ -35,6 +37,7 @@ const CreateTripPlan = () => {
   // Submit the form to start creating the trip
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     try {
       const countryIds = selectedCountries.map((c) => c.value);
 
@@ -51,8 +54,10 @@ const CreateTripPlan = () => {
         }),
       });
 
+      // Getting the actual error message from the backend
       if (!res.ok) {
-        throw new Error("Something went wrong");
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Something went wrong");
       }
 
       const newTrip = await res.json();
@@ -61,56 +66,60 @@ const CreateTripPlan = () => {
       navigate(`/trip/trip-details/${newTrip._id}`);
     } catch (err) {
       console.error("Error while creating trip: ", err.message);
+      setError(err.message);
     }
   };
 
-  // const handleCountryChange = (e) => {
-  //   const selectedOptions = Array.from(e.target.selectedOptions);
-  //   const selectedIds = selectedOptions.map((opt) => opt.value);
-  //   setCountryIds(selectedIds);
-  // };
-
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
-      <div>
-        <label>Title:</label>
+    <form
+      onSubmit={handleSubmit}
+      className="create-trip-modal max-w-md mx-auto space-y-4"
+    >
+      <div className="trip-title-container">
+        <label className="form-label">Title:</label>
         <input
           type="text"
           value={title}
-          className="w-full border rounded p-2"
+          className="title-input w-full border rounded p-2"
           onChange={(e) => setTitle(e.target.value)}
           required
         />
       </div>
-      <div>
-        <label>Countries:</label>
+      <div className="countries-container">
+        <label className="form-label">Countries:</label>
         <Select
           isMulti
           options={countries}
           value={selectedCountries}
-          className="w-full"
+          className="countries-list w-full"
           onChange={setSelectedCountries}
           classNamePrefix="react-select"
           required
         />
+        {countries.length === 0 && error && (
+          <p className="error-message text-red-600 mt-1">{error}</p>
+        )}
       </div>
-      <div>
-        <label>Duration (days):</label>
+      <div className="trip-duration-container">
+        <label className="form-label">Duration (days):</label>
         <input
           type="number"
           value={duration}
-          className="w-full border rounded p-2"
+          className="duration-input w-full border rounded p-2"
           onChange={(e) => setDuration(e.target.value)}
           required
         />
       </div>
-      <div className="flex justify-center">
+      <div className="button-container flex justify-center">
         <button
           type="submit"
-          className="bg-accent text-white px-4 py-2 rounded hover:opacity-90"
+          className="create-new-trip-button bg-accent text-white px-4 py-2 rounded hover:opacity-90"
         >
           Create New Trip Plan
         </button>
+        {countries.length > 0 && error && (
+          <p className="error-message text-red-600 text-center mt-2">{error}</p>
+        )}
       </div>
     </form>
   );
