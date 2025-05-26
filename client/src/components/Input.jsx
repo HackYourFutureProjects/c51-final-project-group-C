@@ -1,6 +1,6 @@
 function Input({ label, type = "text", placeholder, value, onChange }) {
   return (
-    <div className="input-container flex flex-col mb-4 w-80">
+    <div className="relative w-full">
       {label && (
         <label
           className=" input-label mb-1 text-text font-medium"
@@ -14,8 +14,9 @@ function Input({ label, type = "text", placeholder, value, onChange }) {
         type={type}
         placeholder={placeholder}
         value={value}
+        autoComplete="off"
         onChange={onChange}
-        className=" input-field w-full p-2 rounded-xl border border-accent focus:outline-none focus:ring-2 focus:ring-accent transition"
+        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-gray-900 text-base"
       />
     </div>
   );
