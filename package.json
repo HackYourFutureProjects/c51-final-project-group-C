@@ -49,8 +49,5 @@
     "cypress": "^13.8.1",
     "husky": "^9.0.0"
   },
-  "dependencies": {
-    "concurrently": "^9.1.0",
-    "react-icons": "^5.5.0"
-  }
+  "dependencies": {}
 }
