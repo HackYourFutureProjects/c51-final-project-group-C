@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { useForm } from "../hooks/useForm";
+import Input from "./Input";
+import FormError from "./FormError";
 
 const CreateTripPlan = () => {
-  const [title, setTitle] = useState("");
+  const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
-  const [duration, setDuration] = useState("");
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const {
+    formValues,
+    formErrors,
+    handleFormChange,
+    setFormError,
+    clearFormErrors,
+  } = useForm({ title: "", duration: "" });
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -38,7 +46,23 @@ const CreateTripPlan = () => {
   // Submit the form to start creating the trip
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    clearFormErrors();
+
+    if (!formValues.title.trim()) {
+      setFormError("title", "Title is required.");
+      return;
+    }
+
+    if (!formValues.duration || isNaN(formValues.duration)) {
+      setFormError("duration", "Please enter a valid number.");
+      return;
+    }
+
+    if (selectedCountries.length === 0) {
+      setFormError("countries", "Please select at least one country.");
+      return;
+    }
+
     try {
       const countryIds = selectedCountries.map((c) => c.value);
 
@@ -49,8 +73,8 @@ const CreateTripPlan = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title,
-          duration: Number(duration),
+          title: formValues.title,
+          duration: Number(formValues.duration),
           countries: countryIds,
         }),
       });
@@ -66,29 +90,27 @@ const CreateTripPlan = () => {
       // Redirect the users to the Trip Details Page with navigate
       navigate(`/trip/trip-details/${newTrip._id}`);
     } catch (err) {
-      console.error("Error while creating trip: ", err.message);
-      setError(err.message);
+      setFormError("submit", err.message);
     }
   };
 
-  const isFetchError = countries.length === 0 && error;
-  const isSubmitError = countries.length > 0 && error;
+  const handleInputChange = (key) => (e) => {
+    handleFormChange({ target: { id: key, value: e.target.value } });
+  };
 
   return (
     <form
       onSubmit={handleSubmit}
       className="create-trip-modal max-w-md mx-auto space-y-4"
     >
-      <div className="trip-title-container">
-        <label className="form-label">Title:</label>
-        <input
-          type="text"
-          value={title}
-          className="title-input w-full border rounded p-2"
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </div>
+      <Input
+        label="Title"
+        placeholder="Enter trip title"
+        value={formValues.title}
+        onChange={handleInputChange("title")}
+        required
+      />
+      <FormError error={formErrors.title} />
       <div className="countries-container">
         <label className="form-label">Countries:</label>
         <Select
@@ -98,22 +120,20 @@ const CreateTripPlan = () => {
           className="countries-list w-full"
           onChange={setSelectedCountries}
           classNamePrefix="react-select"
+          placeholder="Select countries/country..."
           required
         />
-        {isFetchError && (
-          <p className="error-message text-red-600 mt-1">{error}</p>
-        )}
+        <FormError error={formErrors.countries || error} />
       </div>
-      <div className="trip-duration-container">
-        <label className="form-label">Duration (days):</label>
-        <input
-          type="number"
-          value={duration}
-          className="duration-input w-full border rounded p-2"
-          onChange={(e) => setDuration(e.target.value)}
-          required
-        />
-      </div>
+      <Input
+        label="Duration (days)"
+        type="number"
+        placeholder="Number of days"
+        value={formValues.duration}
+        onChange={handleInputChange("duration")}
+        required
+      />
+      <FormError error={formErrors.duration} />
       <div className="button-container flex justify-center">
         <button
           type="submit"
@@ -121,9 +141,7 @@ const CreateTripPlan = () => {
         >
           Create New Trip Plan
         </button>
-        {isSubmitError && (
-          <p className="error-message text-red-600 text-center mt-2">{error}</p>
-        )}
+        <FormError error={formErrors.submit} />
       </div>
     </form>
   );
