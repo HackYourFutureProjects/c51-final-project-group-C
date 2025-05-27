@@ -37,7 +37,7 @@ export async function sendVerificationEmail(email, verificationToken) {
   });
 
   // Creating the link that sent to the user
-  const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+  const verificationLink = `${process.env.FRONTEND_URL}verify-email?token=${verificationToken}`;
 
   await transporter.sendMail({
     from: `"ELVA" <${process.env.EMAIL_USER}>`,
