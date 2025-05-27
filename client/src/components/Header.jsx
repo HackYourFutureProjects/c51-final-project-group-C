@@ -1,14 +1,24 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 import userImage from "../assets/user.jpg";
 
-// test user
-const user = false;
-
 const Header = () => {
+  const { isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setMenuOpen(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div className="header-container flex justify-between items-center px-4 py-3 bg-background border-b border-border text-text font-inter relative ">
@@ -16,7 +26,7 @@ const Header = () => {
       <div className="logo text-text font-Lora">ELVA</div>
 
       {/* Center nav links for the desktop screen size */}
-      {user && (
+      {isAuthenticated && (
         <nav className="nav-links">
           <ul className="link-list hidden md:flex gap-10 list-none items-center">
             <li>
@@ -34,7 +44,7 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/"
+                to="/profile"
                 className="profile-link hover:text-accent font-medium"
               >
                 Profile
@@ -46,27 +56,43 @@ const Header = () => {
 
       {/* Right side user image  and the hamburger menu on small screen size */}
       <div className="user-area flex items-center gap-4">
-        {user ? (
-          <Link
-            to="/"
-            className="logout-link hidden md:block text-accent font-semibold"
-          >
-            Log out
-          </Link>
+        {isAuthenticated ? (
+          <>
+            <button
+              onClick={handleLogout}
+              className="logout-link hidden md:block text-accent font-semibold"
+            >
+              Log out
+            </button>
+            <button
+              onClick={() => navigate("/profile")}
+              className="focus:outline-none transition transform hover:scale-105"
+            >
+              <img
+                src={userImage}
+                alt="user"
+                className="user-picture w-10 h-10 rounded-full object-cover border-2 border-border hover:border-accent"
+              />
+            </button>
+          </>
         ) : (
-          <Link to="/" className="login-link text-accent font-semibold">
-            Log in
-          </Link>
-        )}
-        {user && (
-          <img
-            src={userImage}
-            alt="user"
-            className=" user-picture w-10 h-10 rounded-full object-cover border-2 border-border"
-          />
+          <>
+            <button
+              onClick={() => navigate("/login")}
+              className="login-link text-accent font-semibold"
+            >
+              Log in
+            </button>
+            <button
+              onClick={() => navigate("/register")}
+              className="register-link text-accent font-semibold"
+            >
+              Register
+            </button>
+          </>
         )}
 
-        {user && (
+        {isAuthenticated && (
           <button
             className="hamburger-toggle md:hidden focus:outline-none"
             onClick={toggleMenu}
@@ -97,7 +123,7 @@ const Header = () => {
       </div>
 
       {/* hamburger menu for small screen size when user is logged in and the menu is open */}
-      {user && menuOpen && (
+      {isAuthenticated && menuOpen && (
         <div className="mobile-menu absolute top-full left-0 w-full bg-background shadow-md flex flex-col items-start gap-4 px-4 py-3 md:hidden z-50">
           <Link
             to="/"
@@ -114,19 +140,18 @@ const Header = () => {
             Create Trip
           </Link>
           <Link
-            to="/"
+            to="/profile"
             className="mobile-link-profile hover:text-accent font-medium"
             onClick={toggleMenu}
           >
             Profile
           </Link>
-          <Link
-            to="/"
+          <button
+            onClick={handleLogout}
             className="mobile-link-logout text-accent font-semibold"
-            onClick={toggleMenu}
           >
             Log out
-          </Link>
+          </button>
         </div>
       )}
     </div>

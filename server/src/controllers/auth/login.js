@@ -40,6 +40,9 @@ export async function login(request, response) {
       user: {
         id: user._id,
         email: user.email,
+        name: user.name || null,
+        surname: user.surname || null,
+        country: user.country || null,
       },
     });
   } catch (error) {
