@@ -14,7 +14,7 @@ const CreateTripPlan = () => {
     const fetchCountries = async () => {
       setError(null);
       try {
-        const res = await fetch("/api/country/get-countries", {
+        const res = await fetch("/api/country/countries", {
           credentials: "include",
         });
 
