@@ -18,7 +18,7 @@ const App = () => {
       <Routes>
         <Route element={<Layout />}>
           {/* 
-            Public Routes (accessible to everyone, even without registrartion). Basic logic is like this:
+            Public Routes (accessible to everyone, even without registration). Basic logic is like this:
             👉 If user is not registered/logged in - we still show the page, as it is a Public Route
             👉 If logged in but profile is not complete - we always redirect to /complete-profile
             👉 If logged in and profile is completed - we redirect to homepage
