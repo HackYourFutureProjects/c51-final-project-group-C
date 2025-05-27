@@ -25,7 +25,7 @@ export const createTrip = async (req, res) => {
     const existingCountries = await country.countDocuments({
       _id: { $in: countries },
     });
-    if (existingCountries.length !== countries.length) {
+    if (existingCountries !== countries.length) {
       return res
         .status(400)
         .json({ message: "One or more country IDs are invalid." });
