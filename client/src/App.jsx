@@ -11,6 +11,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Layout } from "./components/Layout";
+import CreateTripModal from "./pages/Create Trip/CreateTripModal";
 
 const App = () => {
   return (
@@ -96,6 +97,7 @@ const App = () => {
             }
           />
         </Route>
+        <Route path="/create-trip-plan" element={<CreateTripModal />} />
       </Routes>
     </AuthProvider>
   );
