@@ -92,6 +92,14 @@ const LoginPage = () => {
       footer={
         <div className="login-footer flex flex-col gap-4 mt-3">
           <hr />
+          <div className="text-center">
+            <Link
+              to="/forgot-password"
+              className="forgot-password-link text-sm text-accent hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <div className="register-prompt text-neutral-500 text-center mt-4 font-light">
             <div className="flex flex-row items-center gap-2 justify-center">
               <div>Don&#39;t have Elva account?</div>
