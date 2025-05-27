@@ -112,6 +112,9 @@ const RegisterPage = () => {
             <Input
               label="Confirm Password"
               type={showConfirmPassword ? "text" : "password"}
+              placeholder={
+                showPassword ? "Enter your password" : "Enter your password"
+              }
               value={formValues.confirmPassword}
               onChange={(e) =>
                 updateFormValue("confirmPassword", e.target.value)
