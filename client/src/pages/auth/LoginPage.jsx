@@ -68,9 +68,7 @@ const LoginPage = () => {
             <Input
               label="Password"
               type={showPassword ? "text" : "password"}
-              placeholder={
-                showPassword ? "Enter your password" : "Enter your password"
-              }
+              placeholder="Enter your password"
               value={formValues.password}
               onChange={(e) => updateFormValue("password", e.target.value)}
             />

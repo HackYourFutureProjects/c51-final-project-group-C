@@ -67,7 +67,7 @@ const ResetPasswordPage = () => {
       <Modal
         disabled={isLoading}
         isOpen={true}
-        title="Password Reset Successful"
+        title="Password Updated"
         actionLabel="Go to Login"
         onClose={() => navigate("/login")}
         onSubmit={() => navigate("/login")}

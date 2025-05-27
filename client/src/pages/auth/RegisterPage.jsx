@@ -89,9 +89,7 @@ const RegisterPage = () => {
           <div className="password-input-container relative">
             <Input
               label="Password"
-              placeholder={
-                showPassword ? "Enter your password" : "Enter your password"
-              }
+              placeholder="Enter your password"
               type={showPassword ? "text" : "password"}
               value={formValues.password}
               onChange={(e) => updateFormValue("password", e.target.value)}
@@ -112,9 +110,7 @@ const RegisterPage = () => {
             <Input
               label="Confirm Password"
               type={showConfirmPassword ? "text" : "password"}
-              placeholder={
-                showPassword ? "Enter your password" : "Enter your password"
-              }
+              placeholder="Confirm your password"
               value={formValues.confirmPassword}
               onChange={(e) =>
                 updateFormValue("confirmPassword", e.target.value)
