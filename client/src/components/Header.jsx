@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-import userImage from "../assets/user.jpg";
+import Avatar from "./Avatar";
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -44,7 +43,7 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/profile"
+                to="/users/me"
                 className="profile-link hover:text-accent font-medium"
               >
                 Profile
@@ -65,14 +64,10 @@ const Header = () => {
               Log out
             </button>
             <button
-              onClick={() => navigate("/profile")}
-              className="focus:outline-none transition transform hover:scale-105"
+              onClick={() => navigate("/users/me")}
+              className="focus:outline-none transition transform"
             >
-              <img
-                src={userImage}
-                alt="user"
-                className="user-picture w-10 h-10 rounded-full object-cover border-2 border-border hover:border-accent"
-              />
+              <Avatar size="small" withBorder={true} />
             </button>
           </>
         ) : (
@@ -140,7 +135,7 @@ const Header = () => {
             Create Trip
           </Link>
           <Link
-            to="/profile"
+            to="/users/me"
             className="mobile-link-profile hover:text-accent font-medium"
             onClick={toggleMenu}
           >
