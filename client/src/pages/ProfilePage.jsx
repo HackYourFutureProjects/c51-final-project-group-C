@@ -50,7 +50,7 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTabId, setActiveTabId] = useState(null);
-  // ☝️ Tricky: As you see we don't set active tab here. That's because active tab depends on isOwnProfile variable that can be unavailable at the first render.
+  // ☝️ Tricky: We don't set active tab here. That's because active tab depends on isOwnProfile variable that can be unavailable at the first render.
   // 👇 So we set active tab in useEffect to wait for isOwnProfile to be initialized.
   useEffect(() => {
     setActiveTabId(isOwnProfile ? "past-trips" : "published");
@@ -102,7 +102,7 @@ const ProfilePage = () => {
 
   const placeholderCards = Array(9).fill({
     id: "placeholder",
-    title: "title",
+    title: "Trip Title",
   });
 
   // 👇 Private View Layout (how user sees his own profile)
@@ -116,15 +116,32 @@ const ProfilePage = () => {
           tabItems={tabsForPrivateProfileView}
         />
 
-        {/* 👇  Grid of Cards (just a placeholders for now) */}
+        {/* 👇  Grid of Cards */}
         <div className="content-container lg:col-span-3 border-border border rounded-lg p-4 w-full min-h-[calc(100vh-8rem)]">
-          <Grid columns={4} />
+          <Grid columns={4}>
+            {placeholderCards.map((item, index) => (
+              <div
+                key={index}
+                className="card-item border-border border rounded-lg overflow-hidden"
+              >
+                <div className="card-image aspect-square bg-gray-100 flex items-center justify-center">
+                  <span className="placeholder-text text-sm">Photo</span>
+                </div>
+                <div className="card-content p-3">
+                  <h3 className="card-title font-medium text-sm">
+                    {item.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
+          </Grid>
         </div>
       </div>
     );
   };
 
   // 👇 Public View Layout (how user sees someone else's profile)
+
   const renderPublicView = () => {
     const renderTabsContent = () => {
       if (activeTabId === "map") {
@@ -136,6 +153,9 @@ const ProfilePage = () => {
         );
       }
 
+      {
+        /* 👇  Grid of Cards */
+      }
       return (
         <Grid columns={4}>
           {placeholderCards.map((item, index) => (
