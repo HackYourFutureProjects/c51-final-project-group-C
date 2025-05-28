@@ -11,7 +11,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Layout } from "./components/Layout";
-import CreateTripModal from "./pages/Create Trip/CreateTripModal";
+import CreateTripModal from "./pages/CreateTrip/CreateTripModal";
 
 const App = () => {
   return (
