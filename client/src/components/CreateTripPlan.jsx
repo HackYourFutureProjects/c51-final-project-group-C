@@ -53,8 +53,12 @@ const CreateTripPlan = () => {
       return;
     }
 
-    if (!formValues.duration || isNaN(formValues.duration)) {
-      setFormError("duration", "Please enter a valid number.");
+    if (
+      !formValues.duration ||
+      isNaN(formValues.duration) ||
+      Number(formValues.duration) < 1
+    ) {
+      setFormError("duration", "Please enter a valid number (min. 1 day).");
       return;
     }
 
@@ -131,6 +135,7 @@ const CreateTripPlan = () => {
         placeholder="Number of days"
         value={formValues.duration}
         onChange={handleInputChange("duration")}
+        min="1"
         required
       />
       <FormError error={formErrors.duration} />
