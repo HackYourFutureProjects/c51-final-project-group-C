@@ -74,11 +74,21 @@ const App = () => {
 
           {/* 
             Protected Routes, require authentication. They work like this:
+            👉 If user is authenticated -> Click on Create Trip -> redirect to /create-trip-plan -> show the Create Trip Modal to put the basic inputs
             👉 If user is not authenticated -> we redirect to /login (+ we save URL he tried to visit and will redirect him to this page after login)
             👉 If authenticated but profile is incomplete -> redirect to /complete-profile
             👉 If authenticated and profile is complete -> show the page
           */}
-
+          <Route path="/" element={<Home />}>
+            <Route
+              path="create-trip-plan"
+              element={
+                <ProtectedRoute>
+                  <CreateTripModal />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
           <Route
             path="/complete-profile"
             element={
@@ -87,7 +97,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/profile"
             element={
@@ -97,7 +106,6 @@ const App = () => {
             }
           />
         </Route>
-        <Route path="/create-trip-plan" element={<CreateTripModal />} />
       </Routes>
     </AuthProvider>
   );
