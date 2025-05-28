@@ -36,7 +36,7 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/"
+                to="/create-trip-plan"
                 className="create-trip-link hover:text-accent font-medium"
               >
                 Create Trip
