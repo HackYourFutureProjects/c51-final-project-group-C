@@ -19,7 +19,7 @@ export const CreateEvent = async (req, res) => {
       name,
       notes,
       day: dayID,
-      locations: savedLocation._id,
+      location: savedLocation._id,
     });
     const savedEvent = await newEvent.save();
 
