@@ -8,7 +8,7 @@ const eventSchema = new mongoose.Schema({
   },
   day: { type: mongoose.Schema.Types.ObjectId, ref: "days" },
   notes: [{ index: Number, text: String }],
-  locations: [{ type: mongoose.Schema.Types.ObjectId, ref: "locations" }],
+  locations: { type: mongoose.Schema.Types.ObjectId, ref: "locations" },
 });
 
 const event = mongoose.model("events", eventSchema);
