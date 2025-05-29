@@ -1,9 +1,9 @@
 import express from "express";
 
-import { CreateDAy } from "../controllers/day/CreateDay.js";
+import { CreateDay } from "../controllers/day/CreateDay.js";
 // import { requireAuth } from "../middleware/requireAuth.js";
 const dayRouter = express.Router({ mergeParams: true });
 
-dayRouter.post("/create-day", CreateDAy);
+dayRouter.post("/create-day", CreateDay);
 
 export default dayRouter;

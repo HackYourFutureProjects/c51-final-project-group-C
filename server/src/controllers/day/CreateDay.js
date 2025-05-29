@@ -2,7 +2,7 @@ import day from "../../models/Day.js";
 
 import { logError } from "../../util/logging.js";
 
-export const CreateDAy = async (req, res) => {
+export const CreateDay = async (req, res) => {
   const { title, index } = req.body;
 
   try {
