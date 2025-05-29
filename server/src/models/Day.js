@@ -10,6 +10,7 @@ const daySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  events: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
 });
 
 const day = mongoose.model("days", daySchema);
