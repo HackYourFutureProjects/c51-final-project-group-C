@@ -32,6 +32,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/trip", tripRouter);
 app.use("/api/country", countryRouter);
-app.use("/api/:userID/:tripID/days", dayRouter);
+app.use("/api/user/:userID/trip/:tripID/days", dayRouter);
 
 export default app;
