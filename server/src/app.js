@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoutes.js";
 import tripRouter from "./routes/tripRoutes.js";
 import countryRouter from "./routes/countryRoutes.js";
 import dayRouter from "./routes/dayRoutes.js";
+import eventRouter from "./routes/eventRoutes.js";
 
 // Create an express server
 const app = express();
@@ -33,5 +34,6 @@ app.use("/api/users", userRouter);
 app.use("/api/trip", tripRouter);
 app.use("/api/country", countryRouter);
 app.use("/api/user/:userID/trip/:tripID/days", dayRouter);
+app.use("/api/user/:userID/trip/:tripID/day/:dayID/events", eventRouter);
 
 export default app;
