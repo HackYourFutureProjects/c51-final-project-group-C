@@ -5,14 +5,10 @@ import { setJwtCookie } from "../../util/setJwtCookie.js";
 
 export async function completeProfile(req, res) {
   const { name, surname, country } = req.body;
-  const userId = req.user?.userId; // 👈 We take it from JWT
+  const userId = req.user?.userId;
 
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  if (!name || !surname || !country) {
-    return res.status(400).json({ message: "All fields are required." });
   }
 
   try {

@@ -21,9 +21,7 @@ export const createUser = async (req, res) => {
     if (typeof user !== "object") {
       res.status(400).json({
         success: false,
-        msg: `You need to provide a 'user' object. Received: ${JSON.stringify(
-          user,
-        )}`,
+        msg: `You need to provide a 'user' object. Received: ${JSON.stringify(user)}`,
       });
 
       return;
