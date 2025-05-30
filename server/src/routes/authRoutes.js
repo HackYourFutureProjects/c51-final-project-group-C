@@ -3,7 +3,7 @@ import express from "express";
 // Middleware
 
 import { requireAuth } from "../middleware/requireAuth.js";
-import { validate } from "../middleware/validate.js";
+import { validate } from "../middleware/validateData.js";
 
 // Controllers
 
