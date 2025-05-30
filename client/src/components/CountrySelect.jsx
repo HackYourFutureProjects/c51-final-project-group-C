@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import FormError from "./FormError";
 
-const CountrySelect = ({ value, onChange, error, isMulti = true }) => {
+const CountrySelect = ({
+  value,
+  onChange,
+  error,
+  isMulti = true,
+  placeholder,
+}) => {
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
@@ -41,7 +47,7 @@ const CountrySelect = ({ value, onChange, error, isMulti = true }) => {
 
   return (
     <div>
-      <label className="form-label">Country{isMulti ? "s" : ""}:</label>
+      <label className="form-label">{isMulti ? "Countries" : "Country"}</label>
       {isLoading ? (
         <p>Loading countries...</p>
       ) : (
@@ -54,7 +60,8 @@ const CountrySelect = ({ value, onChange, error, isMulti = true }) => {
             onChange={onChange}
             classNamePrefix="react-select"
             placeholder={
-              isMulti ? "Select countries/country..." : "Select your country"
+              placeholder ||
+              (isMulti ? "Select countries/country..." : "Select your country")
             }
           />
           <FormError error={error || fetchError} />
