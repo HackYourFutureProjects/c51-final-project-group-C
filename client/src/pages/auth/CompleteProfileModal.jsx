@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
+import CountrySelect from "../../components/CountrySelect";
 import { useForm } from "../../hooks/useForm";
 
 const CompleteProfileModal = () => {
@@ -14,7 +15,9 @@ const CompleteProfileModal = () => {
   const { formValues, formErrors, updateFormValue, setFormError } = useForm({
     name: user?.name || "",
     surname: user?.surname || "",
-    country: user?.country || "",
+    country: user?.country
+      ? { value: user.country, label: user.countryName || user.country }
+      : null,
   });
 
   const onSubmit = async () => {
@@ -31,7 +34,11 @@ const CompleteProfileModal = () => {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(formValues),
+        body: JSON.stringify({
+          name: formValues.name,
+          surname: formValues.surname,
+          country: formValues.country?.value,
+        }),
       });
 
       if (!response.ok) {
@@ -55,6 +62,10 @@ const CompleteProfileModal = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCountryChange = (selectedCountry) => {
+    updateFormValue("country", selectedCountry);
   };
 
   return (
@@ -83,11 +94,12 @@ const CompleteProfileModal = () => {
             placeholder="Enter your last name"
             onChange={(e) => updateFormValue("surname", e.target.value)}
           />
-          <Input
-            label="Country"
+          <CountrySelect
+            isMulti={false}
             value={formValues.country}
-            placeholder="Enter your country"
-            onChange={(e) => updateFormValue("country", e.target.value)}
+            placeholder="Select your country"
+            onChange={handleCountryChange}
+            error={formErrors.country}
           />
           <FormError error={formErrors.messageToShow} />
         </div>
