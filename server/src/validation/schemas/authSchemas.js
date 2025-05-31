@@ -7,11 +7,6 @@ export const registrationSchema = z
   .object({
     email: emailSchema,
     password: passwordSchema,
-    confirmPassword: passwordSchema,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
   })
   .strict();
 
@@ -30,10 +25,7 @@ export const completeProfileSchema = z
   .object({
     name: nameSchema,
     surname: nameSchema,
-    country: z
-      .string()
-      .min(2, "Country must be at least 2 characters")
-      .max(100, "Country must not exceed 100 characters"),
+    country: nameSchema,
   })
   .strict();
 
