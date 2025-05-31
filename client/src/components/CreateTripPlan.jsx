@@ -93,7 +93,7 @@ const CreateTripPlan = () => {
       const newTrip = await res.json();
 
       // Redirect the users to the Trip Details Page with navigate
-      navigate(`/trip/trip-details/${newTrip._id}`);
+      navigate(`/create-trip-plan/${newTrip._id}/complete`);
     } catch (err) {
       setFormError("submit", err.message);
     }

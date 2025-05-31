@@ -12,6 +12,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Layout } from "./components/Layout";
 import CreateTripModal from "./pages/CreateTrip/CreateTripModal";
+import CompleteTripPage from "./pages/CreateTrip/CompleteTripPage";
 
 const App = () => {
   return (
@@ -89,6 +90,14 @@ const App = () => {
               }
             />
           </Route>
+          <Route
+            path="/create-trip-plan/:tripId/complete"
+            element={
+              <ProtectedRoute>
+                <CompleteTripPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/complete-profile"
             element={
