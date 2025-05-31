@@ -1,4 +1,4 @@
-import location from "../../models/Location.js";
+import Location from "../../models/Location.js";
 
 import { logError } from "../../util/logging.js";
 
@@ -7,7 +7,7 @@ export const CreateLocation = async (req, res) => {
   const { userID } = req.params;
 
   try {
-    const newLocation = new location({
+    const newLocation = new Location({
       coordinates,
       address,
       userID,

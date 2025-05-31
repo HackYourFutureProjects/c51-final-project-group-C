@@ -1,6 +1,6 @@
-import day from "../../models/Day.js";
+import Day from "../../models/Day.js";
 import Event from "../../models/Event.js";
-import location from "../../models/Location.js";
+import Location from "../../models/Location.js";
 
 import { logError } from "../../util/logging.js";
 
@@ -9,7 +9,7 @@ export const CreateEvent = async (req, res) => {
   const { dayID, userID } = req.params;
 
   try {
-    const newLocation = new location({
+    const newLocation = new Location({
       coordinates,
       address,
       userID,
@@ -24,7 +24,7 @@ export const CreateEvent = async (req, res) => {
     const savedEvent = await newEvent.save();
 
     // to update the array in day schema with the eventID
-    await day.findByIdAndUpdate(dayID, {
+    await Day.findByIdAndUpdate(dayID, {
       $push: { events: savedEvent._id },
     });
 
