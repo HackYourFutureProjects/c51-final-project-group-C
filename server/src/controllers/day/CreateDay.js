@@ -1,4 +1,4 @@
-import day from "../../models/Day.js";
+import Day from "../../models/Day.js";
 
 import { logError } from "../../util/logging.js";
 
@@ -6,7 +6,7 @@ export const createDay = async (req, res) => {
   const { title, index } = req.body;
 
   try {
-    const newDay = new day({
+    const newDay = new Day({
       title,
       index,
     });
