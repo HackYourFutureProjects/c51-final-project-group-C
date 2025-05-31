@@ -8,25 +8,33 @@ import { useForm } from "../../hooks/useForm";
 import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
 
 const LoginPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login, isProfileCompleted } = useAuth();
+  const { login, isProfileCompleted, error, validationErrors, isLoading, resetErrors } = useAuth();
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
     email: "",
     password: "",
   });
 
   const onSubmit = async () => {
-    if (!formValues.email || !formValues.password) {
-      setFormError("messageToShow", "Please fill in all fields");
+    clearFormErrors();
+    
+    if (!formValues.email.trim()) {
+      setFormError("general", "Please enter your email");
+      return;
+    }
+
+    if (!formValues.password.trim()) {
+      setFormError("general", "Please enter your password");
       return;
     }
 
     try {
-      setIsLoading(true);
-      await login(formValues);
+      await login({
+        email: formValues.email.trim(),
+        password: formValues.password
+      });
 
       // 👇 Here we get the URL the user tried to visit so we will redirect him to this page after login
       const redirectPath = localStorage.getItem("redirectAfterLogin");
@@ -40,12 +48,11 @@ const LoginPage = () => {
         navigate("/");
       }
     } catch (error) {
-      setFormError("messageToShow", "Invalid email or password");
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      // 👉 Error is handled by the AuthContext
     }
   };
+
+  const errorToShow = formErrors.general || error;
 
   return (
     <Modal
@@ -53,7 +60,11 @@ const LoginPage = () => {
       isOpen={true}
       title="Login"
       actionLabel="Continue"
-      onClose={() => navigate("/")}
+      onClose={() => {
+        resetErrors();
+        clearFormErrors();
+        navigate("/");
+      }}
       onSubmit={onSubmit}
       body={
         <div className="login-form flex flex-col gap-6 py-2">
@@ -84,7 +95,7 @@ const LoginPage = () => {
               )}
             </button>
           </div>
-          <FormError error={formErrors.messageToShow} />
+          <FormError error={errorToShow} validationErrors={validationErrors} />
         </div>
       }
       footer={

@@ -1,50 +1,50 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
 import { useForm } from "../../hooks/useForm";
+import useFetch from "../../hooks/useFetch";
 
 const RegisterPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-  const { register: registerUser } = useAuth();
+  const api = useFetch();
+  const { error, validationErrors, isLoading, resetErrors } = api;
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
     email: "",
     password: "",
     confirmPassword: "",
   });
 
   const onSubmit = async () => {
-    if (
-      !formValues.email ||
-      !formValues.password ||
-      !formValues.confirmPassword
-    ) {
-      setFormError("messageToShow", "Please fill in all fields");
+    clearFormErrors();
+    resetErrors();
+    
+    if (!formValues.email.trim() || !formValues.password.trim() || !formValues.confirmPassword.trim()) {
+      setFormError("general", "Please fill in all fields");
       return;
     }
 
     if (formValues.password !== formValues.confirmPassword) {
-      setFormError("messageToShow", "Passwords do not match");
+      setFormError("passwordMatch", "Passwords do not match");
       return;
     }
 
     try {
-      setIsLoading(true);
-      await registerUser(formValues);
+      const registrationData = {
+        email: formValues.email.trim(),
+        password: formValues.password,
+      };
+      
+      await api.post("/auth/register", registrationData);
       setEmailSent(true);
     } catch (error) {
-      console.error("Registration error:", error);
-      setFormError("messageToShow", "Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      // 👉 no need to set error here, useFetch will handle it
     }
   };
 
@@ -69,13 +69,19 @@ const RegisterPage = () => {
     );
   }
 
+  const errorToShow = formErrors.general || formErrors.passwordMatch || error;
+
   return (
     <Modal
       disabled={isLoading}
       isOpen={true}
       title="Register"
       actionLabel="Continue"
-      onClose={() => navigate("/")}
+      onClose={() => {
+        resetErrors();
+        clearFormErrors();
+        navigate("/");
+      }}
       onSubmit={onSubmit}
       body={
         <div className="register-form flex flex-col gap-6 py-2">
@@ -128,7 +134,7 @@ const RegisterPage = () => {
               )}
             </button>
           </div>
-          <FormError error={formErrors.messageToShow} />
+          <FormError error={errorToShow} validationErrors={validationErrors} />
         </div>
       }
       footer={
