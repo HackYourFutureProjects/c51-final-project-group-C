@@ -16,14 +16,20 @@ const ResetPasswordPage = () => {
   const api = useFetch();
   const { error, validationErrors, isLoading, resetErrors } = api;
 
-  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     password: "",
     confirmPassword: "",
   });
 
   const onSubmit = async () => {
     clearFormErrors();
-    
+
     if (!formValues.password || !formValues.confirmPassword) {
       setFormError("general", "Please fill in all fields");
       return;
@@ -35,10 +41,13 @@ const ResetPasswordPage = () => {
     }
 
     try {
-      await api.post(`/auth/reset-password/${token}`, { password: formValues.password });
+      await api.post(`/auth/reset-password/${token}`, {
+        password: formValues.password,
+      });
       setIsSuccess(true);
     } catch (error) {
       // no need to set error here, useFetch handles it
+      console.log(error);
     }
   };
 

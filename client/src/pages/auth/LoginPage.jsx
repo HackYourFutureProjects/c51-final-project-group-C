@@ -10,16 +10,29 @@ import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login, isProfileCompleted, error, validationErrors, isLoading, resetErrors } = useAuth();
+  const {
+    login,
+    isProfileCompleted,
+    error,
+    validationErrors,
+    isLoading,
+    resetErrors,
+  } = useAuth();
 
-  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     email: "",
     password: "",
   });
 
   const onSubmit = async () => {
     clearFormErrors();
-    
+
     if (!formValues.email.trim()) {
       setFormError("general", "Please enter your email");
       return;
@@ -33,7 +46,7 @@ const LoginPage = () => {
     try {
       await login({
         email: formValues.email.trim(),
-        password: formValues.password
+        password: formValues.password,
       });
 
       // 👇 Here we get the URL the user tried to visit so we will redirect him to this page after login
@@ -49,6 +62,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       // 👉 Error is handled by the AuthContext
+      console.log(error);
     }
   };
 

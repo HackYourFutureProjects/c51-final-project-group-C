@@ -19,7 +19,7 @@ const useFetch = () => {
     const baseOptions = {
       method,
       headers: { "Content-Type": "application/json" },
-      credentials: "include"
+      credentials: "include",
     };
 
     const options = { ...baseOptions };
@@ -35,7 +35,10 @@ const useFetch = () => {
       if (!response.ok) {
         const isValidation = response.status === 400 && data.validationErrors;
         if (isValidation) setValidationErrors(data.validationErrors);
-        throw new Error(data.message || (isValidation ? "Validation failed" : "Request failed"));
+        throw new Error(
+          data.message ||
+            (isValidation ? "Validation failed" : "Request failed"),
+        );
       }
 
       return data;
@@ -65,7 +68,7 @@ const useFetch = () => {
     post,
     put,
     del,
-    resetErrors
+    resetErrors,
   };
 };
 

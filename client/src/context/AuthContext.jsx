@@ -30,12 +30,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credentials) => {
-    try {
-      await api.post("/auth/login", credentials);
-      return await checkAuth();
-    } catch (error) {
-      throw error;
-    }
+    await api.post("/auth/login", credentials);
+    return await checkAuth();
   };
 
   const logout = async () => {

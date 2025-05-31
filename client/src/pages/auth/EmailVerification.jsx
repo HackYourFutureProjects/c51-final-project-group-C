@@ -26,7 +26,7 @@ const EmailVerification = () => {
 
       try {
         const data = await api.post("/auth/verify-email", { token });
-        
+
         if (data.user) {
           setUser(data.user);
         }

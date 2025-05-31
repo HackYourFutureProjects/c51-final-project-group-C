@@ -12,23 +12,32 @@ const ForgotPasswordPage = () => {
   const api = useFetch();
   const { error, validationErrors, isLoading, resetErrors } = api;
 
-  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     email: "",
   });
 
   const onSubmit = async () => {
     clearFormErrors();
-    
+
     if (!formValues.email.trim()) {
       setFormError("general", "Please enter your email");
       return;
     }
 
     try {
-      await api.post("/auth/forgot-password", { email: formValues.email.trim() });
+      await api.post("/auth/forgot-password", {
+        email: formValues.email.trim(),
+      });
       setEmailSent(true);
     } catch (error) {
       // 👉 no need to set error here, useFetch handles it
+      console.log(error);
     }
   };
 

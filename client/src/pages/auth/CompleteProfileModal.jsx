@@ -12,7 +12,13 @@ const CompleteProfileModal = () => {
   const { error, validationErrors, isLoading } = api;
   const navigate = useNavigate();
 
-  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     name: user?.name || "",
     surname: user?.surname || "",
     country: user?.country || "",
@@ -20,8 +26,12 @@ const CompleteProfileModal = () => {
 
   const onSubmit = async () => {
     clearFormErrors();
-    
-    if (!formValues.name.trim() || !formValues.surname.trim() || !formValues.country.trim()) {
+
+    if (
+      !formValues.name.trim() ||
+      !formValues.surname.trim() ||
+      !formValues.country.trim()
+    ) {
       setFormError("general", "Please fill in all fields");
       return;
     }
@@ -30,16 +40,18 @@ const CompleteProfileModal = () => {
       await api.post("/auth/complete-profile", {
         name: formValues.name.trim(),
         surname: formValues.surname.trim(),
-        country: formValues.country.trim()
+        country: formValues.country.trim(),
       });
       await checkAuth();
       navigate("/");
     } catch (error) {
       // 👉 Error is handled by useFetch
+      console.log(error);
     }
   };
 
-  const errorToShow = formErrors.general || 
+  const errorToShow =
+    formErrors.general ||
     (error && !error.includes("Not authenticated") ? error : null);
 
   return (

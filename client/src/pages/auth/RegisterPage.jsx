@@ -15,7 +15,13 @@ const RegisterPage = () => {
   const api = useFetch();
   const { error, validationErrors, isLoading, resetErrors } = api;
 
-  const { formValues, formErrors, updateFormValue, setFormError, clearFormErrors } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     email: "",
     password: "",
     confirmPassword: "",
@@ -24,8 +30,12 @@ const RegisterPage = () => {
   const onSubmit = async () => {
     clearFormErrors();
     resetErrors();
-    
-    if (!formValues.email.trim() || !formValues.password.trim() || !formValues.confirmPassword.trim()) {
+
+    if (
+      !formValues.email.trim() ||
+      !formValues.password.trim() ||
+      !formValues.confirmPassword.trim()
+    ) {
       setFormError("general", "Please fill in all fields");
       return;
     }
@@ -40,11 +50,12 @@ const RegisterPage = () => {
         email: formValues.email.trim(),
         password: formValues.password,
       };
-      
+
       await api.post("/auth/register", registrationData);
       setEmailSent(true);
     } catch (error) {
       // 👉 no need to set error here, useFetch will handle it
+      console.log(error);
     }
   };
 
