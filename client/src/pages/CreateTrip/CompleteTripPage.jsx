@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import RatingStars from "../../components/RatingStars";
 
 const CompleteTripPage = () => {
   // For getting the trip data
@@ -17,29 +18,82 @@ const CompleteTripPage = () => {
 
   useEffect(() => {
     setTripData({
-      title: "My First Solo Trip",
+      title: "3 Days in Paris: Art, Culture & Cuisine",
       isPublished: false,
       days: [
         {
           title: "Arrival & City Tour",
-          description: "",
           activities: [
             {
+              title: "Check-in at Hotel Le Meurice",
+              location: "228 Rue de Rivoli, Paris",
+              description:
+                "Luxury hotel near the Louvre, perfect for a central stay.",
+            },
+            {
               title: "Visit Eiffel Tower",
-              location: "Paris, France",
-              description: "Iconic landmark with amazing views.",
+              location: "Champ de Mars, Paris",
+              description:
+                "Explore the most famous landmark and enjoy the panoramic view from the top.",
+            },
+            {
+              title: "Seine River Cruise",
+              location: "Port de la Bourdonnais",
+              description:
+                "Evening boat ride to see Paris illuminated along the riverbanks.",
             },
           ],
         },
-        { title: "Beach Day", description: "", activities: [] },
         {
-          title: "Hiking Adventure",
-          description: "",
-          activities: [],
+          title: "Art & History Exploration",
+          activities: [
+            {
+              title: "Louvre Museum Tour",
+              location: "Rue de Rivoli, Paris",
+              description:
+                "Home of the Mona Lisa and thousands of historic masterpieces.",
+            },
+            {
+              title: "Lunch at Café de Flore",
+              location: "Boulevard Saint-Germain, Paris",
+              description:
+                "One of Paris' oldest coffeehouses, frequented by artists and writers.",
+            },
+            {
+              title: "Notre-Dame Cathedral Visit",
+              location: "Île de la Cité, Paris",
+              description:
+                "Explore this Gothic architectural wonder and its rich history.",
+            },
+          ],
+        },
+        {
+          title: "Montmartre & Culinary Delights",
+          activities: [
+            {
+              title: "Morning Walk in Montmartre",
+              location: "Montmartre Hill",
+              description:
+                "Stroll through cobblestone streets and visit the famous Sacré-Cœur.",
+            },
+            {
+              title: "Cooking Class: French Pastries",
+              location: "Le Foodist, Paris",
+              description:
+                "Learn how to bake authentic croissants and éclairs with a French chef.",
+            },
+            {
+              title: "Dinner at Le Jules Verne",
+              location: "Eiffel Tower, Paris",
+              description:
+                "Fine dining experience with a view, located inside the Eiffel Tower.",
+            },
+          ],
         },
       ],
       overallRating: 4,
-      overallReview: "It was a fantastic experience!",
+      overallReview:
+        "Every moment in Paris felt magical. The food, the art, the atmosphere — unforgettable!",
     });
   }, []);
 
@@ -105,11 +159,6 @@ const CompleteTripPage = () => {
         />
       </div>
 
-      {/* Add photo section
-      <div className="mb-6">
-        <button className="text-accent underline">+ Add cover photo</button>
-      </div> */}
-
       {/* Day Plan sections */}
       <div className="space-y-4">
         {tripData.days.map((day, i) => (
@@ -119,15 +168,18 @@ const CompleteTripPage = () => {
               className="flex justify-between items-center p-4 cursor-pointer"
               onClick={() => toggleDay(i)}
             >
-              <div className="font-medium">
-                Day {i + 1} : {day.title || "Untitled"}
-              </div>
-              {day.activities?.length > 0 && (
-                <div className="text-sm text-gray-500 mt-1">
-                  {day.activities.length} activity
-                  {day.activities.length > 1 ? "ies" : "y"} added
+              <div className="flex flex-col">
+                <div className="font-medium">
+                  Day {i + 1} : {day.title || "Untitled"}
                 </div>
-              )}
+                {day.activities?.length > 0 && (
+                  <div className="text-sm text-gray-500 mt-1">
+                    {day.activities.length}{" "}
+                    {day.activities.length > 1 ? "activities" : "activity"}{" "}
+                    added
+                  </div>
+                )}
+              </div>
               <button className="text-accent underline">
                 {dayIndex === i ? "Collapse" : "Edit"}
               </button>
@@ -167,6 +219,7 @@ const CompleteTripPage = () => {
                       <input
                         type="text"
                         placeholder="Location"
+                        value={activity.location || ""}
                         onChange={(e) => {
                           const newDays = [...tripData.days];
                           newDays[i].activities[j].location = e.target.value;
@@ -237,23 +290,14 @@ const CompleteTripPage = () => {
         <h3 className="text-lg font-semibold mb-2">
           Rate your overall trip experience
         </h3>
-        {/* Simple stars or emojis for now */}
-        <div className="flex mb-4">
-          {Array.from({ length: 5 }).map((_, idx) => (
-            <span
-              key={idx}
-              className={`text-2xl cursor-pointer ${
-                idx < tripData.overallRating
-                  ? "text-yellow-400"
-                  : "text-gray-300"
-              }`}
-              onClick={() =>
-                setTripData({ ...tripData, overallRating: idx + 1 })
-              }
-            >
-              ★
-            </span>
-          ))}
+        {/* Simple stars and overview section */}
+        <div className="mb-8">
+          <RatingStars
+            rating={tripData.overallRating}
+            onRate={(newRating) =>
+              setTripData({ ...tripData, overallRating: newRating })
+            }
+          />
         </div>
         <textarea
           rows={4}
@@ -266,7 +310,7 @@ const CompleteTripPage = () => {
         ></textarea>
       </div>
 
-      {/* Save/Publish footer */}
+      {/* Save/Publish buttons */}
       <div className="mt-6 text-right space-x-6">
         <button className="bg-white text-accent border border-orange-500 px-4 py-2 rounded shadow-sm hover:bg-orange-50 transition">
           Save
