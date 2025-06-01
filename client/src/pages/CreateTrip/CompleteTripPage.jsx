@@ -7,6 +7,7 @@ const CompleteTripPage = () => {
   const [tripData, setTripData] = useState({
     title: "",
     isPublished: false,
+    coverPhoto: null,
     days: [],
     overallRating: 0,
     overallReview: "",
@@ -62,15 +63,52 @@ const CompleteTripPage = () => {
           onChange={(e) => setTripData({ ...tripData, title: e.target.value })}
           className="text-2xl font-semibold w-full max-w-md border-b border-gray-300 focus:outline-none focus:border-accent"
         />
-        <button className="ml-4 bg-accent text-white px-4 py-2 rounded">
-          {tripData.isPublished ? "Unpublish" : "Publish"}
-        </button>
       </div>
 
-      {/* Add photo section */}
+      {/* Cover Photo Upload + Preview */}
+      <div className="mb-6">
+        {tripData.coverPhoto ? (
+          <div className="mb-4">
+            <div className="relative w-full aspect-[16/9] rounded overflow-hidden">
+              <img
+                src={URL.createObjectURL(tripData.coverPhoto)}
+                alt="Cover photo"
+                className="absolute top-0 left-0 w-full h-full object-cover"
+              />
+            </div>
+            <button
+              onClick={() => setTripData({ ...tripData, coverPhoto: null })}
+              className="mt-2 text-sm text-red-500 underline"
+            >
+              Remove cover photo
+            </button>
+          </div>
+        ) : (
+          <label
+            htmlFor="cover-photo-input"
+            className="block w-full h-64 cursor-pointer border-2 border-dashed border-accent flex items-center justify-center text-accent rounded-lg hover:bg-orange-50 transition mb-4"
+          >
+            + Add cover photo
+          </label>
+        )}
+        <input
+          id="cover-photo-input"
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) {
+              setTripData({ ...tripData, coverPhoto: file });
+            }
+          }}
+          className="hidden"
+        />
+      </div>
+
+      {/* Add photo section
       <div className="mb-6">
         <button className="text-accent underline">+ Add cover photo</button>
-      </div>
+      </div> */}
 
       {/* Day Plan sections */}
       <div className="space-y-4">
@@ -229,8 +267,13 @@ const CompleteTripPage = () => {
       </div>
 
       {/* Save/Publish footer */}
-      <div className="mt-6 text-right">
-        <button className="bg-accent text-white px-4 py-2 rounded">Save</button>
+      <div className="mt-6 text-right space-x-6">
+        <button className="bg-white text-accent border border-orange-500 px-4 py-2 rounded shadow-sm hover:bg-orange-50 transition">
+          Save
+        </button>
+        <button className="bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition">
+          Publish
+        </button>
       </div>
     </div>
   );
