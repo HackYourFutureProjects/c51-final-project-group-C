@@ -21,20 +21,18 @@ const CompleteTripPage = () => {
       days: [
         {
           title: "Arrival & City Tour",
-          time: "",
           description: "",
           activities: [
             {
-              title: "Museum visit",
-              time: "10:00",
-              description: "Went to the museum.",
+              title: "Visit Eiffel Tower",
+              location: "Paris, France",
+              description: "Iconic landmark with amazing views.",
             },
           ],
         },
-        { title: "Beach Day", time: "", description: "", activities: [] },
+        { title: "Beach Day", description: "", activities: [] },
         {
           title: "Hiking Adventure",
-          time: "",
           description: "",
           activities: [],
         },
@@ -129,11 +127,11 @@ const CompleteTripPage = () => {
                         className="border p-2 rounded flex-grow"
                       />
                       <input
-                        type="time"
-                        value={activity.time || ""}
+                        type="text"
+                        placeholder="Location"
                         onChange={(e) => {
                           const newDays = [...tripData.days];
-                          newDays[i].activities[j].time = e.target.value;
+                          newDays[i].activities[j].location = e.target.value;
                           setTripData({ ...tripData, days: newDays });
                         }}
                         className="border p-2 rounded w-full"
@@ -172,7 +170,7 @@ const CompleteTripPage = () => {
                     const newDays = [...tripData.days];
                     newDays[i].activities.push({
                       title: "",
-                      time: "",
+                      location: "",
                       description: "",
                     });
                     setTripData({ ...tripData, days: newDays });
