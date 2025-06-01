@@ -6,10 +6,6 @@ import { logError } from "../../util/logging.js";
 export async function forgotPassword(req, res) {
   const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ message: "Email is required." });
-  }
-
   try {
     const user = await User.findOne({ email });
     if (!user) {

@@ -1,61 +1,58 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import { useForm } from "../../hooks/useForm";
+import useFetch from "../../hooks/useFetch";
 
 const CompleteProfileModal = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, setUser } = useAuth();
+  const { user, checkAuth } = useAuth();
+  const api = useFetch();
+  const { error, validationErrors, isLoading } = api;
   const navigate = useNavigate();
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     name: user?.name || "",
     surname: user?.surname || "",
     country: user?.country || "",
   });
 
   const onSubmit = async () => {
-    if (!formValues.name || !formValues.surname || !formValues.country) {
-      setFormError("messageToShow", "Please fill in all fields");
+    clearFormErrors();
+
+    if (
+      !formValues.name.trim() ||
+      !formValues.surname.trim() ||
+      !formValues.country.trim()
+    ) {
+      setFormError("general", "Please fill in all fields");
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await fetch("/api/auth/complete-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(formValues),
+      await api.post("/auth/complete-profile", {
+        name: formValues.name.trim(),
+        surname: formValues.surname.trim(),
+        country: formValues.country.trim(),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to complete profile");
-      }
-
-      const responseData = await response.json();
-      setUser({
-        ...user,
-        ...responseData.user,
-        isProfileCompleted: true,
-      });
-
+      await checkAuth();
       navigate("/");
     } catch (error) {
-      console.error("Profile completion error:", error);
-      setFormError(
-        "messageToShow",
-        "Failed to complete profile. Please try again.",
-      );
-    } finally {
-      setIsLoading(false);
+      // 👉 Error is handled by useFetch
+      console.log(error);
     }
   };
+
+  const errorToShow =
+    formErrors.general ||
+    (error && !error.includes("Not authenticated") ? error : null);
 
   return (
     <Modal
@@ -89,7 +86,7 @@ const CompleteProfileModal = () => {
             placeholder="Enter your country"
             onChange={(e) => updateFormValue("country", e.target.value)}
           />
-          <FormError error={formErrors.messageToShow} />
+          <FormError error={errorToShow} validationErrors={validationErrors} />
         </div>
       }
     />

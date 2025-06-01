@@ -8,12 +8,6 @@ export async function login(request, response) {
   try {
     const { email, password } = request.body;
 
-    if (!email || !password) {
-      return response.status(400).json({
-        message: "Email and password are required!",
-      });
-    }
-
     const user = await User.findOne({ email });
     if (!user) {
       return response.status(401).json({ message: "Invalid credentials" });

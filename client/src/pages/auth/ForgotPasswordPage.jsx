@@ -4,47 +4,44 @@ import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import { useForm } from "../../hooks/useForm";
+import useFetch from "../../hooks/useFetch";
 
 const ForgotPasswordPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
+  const api = useFetch();
+  const { error, validationErrors, isLoading, resetErrors } = api;
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     email: "",
   });
 
   const onSubmit = async () => {
-    if (!formValues.email) {
-      setFormError("messageToShow", "Please enter your email");
+    clearFormErrors();
+
+    if (!formValues.email.trim()) {
+      setFormError("general", "Please enter your email");
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: formValues.email }),
+      await api.post("/auth/forgot-password", {
+        email: formValues.email.trim(),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to send reset email");
-      }
-
       setEmailSent(true);
     } catch (error) {
-      console.error("Forgot password error:", error);
-      setFormError(
-        "messageToShow",
-        "An error occurred. Please try again later.",
-      );
-    } finally {
-      setIsLoading(false);
+      // 👉 no need to set error here, useFetch handles it
+      console.log(error);
     }
   };
+
+  const errorToShow = formErrors.general || error;
 
   if (emailSent) {
     return (
@@ -73,7 +70,11 @@ const ForgotPasswordPage = () => {
       isOpen={true}
       title="Reset Password"
       actionLabel="Send Reset Link"
-      onClose={() => navigate("/login")}
+      onClose={() => {
+        resetErrors();
+        clearFormErrors();
+        navigate("/login");
+      }}
       onSubmit={onSubmit}
       body={
         <div className="forgot-password-form flex flex-col gap-6 py-2">
@@ -88,7 +89,7 @@ const ForgotPasswordPage = () => {
             value={formValues.email}
             onChange={(e) => updateFormValue("email", e.target.value)}
           />
-          <FormError error={formErrors.messageToShow} />
+          <FormError error={errorToShow} validationErrors={validationErrors} />
         </div>
       }
     />
