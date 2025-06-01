@@ -19,9 +19,25 @@ const CompleteTripPage = () => {
       title: "My First Solo Trip",
       isPublished: false,
       days: [
-        { title: "Arrival & City Tour", activities: [] },
-        { title: "Beach Day", activities: [] },
-        { title: "Hiking Adventure", activities: [] },
+        {
+          title: "Arrival & City Tour",
+          time: "",
+          description: "",
+          activities: [
+            {
+              title: "Museum visit",
+              time: "10:00",
+              description: "Went to the museum.",
+            },
+          ],
+        },
+        { title: "Beach Day", time: "", description: "", activities: [] },
+        {
+          title: "Hiking Adventure",
+          time: "",
+          description: "",
+          activities: [],
+        },
       ],
       overallRating: 4,
       overallReview: "It was a fantastic experience!",
@@ -67,9 +83,15 @@ const CompleteTripPage = () => {
               className="flex justify-between items-center p-4 cursor-pointer"
               onClick={() => toggleDay(i)}
             >
-              <span className="font-medium">
+              <div className="font-medium">
                 Day {i + 1} : {day.title || "Untitled"}
-              </span>
+              </div>
+              {day.activities?.length > 0 && (
+                <div className="text-sm text-gray-500 mt-1">
+                  {day.activities.length} activity
+                  {day.activities.length > 1 ? "ies" : "y"} added
+                </div>
+              )}
               <button className="text-accent underline">
                 {dayIndex === i ? "Collapse" : "Edit"}
               </button>
@@ -106,16 +128,39 @@ const CompleteTripPage = () => {
                         }}
                         className="border p-2 rounded flex-grow"
                       />
-                      <button
-                        className="text-red-500"
-                        onClick={() => {
+                      <input
+                        type="time"
+                        value={activity.time || ""}
+                        onChange={(e) => {
                           const newDays = [...tripData.days];
-                          newDays[i].activities.splice(j, 1);
+                          newDays[i].activities[j].time = e.target.value;
                           setTripData({ ...tripData, days: newDays });
                         }}
-                      >
-                        Delete
-                      </button>
+                        className="border p-2 rounded w-full"
+                      />
+                      <textarea
+                        placeholder="Activity Description"
+                        value={activity.description || ""}
+                        onChange={(e) => {
+                          const newDays = [...tripData.days];
+                          newDays[i].activities[j].description = e.target.value;
+                          setTripData({ ...tripData, days: newDays });
+                        }}
+                        className="border p-2 rounded w-full"
+                        rows={2}
+                      ></textarea>
+                      <div className="text-right">
+                        <button
+                          className="text-red-500"
+                          onClick={() => {
+                            const newDays = [...tripData.days];
+                            newDays[i].activities.splice(j, 1);
+                            setTripData({ ...tripData, days: newDays });
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -125,7 +170,11 @@ const CompleteTripPage = () => {
                   className="text-accent underline"
                   onClick={() => {
                     const newDays = [...tripData.days];
-                    newDays[i].activities.push({ title: "" });
+                    newDays[i].activities.push({
+                      title: "",
+                      time: "",
+                      description: "",
+                    });
                     setTripData({ ...tripData, days: newDays });
                   }}
                 >
