@@ -32,12 +32,12 @@ app.use(express.json());
  */
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
-app.use("/api/trip", tripRouter);
-app.use("/api/country", countryRouter);
-app.use("/api/user/:userID/trip/:tripID/days", dayRouter);
-app.use("/api/user/:userID/trip/:tripID/day/:dayID/events", eventRouter);
+app.use("/api/trips", tripRouter);
+app.use("/api/countries", countryRouter);
+app.use("/api/trips/:tripID/days", dayRouter);
+app.use("/api/trips/:tripID/days/:dayID/events", eventRouter);
 app.use(
-  "/api/user/:userID/trip/:tripID/day/:dayID/event/:eventID/locations",
+  "/api/trips/:tripID/days/:dayID/events/:eventID/locations",
   locationRouter,
 );
 
