@@ -1,13 +1,16 @@
 import express from "express";
-import { createTrip } from "../controllers/trip/createTrip.js";
-import { completeTrip } from "../controllers/trip/completeTrip.js";
-import { getTripById } from "../controllers/trip/getTripByID.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import { validate } from "../middleware/validateData.js";
+import { createTrip } from "../controllers/trip/createTrip.js";
+import { createTripModalSchema } from "../validation/schemas/tripSchemas.js";
 
 const tripRouter = express.Router();
 
-tripRouter.post("/create-trip", requireAuth, createTrip);
-tripRouter.post("/complete-trip", requireAuth, completeTrip);
-tripRouter.get("/:tripID", getTripById);
+tripRouter.post(
+  "/create-trip",
+  requireAuth,
+  validate(createTripModalSchema),
+  createTrip,
+);
 
 export default tripRouter;

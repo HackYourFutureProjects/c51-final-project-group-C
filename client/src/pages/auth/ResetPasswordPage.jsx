@@ -5,60 +5,49 @@ import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import { useForm } from "../../hooks/useForm";
 import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
+import useFetch from "../../hooks/useFetch";
 
 const ResetPasswordPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
   const { token } = useParams();
+  const api = useFetch();
+  const { error, validationErrors, isLoading, resetErrors } = api;
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    formErrors,
+    updateFormValue,
+    setFormError,
+    clearFormErrors,
+  } = useForm({
     password: "",
     confirmPassword: "",
   });
 
   const onSubmit = async () => {
+    clearFormErrors();
+
     if (!formValues.password || !formValues.confirmPassword) {
-      setFormError("messageToShow", "Please fill in all fields");
+      setFormError("general", "Please fill in all fields");
       return;
     }
 
     if (formValues.password !== formValues.confirmPassword) {
-      setFormError("messageToShow", "Passwords do not match");
-      return;
-    }
-
-    if (formValues.password.length < 8) {
-      setFormError(
-        "messageToShow",
-        "Password must be at least 8 characters long",
-      );
+      setFormError("passwordMatch", "Passwords do not match");
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await fetch(`/api/auth/reset-password/${token}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password: formValues.password }),
+      await api.post(`/auth/reset-password/${token}`, {
+        password: formValues.password,
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Failed to reset password");
-      }
-
       setIsSuccess(true);
     } catch (error) {
-      console.error("Reset password error:", error);
-      setFormError("messageToShow", error.message);
-    } finally {
-      setIsLoading(false);
+      // no need to set error here, useFetch handles it
+      console.log(error);
     }
   };
 
@@ -83,13 +72,20 @@ const ResetPasswordPage = () => {
     );
   }
 
+  // Determine which error to show
+  const errorToShow = formErrors.general || formErrors.passwordMatch || error;
+
   return (
     <Modal
       disabled={isLoading}
       isOpen={true}
       title="Set New Password"
       actionLabel="Reset Password"
-      onClose={() => navigate("/login")}
+      onClose={() => {
+        resetErrors();
+        clearFormErrors();
+        navigate("/login");
+      }}
       onSubmit={onSubmit}
       body={
         <div className="reset-password-form flex flex-col gap-6 py-2">
@@ -135,7 +131,7 @@ const ResetPasswordPage = () => {
               )}
             </button>
           </div>
-          <FormError error={formErrors.messageToShow} />
+          <FormError error={errorToShow} validationErrors={validationErrors} />
         </div>
       }
     />

@@ -1,107 +1,45 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import useFetch from "../hooks/useFetch";
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const api = useFetch();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/auth/me", {
-          credentials: "include",
-        });
-
-        if (response.ok) {
-          const { user, isProfileCompleted } = await response.json();
-          setUser({
-            ...user,
-            isProfileCompleted,
-          });
-        } else if (response.status === 401) {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     checkAuth();
   }, []);
 
-  const login = async (credentials) => {
+  const checkAuth = async () => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      const meResponse = await fetch("/api/auth/me", {
-        credentials: "include",
-      });
-
-      if (!meResponse.ok) {
-        throw new Error("Failed to fetch user data");
-      }
-
-      const { user, isProfileCompleted } = await meResponse.json();
-      setUser({
-        ...user,
-        isProfileCompleted,
-      });
-
-      return { user, isProfileCompleted };
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
+      const response = await api.get("/auth/me");
+      const userData = {
+        ...response.user,
+        isProfileCompleted: response.isProfileCompleted,
+      };
+      setUser(userData);
+      return userData;
+    } catch {
+      setUser(null);
+      return null;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const register = async (userData) => {
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Registration error:", error);
-      throw error;
-    }
+  const login = async (credentials) => {
+    await api.post("/auth/login", credentials);
+    return await checkAuth();
   };
 
   const logout = async () => {
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await api.post("/auth/logout");
       setUser(null);
     } catch (error) {
-      console.error("Logout error:", error);
-      throw error;
+      console.error("Logout error", error);
     }
   };
 
@@ -112,9 +50,13 @@ export const AuthProvider = ({ children }) => {
         setUser,
         isAuthenticated: !!user,
         isProfileCompleted: user?.isProfileCompleted,
+        isLoading: loading,
+        error: api.error,
+        validationErrors: api.validationErrors,
+        checkAuth,
         login,
-        register,
         logout,
+        resetErrors: api.resetErrors,
       }}
     >
       {!loading && children}
