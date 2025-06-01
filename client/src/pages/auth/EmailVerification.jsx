@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import useFetch from "../../hooks/useFetch";
 
 const EmailVerification = () => {
@@ -8,8 +10,17 @@ const EmailVerification = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
   const [verificationAttempted, setVerificationAttempted] = useState(false);
-  const [error, setError] = useState(null);
+  const { firstServerError, setServerApiError, clearAllServerErrors } =
+    useError();
+  const { startLoading, stopLoading } = useLoading();
   const api = useFetch();
+
+  useEffect(() => {
+    clearAllServerErrors();
+    return () => {
+      clearAllServerErrors();
+    };
+  }, []);
 
   useEffect(() => {
     // 👇 This to attempt verification only once
@@ -19,10 +30,12 @@ const EmailVerification = () => {
       const token = searchParams.get("token");
 
       if (!token) {
-        setError("Verification token is missing");
+        setServerApiError("Verification token is missing");
         setVerificationAttempted(true);
         return;
       }
+
+      startLoading("Verifying your email");
 
       try {
         const data = await api.post("/auth/verify-email", { token });
@@ -33,28 +46,33 @@ const EmailVerification = () => {
 
         setVerificationAttempted(true);
 
+        clearAllServerErrors();
+
         if (!data.profileComplete) {
           navigate("/complete-profile");
         } else {
           navigate("/");
         }
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        //👉 Errors are already handled in ErrorContext, so we don't need to handle them here
+        console.error(error);
         setVerificationAttempted(true);
+      } finally {
+        stopLoading();
       }
     };
 
     verifyEmail();
   }, [searchParams, api, setUser, navigate, verificationAttempted]);
 
-  if (error) {
+  if (firstServerError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-red-600">
             Verification Failed
           </h2>
-          <p className="mt-2 text-gray-600">{error}</p>
+          <p className="mt-2 text-gray-600">{firstServerError}</p>
         </div>
       </div>
     );

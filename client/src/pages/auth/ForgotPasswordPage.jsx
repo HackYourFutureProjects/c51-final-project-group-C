@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
@@ -10,38 +12,59 @@ const ForgotPasswordPage = () => {
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
   const api = useFetch();
-  const { error, validationErrors, isLoading, resetErrors } = api;
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
   const {
     formValues,
-    formErrors,
-    updateFormValue,
-    setFormError,
-    clearFormErrors,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    validateEmail,
+    clearClientValidationError,
   } = useForm({
     email: "",
   });
 
-  const onSubmit = async () => {
-    clearFormErrors();
+  // 👇 To clear errors from ErrorContext when component is added to DOM and when removed from it
+  useEffect(() => {
+    clearAllServerErrors();
+    clearClientValidationError();
 
-    if (!formValues.email.trim()) {
-      setFormError("general", "Please enter your email");
+    return () => {
+      clearAllServerErrors();
+      clearClientValidationError();
+    };
+  }, []);
+
+  const handleResetRequest = async () => {
+    clearClientValidationError();
+    clearAllServerErrors();
+
+    if (!validateRequired(["email"])) {
+      return;
+    }
+
+    if (!validateEmail("email")) {
       return;
     }
 
     try {
-      await api.post("/auth/forgot-password", {
-        email: formValues.email.trim(),
-      });
+      await api.post(
+        "/auth/forgot-password",
+        {
+          email: formValues.email.trim(),
+        },
+        "Sending reset link",
+      );
       setEmailSent(true);
     } catch (error) {
-      // 👉 no need to set error here, useFetch handles it
-      console.log(error);
+      console.error(error);
+      // Errors are already handled in ErrorContext
     }
   };
 
-  const errorToShow = formErrors.general || error;
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   if (emailSent) {
     return (
@@ -71,11 +94,11 @@ const ForgotPasswordPage = () => {
       title="Reset Password"
       actionLabel="Send Reset Link"
       onClose={() => {
-        resetErrors();
-        clearFormErrors();
+        clearAllServerErrors();
+        clearClientValidationError();
         navigate("/login");
       }}
-      onSubmit={onSubmit}
+      onSubmit={handleResetRequest}
       body={
         <div className="forgot-password-form flex flex-col gap-6 py-2">
           <p className="forgot-password-form-message text-center text-gray-600 text-sm">
@@ -87,9 +110,9 @@ const ForgotPasswordPage = () => {
             type="email"
             placeholder="Enter your email"
             value={formValues.email}
-            onChange={(e) => updateFormValue("email", e.target.value)}
+            onChange={(e) => updateField("email", e.target.value)}
           />
-          <FormError error={errorToShow} validationErrors={validationErrors} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
     />
