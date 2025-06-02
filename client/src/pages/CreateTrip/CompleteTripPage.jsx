@@ -114,6 +114,12 @@ const CompleteTripPage = () => {
     setDayIndex(dayIndex === index ? null : index);
   };
 
+  const updateActivityField = (dayInd, activityInd, field, value) => {
+    const newDays = [...tripData.days];
+    newDays[dayInd].activities[activityInd][field] = value;
+    setTripData({ ...tripData, days: newDays });
+  };
+
   return (
     <div className="complete-trip-details max-w-5xl mx-auto p-4">
       {/* Header */}
@@ -306,11 +312,9 @@ const CompleteTripPage = () => {
                             type="text"
                             placeholder="Activity title"
                             value={activity.title}
-                            onChange={(e) => {
-                              const newDays = [...tripData.days];
-                              newDays[i].activities[j].title = e.target.value;
-                              setTripData({ ...tripData, days: newDays });
-                            }}
+                            onChange={(e) =>
+                              updateActivityField(i, j, "title", e.target.value)
+                            }
                             className="border p-2 rounded w-full"
                           />
                         </div>
@@ -322,12 +326,14 @@ const CompleteTripPage = () => {
                             type="text"
                             placeholder="Location"
                             value={activity.location || ""}
-                            onChange={(e) => {
-                              const newDays = [...tripData.days];
-                              newDays[i].activities[j].location =
-                                e.target.value;
-                              setTripData({ ...tripData, days: newDays });
-                            }}
+                            onChange={(e) =>
+                              updateActivityField(
+                                i,
+                                j,
+                                "location",
+                                e.target.value,
+                              )
+                            }
                             className="border p-2 rounded w-full"
                           />
                         </div>
@@ -338,11 +344,9 @@ const CompleteTripPage = () => {
                           <textarea
                             placeholder="Activity Notes"
                             value={activity.notes || ""}
-                            onChange={(e) => {
-                              const newDays = [...tripData.days];
-                              newDays[i].activities[j].notes = e.target.value;
-                              setTripData({ ...tripData, days: newDays });
-                            }}
+                            onChange={(e) =>
+                              updateActivityField(i, j, "title", e.target.value)
+                            }
                             className="border p-2 rounded w-full"
                             rows={2}
                           ></textarea>
