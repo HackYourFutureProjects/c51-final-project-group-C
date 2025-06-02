@@ -6,6 +6,7 @@ import Location from "../../models/Location.js";
 import { logError } from "../../util/logging.js";
 
 export const createActivity = async (req, res) => {
+  // notes its an object of notes with index {index:1, note:"example"},
   const { name, notes, coordinates, address } = req.body;
   const { dayID } = req.params;
   const userID = req.user.userId;

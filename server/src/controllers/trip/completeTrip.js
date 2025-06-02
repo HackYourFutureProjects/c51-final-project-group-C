@@ -4,7 +4,8 @@ import { logError } from "../../util/logging.js";
 
 export const completeTrip = async (req, res) => {
   //days is an array of the days id
-  const { days, tripID } = req.body;
+  const { days } = req.body;
+  const { tripID } = req.params;
   try {
     const updatedTrip = await Trip.findByIdAndUpdate(
       tripID,

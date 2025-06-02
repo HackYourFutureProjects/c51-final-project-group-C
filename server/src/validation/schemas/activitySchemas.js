@@ -1,7 +1,12 @@
 import { z } from "zod";
-import { nameSchema } from "./commonSchemas.js";
 
 export const createActivitySchema = z.object({
-  name: nameSchema,
-  notes: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  notes: z
+    .object({
+      index: z.number(),
+      text: z.string().min(1, "Note text is required"),
+    })
+    .optional(),
+  userID: z.string().min(1, "User ID is required"), // temporary validation for testing
 });

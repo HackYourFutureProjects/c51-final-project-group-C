@@ -7,7 +7,7 @@ const activitySchema = new mongoose.Schema({
     trim: true,
   },
   day: { type: mongoose.Schema.Types.ObjectId, ref: "days" },
-  notes: [{ index: Number, text: String }],
+  notes: { index: Number, text: String },
   location: { type: mongoose.Schema.Types.ObjectId, ref: "locations" },
 });
 

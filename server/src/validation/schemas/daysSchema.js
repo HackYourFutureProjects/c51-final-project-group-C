@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { nameSchema } from "./commonSchemas.js";
+
 export const createDaySchema = z.object({
-  title: nameSchema,
+  title: z.string().min(1, "Name is required"),
+  index: z.number().int().nonnegative("Index must be a non-negative integer"),
 });

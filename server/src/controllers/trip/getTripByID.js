@@ -1,4 +1,5 @@
 import Trip from "../../models/Trip.js";
+import { logError } from "../../util/logging.js";
 
 export const getTripById = async (req, res) => {
   const { tripID } = req.params;
@@ -10,7 +11,7 @@ export const getTripById = async (req, res) => {
         populate: {
           path: "activities",
           populate: {
-            path: "locations",
+            path: "location",
           },
         },
       })
@@ -20,11 +21,13 @@ export const getTripById = async (req, res) => {
     if (!trip) {
       return res.status(404).json({ message: "Trip not found" });
     }
+    const tripObj = trip.toObject();
 
-    res.status(200).json(trip);
+    res.status(200).json(tripObj);
   } catch (err) {
     res
       .status(err.status || 500)
       .json({ errors: err.errors || "Server error" });
+    logError(err);
   }
 };

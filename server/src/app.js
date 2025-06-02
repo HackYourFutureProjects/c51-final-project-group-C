@@ -6,7 +6,6 @@ import userRouter from "./routes/userRoutes.js";
 import tripRouter from "./routes/tripRoutes.js";
 import countryRouter from "./routes/countryRoutes.js";
 import dayRouter from "./routes/dayRoutes.js";
-
 import locationRouter from "./routes/locationRoutes.js";
 import activityRouter from "./routes/activityRoutes.js";
 
