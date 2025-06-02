@@ -18,14 +18,6 @@ const tripSchema = new mongoose.Schema({
       required: true,
     },
   ],
-  startDate: {
-    type: Date,
-    required: true,
-  },
-  endDate: {
-    type: Date,
-    required: true,
-  },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
