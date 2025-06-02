@@ -8,7 +8,7 @@ export const getTripById = async (req, res) => {
       .populate({
         path: "days",
         populate: {
-          path: "events",
+          path: "activities",
           populate: {
             path: "locations",
           },
