@@ -37,7 +37,7 @@ app.use("/api/countries", countryRouter);
 app.use("/api/trips/:tripID/days", dayRouter);
 app.use("/api/trips/:tripID/days/:dayID/activities", activityRouter);
 app.use(
-  "/api/trips/:tripID/days/:dayID/events/:eventID/locations",
+  "/api/trips/:tripID/days/:dayID/activities/:activityID/locations",
   locationRouter,
 );
 
