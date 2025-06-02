@@ -4,7 +4,7 @@ import { logError } from "../../util/logging.js";
 
 export const CreateLocation = async (req, res) => {
   const { coordinates, address } = req.body;
-  const { userID } = req.params;
+  const userID = req.user.userId;
 
   try {
     const newLocation = new Location({

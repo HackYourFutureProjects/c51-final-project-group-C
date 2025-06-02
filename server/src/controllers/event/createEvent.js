@@ -6,7 +6,8 @@ import { logError } from "../../util/logging.js";
 
 export const CreateEvent = async (req, res) => {
   const { name, notes, coordinates, address } = req.body;
-  const { dayID, userID } = req.params;
+  const { dayID } = req.params;
+  const userID = req.user.userId;
 
   try {
     const newLocation = new Location({
