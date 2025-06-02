@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useError } from "../../context/ErrorContext";
 import { useLoading } from "../../context/LoadingContext";
@@ -26,20 +26,8 @@ const ForgotPasswordPage = () => {
     email: "",
   });
 
-  // 👇 To clear errors from ErrorContext when component is added to DOM and when removed from it
-  useEffect(() => {
-    clearAllServerErrors();
-    clearClientValidationError();
-
-    return () => {
-      clearAllServerErrors();
-      clearClientValidationError();
-    };
-  }, []);
-
   const handleResetRequest = async () => {
     clearClientValidationError();
-    clearAllServerErrors();
 
     if (!validateRequired(["email"])) {
       return;

@@ -26,8 +26,7 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return userData;
     } catch (error) {
-      // If user is not logged in, we get 401 status code response on every page load. Technically it's an error, but
-      // it's expected behavior, so we don't to show it as an error.
+      // If user is not logged in, we get 401 status code. Technically it's an error, but it's expected behavior, so we don't to show it as an error in UI.
       if (error?.message === "Not authenticated") {
         clearAllServerErrors();
       }
@@ -45,7 +44,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // 👇 We pass null because logout is a rare case when you have a POST request without body.
       await api.post("/auth/logout", null, "Logging out");
       setUser(null);
     } catch (error) {

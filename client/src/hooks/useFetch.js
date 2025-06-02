@@ -18,9 +18,8 @@ const useFetch = () => {
       );
     }
 
-    // 👇 This is to clear any errors before making a new request to backend,
-    // so previous errors will not remain in ErrorContext -> will not be shown in the ErrorModal
-
+    // 👇 This is to clear any errors from ErrorContext before making a new request to backend,
+    // so previous errors will not will not be shown in the ErrorModal/FormError
     clearAllServerErrors();
     startLoading(loadingMessage);
 

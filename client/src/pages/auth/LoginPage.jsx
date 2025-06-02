@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useError } from "../../context/ErrorContext";
@@ -27,20 +27,8 @@ const LoginPage = () => {
     password: "",
   });
 
-  // 👇 To clear errors from ErrorContext when component is added to DOM and when removed from it
-  useEffect(() => {
-    clearAllServerErrors();
-    clearClientValidationError();
-
-    return () => {
-      clearAllServerErrors();
-      clearClientValidationError();
-    };
-  }, []);
-
   const handleLogin = async () => {
     clearClientValidationError();
-    clearAllServerErrors();
 
     if (!validateRequired(["email", "password"])) {
       return;
@@ -52,7 +40,6 @@ const LoginPage = () => {
         password: formValues.password,
       });
 
-      // 👇 Here we get the URL the user tried to visit so we will redirect him to this page after login
       const redirectPath = localStorage.getItem("redirectAfterLogin");
       localStorage.removeItem("redirectAfterLogin");
 

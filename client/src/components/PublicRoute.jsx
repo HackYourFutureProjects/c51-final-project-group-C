@@ -1,20 +1,17 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useError } from "../context/ErrorContext";
+import { useLocation } from "react-router-dom";
 
 const PublicRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
-  const { clearAllServerErrors } = useError();
-  const isCompletingProfileNow =
-    window.location.pathname === "/complete-profile";
+  const location = useLocation();
+  const isCompletingProfileNow = location.pathname === "/complete-profile";
 
   if (isAuthenticated && !user.isProfileCompleted && !isCompletingProfileNow) {
-    clearAllServerErrors();
     return <Navigate to="/complete-profile" />;
   }
 
   if (isAuthenticated && user.isProfileCompleted) {
-    clearAllServerErrors();
     return <Navigate to="/" />;
   }
 

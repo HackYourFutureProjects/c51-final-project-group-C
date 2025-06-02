@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
@@ -31,20 +31,8 @@ const RegisterPage = () => {
     confirmPassword: "",
   });
 
-  // 👇 To clear errors from ErrorContext when component is added to DOM and when removed from it
-  useEffect(() => {
-    clearAllServerErrors();
-    clearClientValidationError();
-
-    return () => {
-      clearAllServerErrors();
-      clearClientValidationError();
-    };
-  }, []);
-
   const handleRegister = async () => {
     clearClientValidationError();
-    clearAllServerErrors();
 
     if (!validateRequired(["email", "password", "confirmPassword"])) {
       return;

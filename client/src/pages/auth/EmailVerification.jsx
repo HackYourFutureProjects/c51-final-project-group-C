@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useError } from "../../context/ErrorContext";
@@ -9,29 +9,21 @@ const EmailVerification = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setUser } = useAuth();
-  const [verificationAttempted, setVerificationAttempted] = useState(false);
-  const { firstServerError, setServerApiError, clearAllServerErrors } =
-    useError();
+  const { firstServerError, setServerApiError } = useError();
   const { startLoading, stopLoading } = useLoading();
   const api = useFetch();
 
-  useEffect(() => {
-    clearAllServerErrors();
-    return () => {
-      clearAllServerErrors();
-    };
-  }, []);
+  const verificationRef = useRef(false);
 
   useEffect(() => {
-    // 👇 This to attempt verification only once
-    if (verificationAttempted) return;
+    if (verificationRef.current) return;
+    verificationRef.current = true;
 
     const verifyEmail = async () => {
       const token = searchParams.get("token");
 
       if (!token) {
         setServerApiError("Verification token is missing");
-        setVerificationAttempted(true);
         return;
       }
 
@@ -44,26 +36,21 @@ const EmailVerification = () => {
           setUser(data.user);
         }
 
-        setVerificationAttempted(true);
-
-        clearAllServerErrors();
-
         if (!data.profileComplete) {
           navigate("/complete-profile");
         } else {
           navigate("/");
         }
       } catch (error) {
-        //👉 Errors are already handled in ErrorContext, so we don't need to handle them here
+        // 👉 Errors are already handled in ErrorContext, so we don't need to handle them here
         console.error(error);
-        setVerificationAttempted(true);
       } finally {
         stopLoading();
       }
     };
 
     verifyEmail();
-  }, [searchParams, api, setUser, navigate, verificationAttempted]);
+  }, []);
 
   if (firstServerError) {
     return (

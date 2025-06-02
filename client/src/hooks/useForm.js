@@ -33,7 +33,7 @@ export const useForm = (initialValues = {}) => {
     return true;
   };
 
-  // 👇 Check if valid email format
+  // Check if valid email format
   const validateEmail = (fieldName) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formValues[fieldName])) {
@@ -43,7 +43,7 @@ export const useForm = (initialValues = {}) => {
     return true;
   };
 
-  // 👇 Check if password and confirm password match
+  // Check if password and confirm password match
   const validatePasswordMatch = (passwordField, confirmField) => {
     if (formValues[passwordField] !== formValues[confirmField]) {
       setClientValidationError(`Passwords do not match`);

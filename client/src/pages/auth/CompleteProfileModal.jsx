@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useError } from "../../context/ErrorContext";
@@ -12,7 +11,7 @@ import useFetch from "../../hooks/useFetch";
 const CompleteProfileModal = () => {
   const { user, checkAuth } = useAuth();
   const api = useFetch();
-  const { firstServerError, clearAllServerErrors } = useError();
+  const { firstServerError } = useError();
   const { isLoading } = useLoading();
   const navigate = useNavigate();
 
@@ -28,22 +27,10 @@ const CompleteProfileModal = () => {
     country: user?.country || "",
   });
 
-  // 👇 Clear errors from ErrorContext when component is added to  DOM and when removed from it
-  useEffect(() => {
-    clearAllServerErrors();
-    clearClientValidationError();
-
-    return () => {
-      clearAllServerErrors();
-      clearClientValidationError();
-    };
-  }, [clearAllServerErrors, clearClientValidationError]);
-
   const handleProfileCompletion = async () => {
     clearClientValidationError();
-    clearAllServerErrors();
 
-    // 👇Check there are no empty fields
+    // 👇 Client-side check if there are no empty fields
     if (!validateRequired(["name", "surname", "country"])) {
       return;
     }

@@ -6,7 +6,8 @@ export const ErrorProvider = ({ children }) => {
   const [serverApiError, setServerApiError] = useState(null);
   const [serverValidationErrors, setServerValidationErrors] = useState([]);
 
-  // Get the first validation error for display
+  // Since we don't show all validation errors at once (under each input), we need to get
+  // the first one from validationErrors array that will be displayed in FormError component
   const firstServerError =
     serverValidationErrors.length > 0
       ? serverValidationErrors[0].message
