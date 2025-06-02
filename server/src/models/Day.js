@@ -10,7 +10,7 @@ const daySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  events: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
+  activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "activities" }],
 });
 
 const day = mongoose.model("days", daySchema);

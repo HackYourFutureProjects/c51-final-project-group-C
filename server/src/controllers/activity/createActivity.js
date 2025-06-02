@@ -1,10 +1,11 @@
+import Activity from "../../models/Activity.js";
 import Day from "../../models/Day.js";
-import Event from "../../models/Event.js";
+
 import Location from "../../models/Location.js";
 
 import { logError } from "../../util/logging.js";
 
-export const CreateEvent = async (req, res) => {
+export const createActivity = async (req, res) => {
   const { name, notes, coordinates, address } = req.body;
   const { dayID } = req.params;
   const userID = req.user.userId;
@@ -16,20 +17,20 @@ export const CreateEvent = async (req, res) => {
       userID,
     });
     const savedLocation = await newLocation.save();
-    const newEvent = new Event({
+    const newActivity = new Activity({
       name,
       notes,
       day: dayID,
       location: savedLocation._id,
     });
-    const savedEvent = await newEvent.save();
+    const savedActivity = await newActivity.save();
 
     // to update the array in day schema with the eventID
     await Day.findByIdAndUpdate(dayID, {
-      $push: { events: savedEvent._id },
+      $push: { activities: savedActivity._id },
     });
 
-    res.status(200).json({ event: savedEvent, location: savedLocation });
+    res.status(200).json({ activity: savedActivity, location: savedLocation });
   } catch (err) {
     res
       .status(err.status || 500)

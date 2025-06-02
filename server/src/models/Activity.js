@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const eventSchema = new mongoose.Schema({
+const activitySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -11,6 +11,6 @@ const eventSchema = new mongoose.Schema({
   location: { type: mongoose.Schema.Types.ObjectId, ref: "locations" },
 });
 
-const event = mongoose.model("events", eventSchema);
+const activity = mongoose.model("activities", activitySchema);
 
-export default event;
+export default activity;
