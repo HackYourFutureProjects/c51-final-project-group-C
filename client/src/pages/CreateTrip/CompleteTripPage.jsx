@@ -9,6 +9,8 @@ const CompleteTripPage = () => {
     title: "",
     isPublished: false,
     coverPhoto: null,
+    duration: 0,
+    countries: [],
     days: [],
     overallRating: 0,
     overallReview: "",
@@ -20,6 +22,8 @@ const CompleteTripPage = () => {
     setTripData({
       title: "3 Days in Paris: Art, Culture & Cuisine",
       isPublished: false,
+      duration: 3,
+      countries: ["France"],
       days: [
         {
           title: "Arrival & City Tour",
@@ -27,19 +31,19 @@ const CompleteTripPage = () => {
             {
               title: "Check-in at Hotel Le Meurice",
               location: "228 Rue de Rivoli, Paris",
-              description:
+              notes:
                 "Luxury hotel near the Louvre, perfect for a central stay.",
             },
             {
               title: "Visit Eiffel Tower",
               location: "Champ de Mars, Paris",
-              description:
+              notes:
                 "Explore the most famous landmark and enjoy the panoramic view from the top.",
             },
             {
               title: "Seine River Cruise",
               location: "Port de la Bourdonnais",
-              description:
+              notes:
                 "Evening boat ride to see Paris illuminated along the riverbanks.",
             },
           ],
@@ -50,19 +54,19 @@ const CompleteTripPage = () => {
             {
               title: "Louvre Museum Tour",
               location: "Rue de Rivoli, Paris",
-              description:
+              notes:
                 "Home of the Mona Lisa and thousands of historic masterpieces.",
             },
             {
               title: "Lunch at Café de Flore",
               location: "Boulevard Saint-Germain, Paris",
-              description:
+              notes:
                 "One of Paris' oldest coffeehouses, frequented by artists and writers.",
             },
             {
               title: "Notre-Dame Cathedral Visit",
               location: "Île de la Cité, Paris",
-              description:
+              notes:
                 "Explore this Gothic architectural wonder and its rich history.",
             },
           ],
@@ -73,19 +77,19 @@ const CompleteTripPage = () => {
             {
               title: "Morning Walk in Montmartre",
               location: "Montmartre Hill",
-              description:
+              notes:
                 "Stroll through cobblestone streets and visit the famous Sacré-Cœur.",
             },
             {
               title: "Cooking Class: French Pastries",
               location: "Le Foodist, Paris",
-              description:
+              notes:
                 "Learn how to bake authentic croissants and éclairs with a French chef.",
             },
             {
               title: "Dinner at Le Jules Verne",
               location: "Eiffel Tower, Paris",
-              description:
+              notes:
                 "Fine dining experience with a view, located inside the Eiffel Tower.",
             },
           ],
@@ -99,7 +103,11 @@ const CompleteTripPage = () => {
 
   const addDay = () => {
     const newDay = { title: "", activities: [] };
-    setTripData({ ...tripData, days: [...tripData.days, newDay] });
+    setTripData({
+      ...tripData,
+      days: [...tripData.days, newDay],
+      duration: tripData.days.length + 1,
+    });
   };
 
   const toggleDay = (index) => {
@@ -109,14 +117,66 @@ const CompleteTripPage = () => {
   return (
     <div className="complete-trip-details max-w-5xl mx-auto p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <input
-          type="text"
-          placeholder="Trip Title"
-          value={tripData.title}
-          onChange={(e) => setTripData({ ...tripData, title: e.target.value })}
-          className="text-2xl font-semibold w-full max-w-md border-b border-gray-300 focus:outline-none focus:border-accent"
-        />
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+        {/* Trip Title */}
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Trip Title"
+            value={tripData.title}
+            onChange={(e) =>
+              setTripData({ ...tripData, title: e.target.value })
+            }
+            className="text-2xl font-semibold w-full border-b border-gray-300 focus:outline-none focus:border-accent"
+          />
+        </div>
+        <div className="flex flex-wrap gap-6 text-base text-gray-700">
+          {/* Duration Input */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-500 whitespace-nowrap">
+              Duration:
+            </label>
+            <input
+              type="number"
+              placeholder="Duration (in days)"
+              value={tripData.duration}
+              min={1}
+              onChange={(e) => {
+                const newDuration = parseInt(e.target.value);
+                const updatedDays = Array.from(
+                  { length: newDuration },
+                  (_, idx) =>
+                    tripData.days[idx] || { title: "", activities: [] },
+                );
+                setTripData({
+                  ...tripData,
+                  duration: newDuration,
+                  days: updatedDays,
+                });
+              }}
+              className="w-10 border-b border-gray-300 focus:outline-none focus:border-accent"
+            />
+            <span className="text-sm text-gray-500">days</span>
+          </div>
+          {/* Country Select */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 whitespace-nowrap">
+              Country:
+            </span>
+            <input
+              type="text"
+              placeholder="Countries (comma-separated)"
+              value={(tripData.countries || []).join(", ")}
+              onChange={(e) =>
+                setTripData({
+                  ...tripData,
+                  countries: e.target.value.split(",").map((c) => c.trim()),
+                })
+              }
+              className="text-base border-b border-gray-300 focus:outline-none focus:border-accent w-64"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Cover Photo Upload + Preview */}
@@ -180,9 +240,33 @@ const CompleteTripPage = () => {
                   </div>
                 )}
               </div>
-              <button className="text-accent underline">
-                {dayIndex === i ? "Collapse" : "Edit"}
-              </button>
+              <div className="flex gap-x-4 items-center">
+                <button
+                  className="text-accent underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDay(i);
+                  }}
+                >
+                  {dayIndex === i ? "Collapse" : "Edit"}
+                </button>
+                <button
+                  className="text-red-500 text-sm underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const updatedDays = tripData.days.filter(
+                      (_, index) => index !== i,
+                    );
+                    setTripData({
+                      ...tripData,
+                      days: updatedDays,
+                      duration: updatedDays.length,
+                    });
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
 
             {/* Accordion Content */}
@@ -202,53 +286,79 @@ const CompleteTripPage = () => {
                 />
                 {/* Activities List */}
                 <div className="space-y-2">
-                  {day.activities.length === 0 && <p>No activities yet.</p>}
+                  {day.activities.length === 0 && (
+                    <p className="text-gray-500">No activities yet.</p>
+                  )}
                   {day.activities.map((activity, j) => (
-                    <div key={j} className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        placeholder="Activity title"
-                        value={activity.title}
-                        onChange={(e) => {
-                          const newDays = [...tripData.days];
-                          newDays[i].activities[j].title = e.target.value;
-                          setTripData({ ...tripData, days: newDays });
-                        }}
-                        className="border p-2 rounded flex-grow"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Location"
-                        value={activity.location || ""}
-                        onChange={(e) => {
-                          const newDays = [...tripData.days];
-                          newDays[i].activities[j].location = e.target.value;
-                          setTripData({ ...tripData, days: newDays });
-                        }}
-                        className="border p-2 rounded w-full"
-                      />
-                      <textarea
-                        placeholder="Activity Description"
-                        value={activity.description || ""}
-                        onChange={(e) => {
-                          const newDays = [...tripData.days];
-                          newDays[i].activities[j].description = e.target.value;
-                          setTripData({ ...tripData, days: newDays });
-                        }}
-                        className="border p-2 rounded w-full"
-                        rows={2}
-                      ></textarea>
-                      <div className="text-right">
-                        <button
-                          className="text-red-500"
-                          onClick={() => {
-                            const newDays = [...tripData.days];
-                            newDays[i].activities.splice(j, 1);
-                            setTripData({ ...tripData, days: newDays });
-                          }}
-                        >
-                          Delete
-                        </button>
+                    <div
+                      key={j}
+                      className="border-l-4 border-accent pl-4 relative"
+                    >
+                      <div className="absolute -left-3 top-4 w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center text-sm">
+                        {j + 1}
+                      </div>
+                      <div className="md:col-span-4 space-y-3">
+                        <div>
+                          <label className="text-sm font-medium block mb-1">
+                            Title
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Activity title"
+                            value={activity.title}
+                            onChange={(e) => {
+                              const newDays = [...tripData.days];
+                              newDays[i].activities[j].title = e.target.value;
+                              setTripData({ ...tripData, days: newDays });
+                            }}
+                            className="border p-2 rounded w-full"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium block mb-1">
+                            Location
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Location"
+                            value={activity.location || ""}
+                            onChange={(e) => {
+                              const newDays = [...tripData.days];
+                              newDays[i].activities[j].location =
+                                e.target.value;
+                              setTripData({ ...tripData, days: newDays });
+                            }}
+                            className="border p-2 rounded w-full"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium block mb-1">
+                            Notes
+                          </label>
+                          <textarea
+                            placeholder="Activity Notes"
+                            value={activity.notes || ""}
+                            onChange={(e) => {
+                              const newDays = [...tripData.days];
+                              newDays[i].activities[j].notes = e.target.value;
+                              setTripData({ ...tripData, days: newDays });
+                            }}
+                            className="border p-2 rounded w-full"
+                            rows={2}
+                          ></textarea>
+                        </div>
+                        <div className="text-right">
+                          <button
+                            className="text-red-500"
+                            onClick={() => {
+                              const newDays = [...tripData.days];
+                              newDays[i].activities.splice(j, 1);
+                              setTripData({ ...tripData, days: newDays });
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -262,7 +372,7 @@ const CompleteTripPage = () => {
                     newDays[i].activities.push({
                       title: "",
                       location: "",
-                      description: "",
+                      notes: "",
                     });
                     setTripData({ ...tripData, days: newDays });
                   }}
