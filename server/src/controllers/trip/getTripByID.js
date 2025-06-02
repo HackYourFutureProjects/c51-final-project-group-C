@@ -5,11 +5,6 @@ export const getTripById = async (req, res) => {
   const { tripID } = req.params;
 
   try {
-    // Find the trip by ID and populate nested references:
-    // - days
-    //   - activities
-    //     - location
-    // Also populate user info (only name and surname)
     const trip = await Trip.findById(tripID)
       .populate({
         path: "days",
@@ -26,7 +21,7 @@ export const getTripById = async (req, res) => {
       return res.status(404).json({ message: "Trip not found" });
     }
 
-    // Convert Mongoose document to plain JS object for manipulation
+    // Convert Mongoose document to plain JS object
     const tripObj = trip.toObject();
 
     // Remove Mongo internal version key

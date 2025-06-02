@@ -8,5 +8,4 @@ export const createActivitySchema = z.object({
       text: z.string().min(1, "Note text is required"),
     })
     .optional(),
-  userID: z.string().min(1, "User ID is required"), // temporary validation for testing
 });
