@@ -123,9 +123,9 @@ const CompleteTripPage = () => {
   return (
     <div className="complete-trip-details max-w-5xl mx-auto p-4">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+      <div className="complete-trip-header flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         {/* Trip Title */}
-        <div className="flex-1">
+        <div className="trip-title-container flex-1">
           <input
             type="text"
             placeholder="Trip Title"
@@ -133,13 +133,13 @@ const CompleteTripPage = () => {
             onChange={(e) =>
               setTripData({ ...tripData, title: e.target.value })
             }
-            className="text-2xl font-semibold w-full border-b border-gray-300 focus:outline-none focus:border-accent"
+            className="trip-title text-2xl font-semibold w-full border-b border-gray-300 focus:outline-none focus:border-accent"
           />
         </div>
         <div className="flex flex-wrap gap-6 text-base text-gray-700">
           {/* Duration Input */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-500 whitespace-nowrap">
+          <div className="duration-container flex items-center gap-2">
+            <label className="duration-label text-sm text-gray-500 whitespace-nowrap">
               Duration:
             </label>
             <input
@@ -160,15 +160,15 @@ const CompleteTripPage = () => {
                   days: updatedDays,
                 });
               }}
-              className="w-10 border-b border-gray-300 focus:outline-none focus:border-accent"
+              className="trip-duration w-10 border-b border-gray-300 focus:outline-none focus:border-accent"
             />
-            <span className="text-sm text-gray-500">days</span>
+            <span className="duration-span text-sm text-gray-500">days</span>
           </div>
           {/* Country Select */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500 whitespace-nowrap">
+          <div className="countries-container flex items-center gap-2">
+            <label className="countries-label text-sm text-gray-500 whitespace-nowrap">
               Country:
-            </span>
+            </label>
             <input
               type="text"
               placeholder="Countries (comma-separated)"
@@ -179,26 +179,26 @@ const CompleteTripPage = () => {
                   countries: e.target.value.split(",").map((c) => c.trim()),
                 })
               }
-              className="text-base border-b border-gray-300 focus:outline-none focus:border-accent w-64"
+              className="trip-countries text-base border-b border-gray-300 focus:outline-none focus:border-accent w-64"
             />
           </div>
         </div>
       </div>
 
       {/* Cover Photo Upload + Preview */}
-      <div className="mb-6">
+      <div className="cover-photo-container mb-6">
         {tripData.coverPhoto ? (
           <div className="mb-4">
-            <div className="relative w-full aspect-[16/9] rounded overflow-hidden">
+            <div className="image-container relative w-full aspect-[16/9] rounded overflow-hidden">
               <img
                 src={URL.createObjectURL(tripData.coverPhoto)}
                 alt="Cover photo"
-                className="absolute top-0 left-0 w-full h-full object-cover"
+                className="cover-photo absolute top-0 left-0 w-full h-full object-cover"
               />
             </div>
             <button
               onClick={() => setTripData({ ...tripData, coverPhoto: null })}
-              className="mt-2 text-sm text-red-500 underline"
+              className="remove-photo-button mt-2 text-sm text-red-500 underline"
             >
               Remove cover photo
             </button>
@@ -206,7 +206,7 @@ const CompleteTripPage = () => {
         ) : (
           <label
             htmlFor="cover-photo-input"
-            className="block w-full h-64 cursor-pointer border-2 border-dashed border-accent flex items-center justify-center text-accent rounded-lg hover:bg-orange-50 transition mb-4"
+            className="cover-photo-label block w-full h-64 cursor-pointer border-2 border-dashed border-accent flex items-center justify-center text-accent rounded-lg hover:bg-orange-50 transition mb-4"
           >
             + Add cover photo
           </label>
@@ -226,9 +226,9 @@ const CompleteTripPage = () => {
       </div>
 
       {/* Day Plan sections */}
-      <div className="space-y-4">
+      <div className="days-container space-y-4">
         {tripData.days.map((day, i) => (
-          <div key={i} className="border rounded shadow-sm">
+          <div key={i} className="trip-days-container border rounded shadow-sm">
             {/* Accordion Header */}
             <div
               className="flex justify-between items-center p-4 cursor-pointer"
@@ -248,7 +248,7 @@ const CompleteTripPage = () => {
               </div>
               <div className="flex gap-x-4 items-center">
                 <button
-                  className="text-accent underline"
+                  className="edit-button text-accent underline"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleDay(i);
@@ -257,7 +257,7 @@ const CompleteTripPage = () => {
                   {dayIndex === i ? "Collapse" : "Edit"}
                 </button>
                 <button
-                  className="text-red-500 text-sm underline"
+                  className="delete-day-button text-red-500 text-sm underline"
                   onClick={(e) => {
                     e.stopPropagation();
                     const updatedDays = tripData.days.filter(
@@ -277,7 +277,7 @@ const CompleteTripPage = () => {
 
             {/* Accordion Content */}
             {dayIndex === i && (
-              <div className="p-4 border-t bg-gray-50 space-y-4">
+              <div className="accordion-container p-4 border-t bg-gray-50 space-y-4">
                 {/* Day Title Edit */}
                 <input
                   type="text"
@@ -288,12 +288,14 @@ const CompleteTripPage = () => {
                     newDays[i].title = e.target.value;
                     setTripData({ ...tripData, days: newDays });
                   }}
-                  className="border p-2 rounded w-full"
+                  className="day-title border p-2 rounded w-full"
                 />
                 {/* Activities List */}
-                <div className="space-y-2">
+                <div className="activities-container space-y-2">
                   {day.activities.length === 0 && (
-                    <p className="text-gray-500">No activities yet.</p>
+                    <p className="activities-text text-gray-500">
+                      No activities yet.
+                    </p>
                   )}
                   {day.activities.map((activity, j) => (
                     <div
@@ -305,7 +307,7 @@ const CompleteTripPage = () => {
                       </div>
                       <div className="md:col-span-4 space-y-3">
                         <div>
-                          <label className="text-sm font-medium block mb-1">
+                          <label className="activity-title-label text-sm font-medium block mb-1">
                             Title
                           </label>
                           <input
@@ -315,11 +317,11 @@ const CompleteTripPage = () => {
                             onChange={(e) =>
                               updateActivityField(i, j, "title", e.target.value)
                             }
-                            className="border p-2 rounded w-full"
+                            className="activity-title border p-2 rounded w-full"
                           />
                         </div>
                         <div>
-                          <label className="text-sm font-medium block mb-1">
+                          <label className="activity-location-label text-sm font-medium block mb-1">
                             Location
                           </label>
                           <input
@@ -334,26 +336,26 @@ const CompleteTripPage = () => {
                                 e.target.value,
                               )
                             }
-                            className="border p-2 rounded w-full"
+                            className="activity-location border p-2 rounded w-full"
                           />
                         </div>
                         <div>
-                          <label className="text-sm font-medium block mb-1">
+                          <label className="activity-notes-label text-sm font-medium block mb-1">
                             Notes
                           </label>
                           <textarea
                             placeholder="Activity Notes"
                             value={activity.notes || ""}
                             onChange={(e) =>
-                              updateActivityField(i, j, "title", e.target.value)
+                              updateActivityField(i, j, "notes", e.target.value)
                             }
-                            className="border p-2 rounded w-full"
+                            className="activity-notes border p-2 rounded w-full"
                             rows={2}
                           ></textarea>
                         </div>
                         <div className="text-right">
                           <button
-                            className="text-red-500"
+                            className="activity-delete-button text-red-500"
                             onClick={() => {
                               const newDays = [...tripData.days];
                               newDays[i].activities.splice(j, 1);
@@ -370,7 +372,7 @@ const CompleteTripPage = () => {
 
                 {/* Add Activity */}
                 <button
-                  className="text-accent underline"
+                  className="add-activity-button text-accent underline"
                   onClick={() => {
                     const newDays = [...tripData.days];
                     newDays[i].activities.push({
@@ -391,7 +393,7 @@ const CompleteTripPage = () => {
         {/* Add new day */}
         <div>
           <button
-            className="mt-2 text-sm text-accent underline"
+            className="add-day-button mt-2 text-sm text-accent underline"
             onClick={addDay}
           >
             + Add new day
@@ -400,12 +402,12 @@ const CompleteTripPage = () => {
       </div>
 
       {/* Overall experience section */}
-      <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-2">
+      <div className="experience-container mt-10">
+        <h3 className="experience-subheader text-lg font-semibold mb-2">
           Rate your overall trip experience
         </h3>
         {/* Simple stars and overview section */}
-        <div className="mb-8">
+        <div className="ratings-container mb-8">
           <RatingStars
             rating={tripData.overallRating}
             onRate={(newRating) =>
@@ -420,16 +422,16 @@ const CompleteTripPage = () => {
           onChange={(e) =>
             setTripData({ ...tripData, overallReview: e.target.value })
           }
-          className="w-full border border-gray-300 rounded p-2"
+          className="overall-review w-full border border-gray-300 rounded p-2"
         ></textarea>
       </div>
 
       {/* Save/Publish buttons */}
-      <div className="mt-6 text-right space-x-6">
-        <button className="bg-white text-accent border border-orange-500 px-4 py-2 rounded shadow-sm hover:bg-orange-50 transition">
+      <div className="footer-buttons mt-6 text-right space-x-6">
+        <button className="save-button bg-white text-accent border border-orange-500 px-4 py-2 rounded shadow-sm hover:bg-orange-50 transition">
           Save
         </button>
-        <button className="bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition">
+        <button className="publish-button bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition">
           Publish
         </button>
       </div>
