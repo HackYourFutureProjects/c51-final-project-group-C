@@ -62,11 +62,6 @@ const CreateTripModal = () => {
 
     try {
       const countryIds = countries.map((c) => c.value);
-      console.log("Submitting payload:", {
-        title: formValues.title,
-        duration: Number(duration),
-        countries: countryIds,
-      });
 
       const newTrip = await api.post(
         "/trips/create-trip",
@@ -82,6 +77,12 @@ const CreateTripModal = () => {
       navigate(`/complete-trip/${newTrip._id}`);
     } catch (err) {
       console.error("submit:", err.message);
+      setErrors((prev) => ({
+        ...prev,
+        submit:
+          err.message ||
+          "An error occurred while creating the trip. Please try again.",
+      }));
     }
   };
 
@@ -128,6 +129,7 @@ const CreateTripModal = () => {
             required
           />
           {errors.duration && <FormError message={errors.duration} />}
+          {errors.submit && <FormError message={errors.submit} />}
           <div className="button-container flex justify-center">
             <button
               type="submit"

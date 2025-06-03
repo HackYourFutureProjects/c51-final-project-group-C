@@ -44,7 +44,7 @@ const CompleteProfileModal = () => {
         {
           name: formValues.name.trim(),
           surname: formValues.surname.trim(),
-          country: formValues.country.trim(),
+          country: formValues.country ? formValues.country.label : null,
         },
         "Completing your profile",
       );
@@ -94,7 +94,6 @@ const CompleteProfileModal = () => {
             value={formValues.country}
             placeholder="Select your country"
             onChange={handleCountryChange}
-            error={displayErrorMessage}
           />
           {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
