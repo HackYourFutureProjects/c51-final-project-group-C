@@ -15,3 +15,9 @@ export const createTripModalSchema = z
     countries: countryIdArraySchema,
   })
   .strict();
+
+export const completeTripSchema = z.object({
+  days: z
+    .array(z.string().min(1))
+    .nonempty("days must be a non-empty array of day IDs"),
+});

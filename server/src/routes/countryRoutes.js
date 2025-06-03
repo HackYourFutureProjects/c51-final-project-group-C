@@ -3,6 +3,6 @@ import { getAllCountries } from "../controllers/country/getAllCountries.js";
 
 const countryRouter = express.Router();
 
-countryRouter.get("/countries", getAllCountries);
+countryRouter.get("/", getAllCountries);
 
 export default countryRouter;
