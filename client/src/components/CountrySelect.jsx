@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import FormError from "./FormError";
+import useFetch from "../hooks/useFetch";
 
 const CountrySelect = ({
   value,
@@ -10,22 +11,17 @@ const CountrySelect = ({
   placeholder,
 }) => {
   const [options, setOptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
+  const api = useFetch();
 
   useEffect(() => {
     const fetchCountries = async () => {
       setFetchError(null);
       try {
-        const res = await fetch("/api/country/countries", {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch countries");
-        }
-
-        const data = await res.json();
+        const data = await api.get(
+          "/country/countries",
+          "Loading countries...",
+        );
 
         // Converting the data to react-select format
         const formattedData = data.map((country) => ({
@@ -37,8 +33,6 @@ const CountrySelect = ({
       } catch (err) {
         console.error("Failed to fetch countries: ", err);
         setFetchError(err.message);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -48,7 +42,7 @@ const CountrySelect = ({
   return (
     <div>
       <label className="form-label">{isMulti ? "Countries" : "Country"}</label>
-      {isLoading ? (
+      {options.length === 0 && !fetchError ? (
         <p>Loading countries...</p>
       ) : (
         <>
@@ -64,7 +58,7 @@ const CountrySelect = ({
               (isMulti ? "Select countries/country..." : "Select your country")
             }
           />
-          <FormError error={error || fetchError} />
+          <FormError message={error || fetchError} />
         </>
       )}
     </div>

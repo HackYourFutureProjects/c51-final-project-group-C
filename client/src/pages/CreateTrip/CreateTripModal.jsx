@@ -5,18 +5,22 @@ import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import Modal from "../../components/Modal";
 import CountrySelect from "../../components/CountrySelect";
+import useFetch from "../../hooks/useFetch";
 
 const CreateTripModal = () => {
   const navigate = useNavigate();
+  const api = useFetch();
   const [isOpen, setIsOpen] = useState(true);
+  const [duration, setDuration] = useState("");
+  const [countries, setCountries] = useState([]);
+  const [errors, setErrors] = useState({});
   const {
     formValues,
-    formErrors,
+    clientValidationError,
     handleFormChange,
-    updateFormValue,
-    setFormError,
-    clearFormErrors,
-  } = useForm({ title: "", duration: "", countries: [] });
+    validateRequired,
+    clearClientValidationError,
+  } = useForm({ title: "" });
 
   const handleClose = () => {
     setIsOpen(false);
@@ -28,68 +32,61 @@ const CreateTripModal = () => {
   // Submit the form to start creating the trip
   const handleSubmit = async (e) => {
     e.preventDefault();
-    clearFormErrors();
+    clearClientValidationError();
+    setErrors({});
 
-    if (!formValues.title.trim()) {
-      setFormError("title", "Title is required.");
+    if (!validateRequired(["title"])) {
       return;
     }
 
     if (
-      !formValues.duration ||
-      isNaN(formValues.duration) ||
-      Number(formValues.duration) < 1 ||
-      Number(formValues.duration) > 60
+      !duration ||
+      isNaN(duration) ||
+      Number(duration) < 1 ||
+      Number(duration) > 60
     ) {
-      setFormError("duration", "Please enter a valid number between 1 and 60.");
+      setErrors((prev) => ({
+        ...prev,
+        duration: "Please enter a valid number between 1 and 60.",
+      }));
       return;
     }
 
-    if (!formValues.countries || formValues.countries.length === 0) {
-      setFormError("countries", "Please select at least one country.");
+    if (!countries || countries.length === 0) {
+      setErrors((prev) => ({
+        ...prev,
+        countries: "Please select at least one country.",
+      }));
       return;
     }
 
     try {
-      const countryIds = formValues.countries.map((c) => c.value);
-
-      const res = await fetch("/api/trip/create-trip", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: formValues.title,
-          duration: Number(formValues.duration),
-          countries: countryIds,
-        }),
+      const countryIds = countries.map((c) => c.value);
+      console.log("Submitting payload:", {
+        title: formValues.title,
+        duration: Number(duration),
+        countries: countryIds,
       });
 
-      // Getting the actual error message from the backend
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Something went wrong");
-      }
-
-      const newTrip = await res.json();
+      const newTrip = await api.post(
+        "/trip/create-trip",
+        {
+          title: formValues.title,
+          duration: Number(duration),
+          countries: countryIds,
+        },
+        "Creating trip plan...",
+      );
 
       // Redirect the users to the Trip Details Page with navigate
-      navigate(`/trip/trip-details/${newTrip._id}`);
+      navigate(`/create-trip-plan/${newTrip._id}/complete`);
     } catch (err) {
-      setFormError("submit", err.message);
+      console.error("submit:", err.message);
     }
   };
 
   const handleInputChange = (key) => (e) => {
     handleFormChange({ target: { id: key, value: e.target.value } });
-  };
-
-  const handleCountriesChange = (val) => {
-    updateFormValue("countries", val);
-    if (formErrors.countries) {
-      setFormError("countries", null);
-    }
   };
 
   return (
@@ -111,24 +108,26 @@ const CreateTripModal = () => {
             onChange={handleInputChange("title")}
             required
           />
-          <FormError error={formErrors.title} />
+          {clientValidationError && (
+            <FormError message={clientValidationError} />
+          )}
           <CountrySelect
             isMulti
-            value={formValues.countries}
-            onChange={handleCountriesChange}
-            error={formErrors.countries}
+            value={countries}
+            onChange={(val) => setCountries(val)}
+            error={errors.countries}
           />
           <Input
             label="Duration (days)"
             type="number"
             placeholder="Number of days"
-            value={formValues.duration}
-            onChange={handleInputChange("duration")}
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
             min="1"
             max="60"
             required
           />
-          <FormError error={formErrors.duration} />
+          {errors.duration && <FormError message={errors.duration} />}
           <div className="button-container flex justify-center">
             <button
               type="submit"
@@ -136,7 +135,6 @@ const CreateTripModal = () => {
             >
               Create New Trip Plan
             </button>
-            <FormError error={formErrors.submit} />
           </div>
         </form>
       }
