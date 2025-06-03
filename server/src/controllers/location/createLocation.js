@@ -2,7 +2,7 @@ import Location from "../../models/Location.js";
 
 import { logError } from "../../util/logging.js";
 
-export const CreateLocation = async (req, res) => {
+export const createLocation = async (req, res) => {
   const { coordinates, address } = req.body;
   const userID = req.user.userId;
 
