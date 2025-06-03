@@ -8,26 +8,6 @@ export async function registerUser(req, res) {
   try {
     const { email, password } = req.body;
 
-    // Checking the email/password provided
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required!",
-      });
-    }
-
-    // Checking the email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
-    }
-
-    // Password length check
-    if (password.length < 8) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 8 characters long" });
-    }
-
     // Checking the user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {

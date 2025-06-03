@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
@@ -8,27 +10,36 @@ import { useForm } from "../../hooks/useForm";
 import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
 
 const LoginPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login, isProfileCompleted } = useAuth();
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    clearClientValidationError,
+  } = useForm({
     email: "",
     password: "",
   });
 
-  const onSubmit = async () => {
-    if (!formValues.email || !formValues.password) {
-      setFormError("messageToShow", "Please fill in all fields");
+  const handleLogin = async () => {
+    clearClientValidationError();
+
+    if (!validateRequired(["email", "password"])) {
       return;
     }
 
     try {
-      setIsLoading(true);
-      await login(formValues);
+      await login({
+        email: formValues.email.trim(),
+        password: formValues.password,
+      });
 
-      // 👇 Here we get the URL the user tried to visit so we will redirect him to this page after login
       const redirectPath = localStorage.getItem("redirectAfterLogin");
       localStorage.removeItem("redirectAfterLogin");
 
@@ -40,12 +51,12 @@ const LoginPage = () => {
         navigate("/");
       }
     } catch (error) {
-      setFormError("messageToShow", "Invalid email or password");
       console.error(error);
-    } finally {
-      setIsLoading(false);
+      // Errors are already handled in ErrorContext
     }
   };
+
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   return (
     <Modal
@@ -53,8 +64,12 @@ const LoginPage = () => {
       isOpen={true}
       title="Login"
       actionLabel="Continue"
-      onClose={() => navigate("/")}
-      onSubmit={onSubmit}
+      onClose={() => {
+        clearAllServerErrors();
+        clearClientValidationError();
+        navigate("/");
+      }}
+      onSubmit={handleLogin}
       body={
         <div className="login-form flex flex-col gap-6 py-2">
           <Input
@@ -62,7 +77,7 @@ const LoginPage = () => {
             type="email"
             placeholder="Enter your email"
             value={formValues.email}
-            onChange={(e) => updateFormValue("email", e.target.value)}
+            onChange={(e) => updateField("email", e.target.value)}
           />
           <div className="password-input-container relative">
             <Input
@@ -70,7 +85,7 @@ const LoginPage = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={formValues.password}
-              onChange={(e) => updateFormValue("password", e.target.value)}
+              onChange={(e) => updateField("password", e.target.value)}
             />
             <button
               type="button"
@@ -84,7 +99,7 @@ const LoginPage = () => {
               )}
             </button>
           </div>
-          <FormError error={formErrors.messageToShow} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
       footer={

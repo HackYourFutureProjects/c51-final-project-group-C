@@ -1,90 +1,76 @@
-import { useState } from "react";
+import { useError } from "../context/ErrorContext";
+import { useLoading } from "../context/LoadingContext";
 
-/**
- * Our useFetch hook should be used for all communication with the server.
- *
- * route - This is the route you want to access on the server. It should NOT include the /api part, so should be /user or /user/{id}
- * onReceived - a function that will be called with the response of the server. Will only be called if everything went well!
- *
- * Our hook will give you an object with the properties:
- *
- * isLoading - true if the fetch is still in progress
- * error - will contain an Error object if something went wrong
- * performFetch - this function will trigger the fetching. It is up to the user of the hook to determine when to do this!
- * cancelFetch - this function will cancel the fetch, call it when your component is unmounted
- */
-const useFetch = (route, onReceived) => {
-  /**
-   * We use the AbortController which is supported by all modern browsers to handle cancellations
-   * For more info: https://developer.mozilla.org/en-US/docs/Web/API/AbortController
-   */
-  const controller = new AbortController();
-  const signal = controller.signal;
-  const cancelFetch = () => {
-    controller.abort();
-  };
+const useFetch = () => {
+  const { startLoading, stopLoading } = useLoading();
+  const { setServerApiError, setServerValidationErrors, clearAllServerErrors } =
+    useError();
 
-  if (route.includes("api/")) {
-    /**
-     * We add this check here to provide a better error message if you accidentally add the api part
-     * As an error that happens later because of this can be very confusing!
-     */
-    throw Error(
-      "when using the useFetch hook, the route should not include the /api/ part",
-    );
-  }
+  const performFetch = async (
+    route,
+    method,
+    body = null,
+    loadingMessage = null,
+  ) => {
+    if (route.includes("api/")) {
+      throw Error(
+        "when using the useFetch hook, the route should not include the /api/ part",
+      );
+    }
 
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Add any args given to the function to the fetch function
-  const performFetch = (options) => {
-    setError(null);
-    setIsLoading(true);
+    // 👇 This is to clear any errors from ErrorContext before making a new request to backend,
+    // so previous errors will not will not be shown in the ErrorModal/FormError
+    clearAllServerErrors();
+    startLoading(loadingMessage);
 
     const baseOptions = {
-      method: "GET",
-      headers: {
-        "content-type": "application/json",
-      },
+      method,
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     };
 
-    const fetchData = async () => {
-      // We add the /api subsection here to make it a single point of change if our configuration changes
-      const url = `/api${route}`;
-      const res = await fetch(url, { ...baseOptions, ...options, signal });
+    const options = { ...baseOptions };
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
 
-      if (!res.ok) {
-        setError(
-          `Fetch for ${url} returned an invalid status (${
-            res.status
-          }). Received: ${JSON.stringify(res)}`,
-        );
+    try {
+      const apiUrl = route.startsWith("/api") ? route : `/api${route}`;
+      const response = await fetch(apiUrl, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        // 👇 Here we check for validation errors and pass them to the ErrorContext, later on they will be rendered in FormError component
+        if (response.status === 400 && data.validationErrors) {
+          setServerValidationErrors(data.validationErrors);
+        } else {
+          // 👇 And here we check all other errors that are not validation errors and pass them to the ErrorContext, they will be rendered in ErrorModal
+          setServerApiError(data.message || "Request failed");
+        }
+        throw new Error(data.message || "Request failed");
       }
 
-      const jsonResult = await res.json();
-
-      if (jsonResult.success === true) {
-        onReceived(jsonResult);
-      } else {
-        setError(
-          jsonResult.msg ||
-            `The result from our API did not have an error message. Received: ${JSON.stringify(
-              jsonResult,
-            )}`,
-        );
-      }
-
-      setIsLoading(false);
-    };
-
-    fetchData().catch((error) => {
-      setError(error);
-      setIsLoading(false);
-    });
+      return data;
+    } finally {
+      stopLoading();
+    }
   };
 
-  return { isLoading, error, performFetch, cancelFetch };
+  const get = (route, loadingMessage) =>
+    performFetch(route, "GET", null, loadingMessage);
+  const post = (route, body, loadingMessage) =>
+    performFetch(route, "POST", body, loadingMessage);
+  const put = (route, body, loadingMessage) =>
+    performFetch(route, "PUT", body, loadingMessage);
+  const del = (route, loadingMessage) =>
+    performFetch(route, "DELETE", null, loadingMessage);
+
+  return {
+    get,
+    post,
+    put,
+    del,
+  };
 };
 
 export default useFetch;

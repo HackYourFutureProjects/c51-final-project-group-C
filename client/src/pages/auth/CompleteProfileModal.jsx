@@ -1,18 +1,28 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import CountrySelect from "../../components/CountrySelect";
 import { useForm } from "../../hooks/useForm";
+import useFetch from "../../hooks/useFetch";
 
 const CompleteProfileModal = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, setUser } = useAuth();
+  const { user, checkAuth } = useAuth();
+  const api = useFetch();
+  const { firstServerError } = useError();
+  const { isLoading } = useLoading();
   const navigate = useNavigate();
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    clearClientValidationError,
+  } = useForm({
     name: user?.name || "",
     surname: user?.surname || "",
     country: user?.country
@@ -20,53 +30,38 @@ const CompleteProfileModal = () => {
       : null,
   });
 
-  const onSubmit = async () => {
-    if (!formValues.name || !formValues.surname || !formValues.country) {
-      setFormError("messageToShow", "Please fill in all fields");
+  const handleProfileCompletion = async () => {
+    clearClientValidationError();
+
+    // 👇 Client-side check if there are no empty fields
+    if (!validateRequired(["name", "surname", "country"])) {
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await fetch("/api/auth/complete-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await api.post(
+        "/auth/complete-profile",
+        {
+          name: formValues.name.trim(),
+          surname: formValues.surname.trim(),
+          country: formValues.country.trim(),
         },
-        credentials: "include",
-        body: JSON.stringify({
-          name: formValues.name,
-          surname: formValues.surname,
-          country: formValues.country?.value,
-        }),
-      });
+        "Completing your profile",
+      );
 
-      if (!response.ok) {
-        throw new Error("Failed to complete profile");
-      }
-
-      const responseData = await response.json();
-      setUser({
-        ...user,
-        ...responseData.user,
-        isProfileCompleted: true,
-      });
-
+      await checkAuth();
       navigate("/");
     } catch (error) {
-      console.error("Profile completion error:", error);
-      setFormError(
-        "messageToShow",
-        "Failed to complete profile. Please try again.",
-      );
-    } finally {
-      setIsLoading(false);
+      console.error(error);
+      // Errors are already handled in ErrorContext
     }
   };
 
   const handleCountryChange = (selectedCountry) => {
-    updateFormValue("country", selectedCountry);
+    updateField("country", selectedCountry);
   };
+
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   return (
     <Modal
@@ -76,7 +71,7 @@ const CompleteProfileModal = () => {
       actionLabel="Save"
       showCloseButton={false}
       preventClose={true}
-      onSubmit={onSubmit}
+      onSubmit={handleProfileCompletion}
       body={
         <div className="profile-form flex flex-col gap-6 py-2">
           <div className="profile-form-description text-sm text-gray-600 mb-4">
@@ -86,22 +81,22 @@ const CompleteProfileModal = () => {
             label="First Name"
             value={formValues.name}
             placeholder="Enter your first name"
-            onChange={(e) => updateFormValue("name", e.target.value)}
+            onChange={(e) => updateField("name", e.target.value)}
           />
           <Input
             label="Last Name"
             value={formValues.surname}
             placeholder="Enter your last name"
-            onChange={(e) => updateFormValue("surname", e.target.value)}
+            onChange={(e) => updateField("surname", e.target.value)}
           />
           <CountrySelect
             isMulti={false}
             value={formValues.country}
             placeholder="Select your country"
             onChange={handleCountryChange}
-            error={formErrors.country}
+            error={displayErrorMessage}
           />
-          <FormError error={formErrors.messageToShow} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
     />

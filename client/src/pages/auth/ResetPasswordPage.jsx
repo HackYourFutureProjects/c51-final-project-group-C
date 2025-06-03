@@ -1,66 +1,64 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import { useForm } from "../../hooks/useForm";
 import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
+import useFetch from "../../hooks/useFetch";
 
 const ResetPasswordPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
   const { token } = useParams();
+  const api = useFetch();
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    validatePasswordMatch,
+    clearClientValidationError,
+  } = useForm({
     password: "",
     confirmPassword: "",
   });
 
-  const onSubmit = async () => {
-    if (!formValues.password || !formValues.confirmPassword) {
-      setFormError("messageToShow", "Please fill in all fields");
+  const handlePasswordReset = async () => {
+    clearClientValidationError();
+    clearAllServerErrors();
+
+    if (!validateRequired(["password", "confirmPassword"])) {
       return;
     }
 
-    if (formValues.password !== formValues.confirmPassword) {
-      setFormError("messageToShow", "Passwords do not match");
-      return;
-    }
-
-    if (formValues.password.length < 8) {
-      setFormError(
-        "messageToShow",
-        "Password must be at least 8 characters long",
-      );
+    if (!validatePasswordMatch("password", "confirmPassword")) {
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await fetch(`/api/auth/reset-password/${token}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await api.post(
+        `/auth/reset-password/${token}`,
+        {
+          password: formValues.password,
         },
-        body: JSON.stringify({ password: formValues.password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Failed to reset password");
-      }
-
+        "Resetting your password",
+      );
       setIsSuccess(true);
     } catch (error) {
-      console.error("Reset password error:", error);
-      setFormError("messageToShow", error.message);
-    } finally {
-      setIsLoading(false);
+      console.error(error);
+      // Errors are already handled in ErrorContext
     }
   };
+
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   if (isSuccess) {
     return (
@@ -89,8 +87,12 @@ const ResetPasswordPage = () => {
       isOpen={true}
       title="Set New Password"
       actionLabel="Reset Password"
-      onClose={() => navigate("/login")}
-      onSubmit={onSubmit}
+      onClose={() => {
+        clearAllServerErrors();
+        clearClientValidationError();
+        navigate("/login");
+      }}
+      onSubmit={handlePasswordReset}
       body={
         <div className="reset-password-form flex flex-col gap-6 py-2">
           <div className="password-input-container relative">
@@ -99,7 +101,7 @@ const ResetPasswordPage = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Enter new password"
               value={formValues.password}
-              onChange={(e) => updateFormValue("password", e.target.value)}
+              onChange={(e) => updateField("password", e.target.value)}
             />
             <button
               type="button"
@@ -119,9 +121,7 @@ const ResetPasswordPage = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm new password"
               value={formValues.confirmPassword}
-              onChange={(e) =>
-                updateFormValue("confirmPassword", e.target.value)
-              }
+              onChange={(e) => updateField("confirmPassword", e.target.value)}
             />
             <button
               type="button"
@@ -135,7 +135,7 @@ const ResetPasswordPage = () => {
               )}
             </button>
           </div>
-          <FormError error={formErrors.messageToShow} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
     />

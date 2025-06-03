@@ -1,61 +1,65 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
+import useFetch from "../../hooks/useFetch";
 
 const EmailVerification = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setUser } = useAuth();
-  const [error, setError] = useState(null);
+  const { firstServerError, setServerApiError } = useError();
+  const { startLoading, stopLoading } = useLoading();
+  const api = useFetch();
+
+  const verificationRef = useRef(false);
 
   useEffect(() => {
+    if (verificationRef.current) return;
+    verificationRef.current = true;
+
     const verifyEmail = async () => {
       const token = searchParams.get("token");
 
       if (!token) {
-        setError("Verification token is missing");
+        setServerApiError("Verification token is missing");
         return;
       }
 
-      try {
-        const response = await fetch("/api/auth/verify-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token }),
-          credentials: "include",
-        });
+      startLoading("Verifying your email");
 
-        if (!response.ok) {
-          throw new Error("Email verification failed");
+      try {
+        const data = await api.post("/auth/verify-email", { token });
+
+        if (data.user) {
+          setUser(data.user);
         }
 
-        const data = await response.json();
-
-        setUser(data.user);
-
-        if (!data.user.isProfileCompleted) {
+        if (!data.profileComplete) {
           navigate("/complete-profile");
         } else {
           navigate("/");
         }
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        // 👉 Errors are already handled in ErrorContext, so we don't need to handle them here
+        console.error(error);
+      } finally {
+        stopLoading();
       }
     };
 
     verifyEmail();
-  }, [searchParams, setUser, navigate]);
+  }, []);
 
-  if (error) {
+  if (firstServerError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-red-600">
-            Verification Failed.
+            Verification Failed
           </h2>
-          <p className="mt-2 text-gray-600">{error}</p>
+          <p className="mt-2 text-gray-600">{firstServerError}</p>
         </div>
       </div>
     );
