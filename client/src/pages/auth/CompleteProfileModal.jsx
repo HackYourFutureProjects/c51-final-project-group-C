@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
@@ -9,50 +11,50 @@ import useFetch from "../../hooks/useFetch";
 const CompleteProfileModal = () => {
   const { user, checkAuth } = useAuth();
   const api = useFetch();
-  const { error, validationErrors, isLoading } = api;
+  const { firstServerError } = useError();
+  const { isLoading } = useLoading();
   const navigate = useNavigate();
 
   const {
     formValues,
-    formErrors,
-    updateFormValue,
-    setFormError,
-    clearFormErrors,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    clearClientValidationError,
   } = useForm({
     name: user?.name || "",
     surname: user?.surname || "",
     country: user?.country || "",
   });
 
-  const onSubmit = async () => {
-    clearFormErrors();
+  const handleProfileCompletion = async () => {
+    clearClientValidationError();
 
-    if (
-      !formValues.name.trim() ||
-      !formValues.surname.trim() ||
-      !formValues.country.trim()
-    ) {
-      setFormError("general", "Please fill in all fields");
+    // 👇 Client-side check if there are no empty fields
+    if (!validateRequired(["name", "surname", "country"])) {
       return;
     }
 
     try {
-      await api.post("/auth/complete-profile", {
-        name: formValues.name.trim(),
-        surname: formValues.surname.trim(),
-        country: formValues.country.trim(),
-      });
+      await api.post(
+        "/auth/complete-profile",
+        {
+          name: formValues.name.trim(),
+          surname: formValues.surname.trim(),
+          country: formValues.country.trim(),
+        },
+        "Completing your profile",
+      );
+
       await checkAuth();
       navigate("/");
     } catch (error) {
-      // 👉 Error is handled by useFetch
-      console.log(error);
+      console.error(error);
+      // Errors are already handled in ErrorContext
     }
   };
 
-  const errorToShow =
-    formErrors.general ||
-    (error && !error.includes("Not authenticated") ? error : null);
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   return (
     <Modal
@@ -62,7 +64,7 @@ const CompleteProfileModal = () => {
       actionLabel="Save"
       showCloseButton={false}
       preventClose={true}
-      onSubmit={onSubmit}
+      onSubmit={handleProfileCompletion}
       body={
         <div className="profile-form flex flex-col gap-6 py-2">
           <div className="profile-form-description text-sm text-gray-600 mb-4">
@@ -72,21 +74,21 @@ const CompleteProfileModal = () => {
             label="First Name"
             value={formValues.name}
             placeholder="Enter your first name"
-            onChange={(e) => updateFormValue("name", e.target.value)}
+            onChange={(e) => updateField("name", e.target.value)}
           />
           <Input
             label="Last Name"
             value={formValues.surname}
             placeholder="Enter your last name"
-            onChange={(e) => updateFormValue("surname", e.target.value)}
+            onChange={(e) => updateField("surname", e.target.value)}
           />
           <Input
             label="Country"
             value={formValues.country}
             placeholder="Enter your country"
-            onChange={(e) => updateFormValue("country", e.target.value)}
+            onChange={(e) => updateField("country", e.target.value)}
           />
-          <FormError error={errorToShow} validationErrors={validationErrors} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
     />

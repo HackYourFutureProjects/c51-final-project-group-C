@@ -6,6 +6,8 @@ import FormError from "../../components/FormError";
 import { LuEye as EyeIcon, LuEyeClosed as ClosedEyeIcon } from "react-icons/lu";
 import { useForm } from "../../hooks/useForm";
 import useFetch from "../../hooks/useFetch";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 
 const RegisterPage = () => {
   const [emailSent, setEmailSent] = useState(false);
@@ -13,35 +15,30 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const api = useFetch();
-  const { error, validationErrors, isLoading, resetErrors } = api;
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
   const {
     formValues,
-    formErrors,
-    updateFormValue,
-    setFormError,
-    clearFormErrors,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    validatePasswordMatch,
+    clearClientValidationError,
   } = useForm({
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const onSubmit = async () => {
-    clearFormErrors();
-    resetErrors();
+  const handleRegister = async () => {
+    clearClientValidationError();
 
-    if (
-      !formValues.email.trim() ||
-      !formValues.password.trim() ||
-      !formValues.confirmPassword.trim()
-    ) {
-      setFormError("general", "Please fill in all fields");
+    if (!validateRequired(["email", "password", "confirmPassword"])) {
       return;
     }
 
-    if (formValues.password !== formValues.confirmPassword) {
-      setFormError("passwordMatch", "Passwords do not match");
+    if (!validatePasswordMatch("password", "confirmPassword")) {
       return;
     }
 
@@ -51,11 +48,15 @@ const RegisterPage = () => {
         password: formValues.password,
       };
 
-      await api.post("/auth/register", registrationData);
+      await api.post(
+        "/auth/register",
+        registrationData,
+        "Registering your account",
+      );
       setEmailSent(true);
     } catch (error) {
-      // 👉 no need to set error here, useFetch will handle it
-      console.log(error);
+      console.error(error);
+      // 👉 Errors are already handled in ErrorContext, so we don't need to handle them here
     }
   };
 
@@ -80,7 +81,7 @@ const RegisterPage = () => {
     );
   }
 
-  const errorToShow = formErrors.general || formErrors.passwordMatch || error;
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   return (
     <Modal
@@ -89,11 +90,11 @@ const RegisterPage = () => {
       title="Register"
       actionLabel="Continue"
       onClose={() => {
-        resetErrors();
-        clearFormErrors();
+        clearAllServerErrors();
+        clearClientValidationError();
         navigate("/");
       }}
-      onSubmit={onSubmit}
+      onSubmit={handleRegister}
       body={
         <div className="register-form flex flex-col gap-6 py-2">
           <Input
@@ -101,7 +102,7 @@ const RegisterPage = () => {
             type="email"
             placeholder="Enter your email"
             value={formValues.email}
-            onChange={(e) => updateFormValue("email", e.target.value)}
+            onChange={(e) => updateField("email", e.target.value)}
           />
           <div className="password-input-container relative">
             <Input
@@ -109,7 +110,7 @@ const RegisterPage = () => {
               placeholder="Enter your password"
               type={showPassword ? "text" : "password"}
               value={formValues.password}
-              onChange={(e) => updateFormValue("password", e.target.value)}
+              onChange={(e) => updateField("password", e.target.value)}
             />
             <button
               type="button"
@@ -129,9 +130,7 @@ const RegisterPage = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
               value={formValues.confirmPassword}
-              onChange={(e) =>
-                updateFormValue("confirmPassword", e.target.value)
-              }
+              onChange={(e) => updateField("confirmPassword", e.target.value)}
             />
             <button
               type="button"
@@ -145,7 +144,7 @@ const RegisterPage = () => {
               )}
             </button>
           </div>
-          <FormError error={errorToShow} validationErrors={validationErrors} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
       footer={

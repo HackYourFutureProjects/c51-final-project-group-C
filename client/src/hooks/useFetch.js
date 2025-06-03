@@ -1,20 +1,27 @@
-import { useState } from "react";
+import { useError } from "../context/ErrorContext";
+import { useLoading } from "../context/LoadingContext";
 
 const useFetch = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [validationErrors, setValidationErrors] = useState([]);
+  const { startLoading, stopLoading } = useLoading();
+  const { setServerApiError, setServerValidationErrors, clearAllServerErrors } =
+    useError();
 
-  const performFetch = async (route, method, body = null) => {
+  const performFetch = async (
+    route,
+    method,
+    body = null,
+    loadingMessage = null,
+  ) => {
     if (route.includes("api/")) {
       throw Error(
         "when using the useFetch hook, the route should not include the /api/ part",
       );
     }
 
-    setIsLoading(true);
-    setError(null);
-    setValidationErrors([]);
+    // 👇 This is to clear any errors from ErrorContext before making a new request to backend,
+    // so previous errors will not will not be shown in the ErrorModal/FormError
+    clearAllServerErrors();
+    startLoading(loadingMessage);
 
     const baseOptions = {
       method,
@@ -33,42 +40,36 @@ const useFetch = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        const isValidation = response.status === 400 && data.validationErrors;
-        if (isValidation) setValidationErrors(data.validationErrors);
-        throw new Error(
-          data.message ||
-            (isValidation ? "Validation failed" : "Request failed"),
-        );
+        // 👇 Here we check for validation errors and pass them to the ErrorContext, later on they will be rendered in FormError component
+        if (response.status === 400 && data.validationErrors) {
+          setServerValidationErrors(data.validationErrors);
+        } else {
+          // 👇 And here we check all other errors that are not validation errors and pass them to the ErrorContext, they will be rendered in ErrorModal
+          setServerApiError(data.message || "Request failed");
+        }
+        throw new Error(data.message || "Request failed");
       }
 
       return data;
-    } catch (err) {
-      setError(err.message);
-      throw err;
     } finally {
-      setIsLoading(false);
+      stopLoading();
     }
   };
 
-  const get = (route) => performFetch(route, "GET");
-  const post = (route, body) => performFetch(route, "POST", body);
-  const put = (route, body) => performFetch(route, "PUT", body);
-  const del = (route) => performFetch(route, "DELETE");
-
-  const resetErrors = () => {
-    setError(null);
-    setValidationErrors([]);
-  };
+  const get = (route, loadingMessage) =>
+    performFetch(route, "GET", null, loadingMessage);
+  const post = (route, body, loadingMessage) =>
+    performFetch(route, "POST", body, loadingMessage);
+  const put = (route, body, loadingMessage) =>
+    performFetch(route, "PUT", body, loadingMessage);
+  const del = (route, loadingMessage) =>
+    performFetch(route, "DELETE", null, loadingMessage);
 
   return {
-    isLoading,
-    error,
-    validationErrors,
     get,
     post,
     put,
     del,
-    resetErrors,
   };
 };
 

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
@@ -14,42 +16,49 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const { token } = useParams();
   const api = useFetch();
-  const { error, validationErrors, isLoading, resetErrors } = api;
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
   const {
     formValues,
-    formErrors,
-    updateFormValue,
-    setFormError,
-    clearFormErrors,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    validatePasswordMatch,
+    clearClientValidationError,
   } = useForm({
     password: "",
     confirmPassword: "",
   });
 
-  const onSubmit = async () => {
-    clearFormErrors();
+  const handlePasswordReset = async () => {
+    clearClientValidationError();
+    clearAllServerErrors();
 
-    if (!formValues.password || !formValues.confirmPassword) {
-      setFormError("general", "Please fill in all fields");
+    if (!validateRequired(["password", "confirmPassword"])) {
       return;
     }
 
-    if (formValues.password !== formValues.confirmPassword) {
-      setFormError("passwordMatch", "Passwords do not match");
+    if (!validatePasswordMatch("password", "confirmPassword")) {
       return;
     }
 
     try {
-      await api.post(`/auth/reset-password/${token}`, {
-        password: formValues.password,
-      });
+      await api.post(
+        `/auth/reset-password/${token}`,
+        {
+          password: formValues.password,
+        },
+        "Resetting your password",
+      );
       setIsSuccess(true);
     } catch (error) {
-      // no need to set error here, useFetch handles it
-      console.log(error);
+      console.error(error);
+      // Errors are already handled in ErrorContext
     }
   };
+
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   if (isSuccess) {
     return (
@@ -72,9 +81,6 @@ const ResetPasswordPage = () => {
     );
   }
 
-  // Determine which error to show
-  const errorToShow = formErrors.general || formErrors.passwordMatch || error;
-
   return (
     <Modal
       disabled={isLoading}
@@ -82,11 +88,11 @@ const ResetPasswordPage = () => {
       title="Set New Password"
       actionLabel="Reset Password"
       onClose={() => {
-        resetErrors();
-        clearFormErrors();
+        clearAllServerErrors();
+        clearClientValidationError();
         navigate("/login");
       }}
-      onSubmit={onSubmit}
+      onSubmit={handlePasswordReset}
       body={
         <div className="reset-password-form flex flex-col gap-6 py-2">
           <div className="password-input-container relative">
@@ -95,7 +101,7 @@ const ResetPasswordPage = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Enter new password"
               value={formValues.password}
-              onChange={(e) => updateFormValue("password", e.target.value)}
+              onChange={(e) => updateField("password", e.target.value)}
             />
             <button
               type="button"
@@ -115,9 +121,7 @@ const ResetPasswordPage = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm new password"
               value={formValues.confirmPassword}
-              onChange={(e) =>
-                updateFormValue("confirmPassword", e.target.value)
-              }
+              onChange={(e) => updateField("confirmPassword", e.target.value)}
             />
             <button
               type="button"
@@ -131,7 +135,7 @@ const ResetPasswordPage = () => {
               )}
             </button>
           </div>
-          <FormError error={errorToShow} validationErrors={validationErrors} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
     />
