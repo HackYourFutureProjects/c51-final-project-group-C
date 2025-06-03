@@ -6,10 +6,14 @@ import FormError from "../../components/FormError";
 import Modal from "../../components/Modal";
 import CountrySelect from "../../components/CountrySelect";
 import useFetch from "../../hooks/useFetch";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 
 const CreateTripModal = () => {
   const navigate = useNavigate();
   const api = useFetch();
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
   const [isOpen, setIsOpen] = useState(true);
   const [duration, setDuration] = useState("");
   const [countries, setCountries] = useState([]);
@@ -33,6 +37,7 @@ const CreateTripModal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     clearClientValidationError();
+    clearAllServerErrors();
     setErrors({});
 
     if (!validateRequired(["title"])) {
@@ -129,13 +134,14 @@ const CreateTripModal = () => {
             required
           />
           {errors.duration && <FormError message={errors.duration} />}
+          {firstServerError && <FormError message={firstServerError} />}
           {errors.submit && <FormError message={errors.submit} />}
           <div className="button-container flex justify-center">
             <button
               type="submit"
               className="create-new-trip-button bg-accent text-white px-4 py-2 rounded hover:opacity-90"
             >
-              Create New Trip Plan
+              {isLoading ? "Creating..." : "Create New Trip Plan"}
             </button>
           </div>
         </form>
