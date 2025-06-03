@@ -18,10 +18,7 @@ const CountrySelect = ({
     const fetchCountries = async () => {
       setFetchError(null);
       try {
-        const data = await api.get(
-          "/country/countries",
-          "Loading countries...",
-        );
+        const data = await api.get("/countries", "Loading countries...");
 
         // Converting the data to react-select format
         const formattedData = data.map((country) => ({

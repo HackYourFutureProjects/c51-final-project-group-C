@@ -69,7 +69,7 @@ const CreateTripModal = () => {
       });
 
       const newTrip = await api.post(
-        "/trip/create-trip",
+        "/trips/create-trip",
         {
           title: formValues.title,
           duration: Number(duration),
@@ -79,7 +79,7 @@ const CreateTripModal = () => {
       );
 
       // Redirect the users to the Trip Details Page with navigate
-      navigate(`/create-trip-plan/${newTrip._id}/complete`);
+      navigate(`/complete-trip/${newTrip._id}`);
     } catch (err) {
       console.error("submit:", err.message);
     }
