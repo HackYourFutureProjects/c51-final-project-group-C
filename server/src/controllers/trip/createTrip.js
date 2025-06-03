@@ -1,5 +1,5 @@
 import Trip from "../../models/Trip.js";
-import country from "../../models/Country.js";
+import Country from "../../models/Country.js";
 
 export const createTrip = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ export const createTrip = async (req, res) => {
       return res.status(401).json({ message: "User not authenticated." });
     }
     // this is to check if the front end send true countries ID
-    const existingCountries = await country.countDocuments({
+    const existingCountries = await Country.countDocuments({
       _id: { $in: countries },
     });
     if (existingCountries !== countries.length) {
