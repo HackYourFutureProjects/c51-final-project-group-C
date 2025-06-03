@@ -32,7 +32,7 @@ export const useForm = (initialValues = {}) => {
           setClientValidationError("Please select a country");
           return false;
         }
-        continue; // continue to next field
+        continue;
       }
 
       if (!value || (typeof value === "string" && !value.trim())) {
