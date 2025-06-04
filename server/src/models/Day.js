@@ -6,11 +6,16 @@ const daySchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  index: {
+  dayNumber: {
     type: Number,
     required: true,
   },
   activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "activities" }],
+  tripID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "trips",
+    required: true,
+  },
 });
 
 const day = mongoose.model("days", daySchema);
