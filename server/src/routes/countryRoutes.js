@@ -5,6 +5,6 @@ import { getCountryById } from "../controllers/country/getCountriesById.js";
 const countryRouter = express.Router();
 
 countryRouter.get("/", getAllCountries);
-countryRouter.get("/:id", getCountryById);
+countryRouter.get("/:countryID", getCountryById);
 
 export default countryRouter;

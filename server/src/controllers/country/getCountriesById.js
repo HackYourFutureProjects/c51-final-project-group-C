@@ -1,9 +1,9 @@
 import Country from "../../models/Country.js";
 
 export const getCountryById = async (req, res) => {
-  const { id } = req.params;
+  const { countryID } = req.params;
   try {
-    const country = await Country.findById(id);
+    const country = await Country.findById(countryID);
     if (!country) {
       return res.status(404).json({ message: "Country not found" });
     }

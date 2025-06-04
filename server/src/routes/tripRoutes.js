@@ -8,6 +8,7 @@ import {
 } from "../validation/schemas/tripSchemas.js";
 import { saveTrip } from "../controllers/trip/saveTrip.js";
 import { getTripById } from "../controllers/trip/getTripByID.js";
+import { toggleTripPublished } from "../controllers/trip/publishTrip.js";
 
 const tripRouter = express.Router();
 
@@ -23,6 +24,7 @@ tripRouter.post(
   validate(saveTripSchema),
   saveTrip,
 );
-tripRouter.get("/:tripID", getTripById);
+tripRouter.put("/publish/:tripID", toggleTripPublished);
+tripRouter.get("/:tripID", requireAuth, getTripById);
 
 export default tripRouter;
