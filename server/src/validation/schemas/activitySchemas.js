@@ -8,4 +8,8 @@ export const createActivitySchema = z.object({
       text: z.string().min(1, "Note text is required"),
     })
     .optional(),
+  price: z
+    .number()
+    .nonnegative("Price must be a non-negative number")
+    .optional(),
 });
