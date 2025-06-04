@@ -24,7 +24,7 @@ tripRouter.post(
   validate(saveTripSchema),
   saveTrip,
 );
-tripRouter.put("/publish/:tripID", toggleTripPublished);
-tripRouter.get("/:tripID", requireAuth, getTripById);
+tripRouter.put("/publish/:tripID", requireAuth, toggleTripPublished);
+tripRouter.get("/:tripID", getTripById);
 
 export default tripRouter;

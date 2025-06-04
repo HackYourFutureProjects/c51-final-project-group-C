@@ -15,21 +15,36 @@ export const createLocation = async (req, res) => {
   const userID = req.user.userId;
 
   try {
-    const newLocation = new Location({
-      coordinates,
-      address,
-      userID,
+    // Step 1: Check for existing location
+    const existingLocation = await Location.findOne({
+      "coordinates.lat": coordinates.lat,
+      "coordinates.lng": coordinates.lng,
+      address: address,
     });
 
-    const savedLocation = await newLocation.save();
+    let locationToUse;
 
+    if (existingLocation) {
+      locationToUse = existingLocation;
+    } else {
+      // Step 2: If not exists, create new one
+      const newLocation = new Location({
+        coordinates,
+        address,
+        userID,
+      });
+
+      locationToUse = await newLocation.save();
+    }
+
+    // Step 3: Attach to activity if activityID is given
     if (activityID) {
       await Activity.findByIdAndUpdate(activityID, {
-        location: savedLocation._id,
+        location: locationToUse._id,
       });
     }
 
-    res.status(200).json(savedLocation);
+    res.status(200).json(locationToUse);
   } catch (err) {
     res
       .status(err.status || 500)
