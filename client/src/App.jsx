@@ -90,14 +90,6 @@ const App = () => {
           */}
               <Route path="/" element={<Home />}>
                 <Route
-                  path="/create-trip-plan/:tripId/complete"
-                  element={
-                    <ProtectedRoute>
-                      <CompleteTripPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
                   path="create-trip-plan"
                   element={
                     <ProtectedRoute>
@@ -106,6 +98,14 @@ const App = () => {
                   }
                 />
               </Route>
+              <Route
+                path="/complete-trip/:tripId"
+                element={
+                  <ProtectedRoute>
+                    <CompleteTripPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/complete-profile"
                 element={

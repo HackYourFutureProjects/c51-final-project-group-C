@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import RatingStars from "../../components/RatingStars";
+import { useParams } from "react-router-dom";
+import useFetch from "../../hooks/useFetch";
 
 const CompleteTripPage = () => {
   // For getting the trip data
-  // const { tripId } = useParams();
+  const { tripId } = useParams();
+  const api = useFetch();
 
   const [tripData, setTripData] = useState({
     title: "",
@@ -17,89 +20,40 @@ const CompleteTripPage = () => {
   });
 
   const [dayIndex, setDayIndex] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setTripData({
-      title: "3 Days in Paris: Art, Culture & Cuisine",
-      isPublished: false,
-      duration: 3,
-      countries: ["France"],
-      days: [
-        {
-          title: "Arrival & City Tour",
-          activities: [
-            {
-              title: "Check-in at Hotel Le Meurice",
-              location: "228 Rue de Rivoli, Paris",
-              notes:
-                "Luxury hotel near the Louvre, perfect for a central stay.",
-            },
-            {
-              title: "Visit Eiffel Tower",
-              location: "Champ de Mars, Paris",
-              notes:
-                "Explore the most famous landmark and enjoy the panoramic view from the top.",
-            },
-            {
-              title: "Seine River Cruise",
-              location: "Port de la Bourdonnais",
-              notes:
-                "Evening boat ride to see Paris illuminated along the riverbanks.",
-            },
-          ],
-        },
-        {
-          title: "Art & History Exploration",
-          activities: [
-            {
-              title: "Louvre Museum Tour",
-              location: "Rue de Rivoli, Paris",
-              notes:
-                "Home of the Mona Lisa and thousands of historic masterpieces.",
-            },
-            {
-              title: "Lunch at Café de Flore",
-              location: "Boulevard Saint-Germain, Paris",
-              notes:
-                "One of Paris' oldest coffeehouses, frequented by artists and writers.",
-            },
-            {
-              title: "Notre-Dame Cathedral Visit",
-              location: "Île de la Cité, Paris",
-              notes:
-                "Explore this Gothic architectural wonder and its rich history.",
-            },
-          ],
-        },
-        {
-          title: "Montmartre & Culinary Delights",
-          activities: [
-            {
-              title: "Morning Walk in Montmartre",
-              location: "Montmartre Hill",
-              notes:
-                "Stroll through cobblestone streets and visit the famous Sacré-Cœur.",
-            },
-            {
-              title: "Cooking Class: French Pastries",
-              location: "Le Foodist, Paris",
-              notes:
-                "Learn how to bake authentic croissants and éclairs with a French chef.",
-            },
-            {
-              title: "Dinner at Le Jules Verne",
-              location: "Eiffel Tower, Paris",
-              notes:
-                "Fine dining experience with a view, located inside the Eiffel Tower.",
-            },
-          ],
-        },
-      ],
-      overallRating: 4,
-      overallReview:
-        "Every moment in Paris felt magical. The food, the art, the atmosphere — unforgettable!",
-    });
-  }, []);
+    if (!tripId) return;
+
+    const fetchTrip = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await api.get(`/trips/${tripId}`);
+
+        setTripData({
+          title: data.title || "",
+          isPublished: data.isPublished || false,
+          coverPhoto: null,
+          duration: data.duration || 1,
+          countries: data.countries || [],
+          days: Array.from(
+            { length: data.duration || 1 },
+            (_, idx) => data.days?.[idx] || { title: "", activities: [] },
+          ),
+          overallRating: data.overallRating || 0,
+          overallReview: data.overallReview || "",
+        });
+      } catch (err) {
+        setError(err.message || "Failed to load trip data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrip();
+  }, [tripId]);
 
   const addDay = () => {
     const newDay = { title: "", activities: [] };
@@ -119,6 +73,9 @@ const CompleteTripPage = () => {
     newDays[dayInd].activities[activityInd][field] = value;
     setTripData({ ...tripData, days: newDays });
   };
+
+  if (loading) return <p>Loading trip data...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div className="complete-trip-details max-w-5xl mx-auto p-4">
@@ -148,7 +105,7 @@ const CompleteTripPage = () => {
               value={tripData.duration}
               min={1}
               onChange={(e) => {
-                const newDuration = parseInt(e.target.value);
+                const newDuration = parseInt(e.target.value) || 1;
                 const updatedDays = Array.from(
                   { length: newDuration },
                   (_, idx) =>
@@ -340,6 +297,20 @@ const CompleteTripPage = () => {
                           />
                         </div>
                         <div>
+                          <label className="activity-price-label text-sm font-medium block mb-1">
+                            Price
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 20$"
+                            value={activity.price || ""}
+                            onChange={(e) =>
+                              updateActivityField(i, j, "price", e.target.value)
+                            }
+                            className="activity-price border p-2 rounded w-full"
+                          />
+                        </div>
+                        <div>
                           <label className="activity-notes-label text-sm font-medium block mb-1">
                             Notes
                           </label>
@@ -378,6 +349,7 @@ const CompleteTripPage = () => {
                     newDays[i].activities.push({
                       title: "",
                       location: "",
+                      price: "",
                       notes: "",
                     });
                     setTripData({ ...tripData, days: newDays });
