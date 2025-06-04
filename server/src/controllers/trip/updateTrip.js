@@ -1,7 +1,7 @@
 import Trip from "../../models/Trip.js";
 import { logError } from "../../util/logging.js";
 
-export const saveTrip = async (req, res) => {
+export const updateTrip = async (req, res) => {
   const { creatorOverview, creatorRating } = req.body;
   const { tripID } = req.params;
 

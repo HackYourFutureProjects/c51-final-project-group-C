@@ -4,9 +4,9 @@ import { validate } from "../middleware/validateData.js";
 import { createTrip } from "../controllers/trip/createTrip.js";
 import {
   createTripModalSchema,
-  saveTripSchema,
+  updateTripSchema,
 } from "../validation/schemas/tripSchemas.js";
-import { saveTrip } from "../controllers/trip/saveTrip.js";
+import { updateTrip } from "../controllers/trip/updateTrip.js";
 import { getTripById } from "../controllers/trip/getTripByID.js";
 import { toggleTripPublished } from "../controllers/trip/publishTrip.js";
 
@@ -19,10 +19,10 @@ tripRouter.post(
   createTrip,
 );
 tripRouter.post(
-  "/save-trip/:tripID",
+  "/update-trip/:tripID",
   requireAuth,
-  validate(saveTripSchema),
-  saveTrip,
+  validate(updateTripSchema),
+  updateTrip,
 );
 tripRouter.put("/publish/:tripID", requireAuth, toggleTripPublished);
 tripRouter.get("/:tripID", getTripById);

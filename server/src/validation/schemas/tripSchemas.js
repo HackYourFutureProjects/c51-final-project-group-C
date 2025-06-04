@@ -16,7 +16,7 @@ export const createTripModalSchema = z
   })
   .strict();
 
-export const saveTripSchema = z.object({
+export const updateTripSchema = z.object({
   creatorOverview: z
     .string()
     .trim()
