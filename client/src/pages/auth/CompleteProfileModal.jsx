@@ -5,6 +5,7 @@ import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
+import CountrySelect from "../../components/CountrySelect";
 import { useForm } from "../../hooks/useForm";
 import useFetch from "../../hooks/useFetch";
 
@@ -24,7 +25,9 @@ const CompleteProfileModal = () => {
   } = useForm({
     name: user?.name || "",
     surname: user?.surname || "",
-    country: user?.country || "",
+    country: user?.country
+      ? { value: user.country, label: user.countryName || user.country }
+      : null,
   });
 
   const handleProfileCompletion = async () => {
@@ -41,7 +44,7 @@ const CompleteProfileModal = () => {
         {
           name: formValues.name.trim(),
           surname: formValues.surname.trim(),
-          country: formValues.country.trim(),
+          country: formValues.country ? formValues.country.label : null,
         },
         "Completing your profile",
       );
@@ -52,6 +55,10 @@ const CompleteProfileModal = () => {
       console.error(error);
       // Errors are already handled in ErrorContext
     }
+  };
+
+  const handleCountryChange = (selectedCountry) => {
+    updateField("country", selectedCountry);
   };
 
   const displayErrorMessage = clientValidationError || firstServerError;
@@ -82,11 +89,11 @@ const CompleteProfileModal = () => {
             placeholder="Enter your last name"
             onChange={(e) => updateField("surname", e.target.value)}
           />
-          <Input
-            label="Country"
+          <CountrySelect
+            isMulti={false}
             value={formValues.country}
-            placeholder="Enter your country"
-            onChange={(e) => updateField("country", e.target.value)}
+            placeholder="Select your country"
+            onChange={handleCountryChange}
           />
           {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>

@@ -25,6 +25,16 @@ export const useForm = (initialValues = {}) => {
   const validateRequired = (fieldNames) => {
     for (const field of fieldNames) {
       const value = formValues[field];
+
+      // Special case for country
+      if (field === "country") {
+        if (!value || !value.value) {
+          setClientValidationError("Please select a country");
+          return false;
+        }
+        continue;
+      }
+
       if (!value || (typeof value === "string" && !value.trim())) {
         setClientValidationError(`Please enter ${field}`);
         return false;
