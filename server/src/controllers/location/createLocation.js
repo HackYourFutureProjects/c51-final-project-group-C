@@ -15,7 +15,7 @@ export const createLocation = async (req, res) => {
   const userID = req.user.userId;
 
   try {
-    // Step 1: Check for existing location
+    //: Check for existing location
     const existingLocation = await Location.findOne({
       "coordinates.lat": coordinates.lat,
       "coordinates.lng": coordinates.lng,
@@ -27,7 +27,7 @@ export const createLocation = async (req, res) => {
     if (existingLocation) {
       locationToUse = existingLocation;
     } else {
-      // Step 2: If not exists, create new one
+      // If not exists, create new one
       const newLocation = new Location({
         coordinates,
         address,
@@ -37,7 +37,6 @@ export const createLocation = async (req, res) => {
       locationToUse = await newLocation.save();
     }
 
-    // Step 3: Attach to activity if activityID is given
     if (activityID) {
       await Activity.findByIdAndUpdate(activityID, {
         location: locationToUse._id,
