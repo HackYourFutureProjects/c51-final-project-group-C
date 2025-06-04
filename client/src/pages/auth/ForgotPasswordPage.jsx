@@ -1,50 +1,58 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import FormError from "../../components/FormError";
 import { useForm } from "../../hooks/useForm";
+import useFetch from "../../hooks/useFetch";
 
 const ForgotPasswordPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
+  const api = useFetch();
+  const { firstServerError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
-  const { formValues, formErrors, updateFormValue, setFormError } = useForm({
+  const {
+    formValues,
+    clientValidationError,
+    updateField,
+    validateRequired,
+    validateEmail,
+    clearClientValidationError,
+  } = useForm({
     email: "",
   });
 
-  const onSubmit = async () => {
-    if (!formValues.email) {
-      setFormError("messageToShow", "Please enter your email");
+  const handleResetRequest = async () => {
+    clearClientValidationError();
+
+    if (!validateRequired(["email"])) {
+      return;
+    }
+
+    if (!validateEmail("email")) {
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await api.post(
+        "/auth/forgot-password",
+        {
+          email: formValues.email.trim(),
         },
-        body: JSON.stringify({ email: formValues.email }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send reset email");
-      }
-
+        "Sending reset link",
+      );
       setEmailSent(true);
     } catch (error) {
-      console.error("Forgot password error:", error);
-      setFormError(
-        "messageToShow",
-        "An error occurred. Please try again later.",
-      );
-    } finally {
-      setIsLoading(false);
+      console.error(error);
+      // Errors are already handled in ErrorContext
     }
   };
+
+  const displayErrorMessage = clientValidationError || firstServerError;
 
   if (emailSent) {
     return (
@@ -73,8 +81,12 @@ const ForgotPasswordPage = () => {
       isOpen={true}
       title="Reset Password"
       actionLabel="Send Reset Link"
-      onClose={() => navigate("/login")}
-      onSubmit={onSubmit}
+      onClose={() => {
+        clearAllServerErrors();
+        clearClientValidationError();
+        navigate("/login");
+      }}
+      onSubmit={handleResetRequest}
       body={
         <div className="forgot-password-form flex flex-col gap-6 py-2">
           <p className="forgot-password-form-message text-center text-gray-600 text-sm">
@@ -86,9 +98,9 @@ const ForgotPasswordPage = () => {
             type="email"
             placeholder="Enter your email"
             value={formValues.email}
-            onChange={(e) => updateFormValue("email", e.target.value)}
+            onChange={(e) => updateField("email", e.target.value)}
           />
-          <FormError error={formErrors.messageToShow} />
+          {displayErrorMessage && <FormError message={displayErrorMessage} />}
         </div>
       }
     />

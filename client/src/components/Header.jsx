@@ -128,7 +128,7 @@ const Header = () => {
             Home
           </Link>
           <Link
-            to="/"
+            to="/create-trip-plan"
             className="mobile-link-create-trip hover:text-accent font-medium"
             onClick={toggleMenu}
           >

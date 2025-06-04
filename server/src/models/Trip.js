@@ -23,6 +23,7 @@ const tripSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
+  days: [{ type: mongoose.Schema.Types.ObjectId, ref: "days" }],
   createdAt: {
     type: Date,
     default: Date.now,
