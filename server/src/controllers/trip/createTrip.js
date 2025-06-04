@@ -25,9 +25,13 @@ export const createTrip = async (req, res) => {
       countries,
       userID,
     });
-
+    // Populate countries with name and code
+    const populatedTrip = await Trip.findById(savedTrip._id).populate({
+      path: "countries",
+      select: "name code",
+    });
     const savedTrip = await newTrip.save();
-    res.status(201).json(savedTrip);
+    res.status(201).json(populatedTrip);
   } catch (error) {
     res.status(500).json({ message: "server error" });
   }
