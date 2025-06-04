@@ -3,35 +3,30 @@ import Activity from "../../models/Activity.js";
 import { logError } from "../../util/logging.js";
 
 export const createLocation = async (req, res) => {
-  //    example of the body {
-  //   "coordinates": {
-  //     "lat": 40.7128,
-  //     "lng": -74.0060
-  //   },
-  //   "address": "123 Main St, New York, NY"
-  // }
   const { coordinates, address } = req.body;
   const { activityID } = req.params;
   const userID = req.user.userId;
 
   try {
-    //: Check for existing location
-    const existingLocation = await Location.findOne({
+    // Check for existing location
+    let locationToUse = await Location.findOne({
       "coordinates.lat": coordinates.lat,
       "coordinates.lng": coordinates.lng,
       address: address,
     });
 
-    let locationToUse;
-
-    if (existingLocation) {
-      locationToUse = existingLocation;
+    if (locationToUse) {
+      // Push userID into userIDs array if not already there
+      if (!locationToUse.userIDs.includes(userID)) {
+        locationToUse.userIDs.push(userID);
+        await locationToUse.save();
+      }
     } else {
-      // If not exists, create new one
+      // If not exists, create new one with userIDs array including current userID
       const newLocation = new Location({
         coordinates,
         address,
-        userID,
+        userIDs: [userID],
       });
 
       locationToUse = await newLocation.save();
