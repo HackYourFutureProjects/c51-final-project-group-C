@@ -1,17 +1,17 @@
 import Trip from "../../models/Trip.js";
-
 import { logError } from "../../util/logging.js";
 
-export const completeTrip = async (req, res) => {
-  //days is an array of the days id
-  const { days } = req.body;
+export const saveTrip = async (req, res) => {
+  const { creatorOverview, creatorRating } = req.body;
   const { tripID } = req.params;
+
   try {
     const updatedTrip = await Trip.findByIdAndUpdate(
       tripID,
-      { days },
+      { creatorOverview, creatorRating },
       { new: true, runValidators: true },
     );
+
     res.status(200).json(updatedTrip);
   } catch (err) {
     res

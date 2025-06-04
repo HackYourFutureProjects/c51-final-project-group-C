@@ -16,8 +16,16 @@ export const createTripModalSchema = z
   })
   .strict();
 
-export const completeTripSchema = z.object({
-  days: z
-    .array(z.string().min(1))
-    .nonempty("days must be a non-empty array of day IDs"),
+export const saveTripSchema = z.object({
+  creatorOverview: z
+    .string()
+    .trim()
+    .min(1, "Overview cannot be empty")
+    .max(1000, "Overview is too long")
+    .optional(),
+  creatorRating: z
+    .number()
+    .min(0, "Rating must be at least 0")
+    .max(5, "Rating cannot be more than 5")
+    .optional(),
 });
