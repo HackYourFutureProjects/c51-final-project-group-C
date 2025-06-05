@@ -8,7 +8,7 @@ export const deleteDay = async (req, res) => {
     if (!day) return res.status(404).json({ message: "Day not found" });
     // This triggers deleting its activities
     await day.deleteOne();
-    res.json({ message: "Day and related activities deleted" });
+    res.status(200).json({ message: "Day and related activities deleted" });
   } catch (err) {
     res.status(500).json({ message: "server error" });
     logError(err);

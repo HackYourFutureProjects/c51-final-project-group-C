@@ -9,7 +9,7 @@ export const deleteActivity = async (req, res) => {
       return res.status(404).json({ message: "Activity not found" });
     //  triggers location delete
     await activity.deleteOne();
-    res.json({ message: "Activity and its location deleted" });
+    res.status(200).json({ message: "Activity and its location deleted" });
   } catch (err) {
     res.status(500).json({ message: "server error" });
     logError(err);
