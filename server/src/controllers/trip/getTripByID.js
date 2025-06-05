@@ -70,6 +70,7 @@ export const getTripById = async (req, res) => {
               _id: activity._id,
               name: activity.name,
               notes: activity.notes,
+              price: activity.price, // include price if it exists in activity
               location: activity.location,
             };
           });
@@ -80,7 +81,6 @@ export const getTripById = async (req, res) => {
     // Send the cleaned and ordered trip object
     res.status(200).json(tripObj);
   } catch (err) {
-    // Handle errors gracefully and log them
     res
       .status(err.status || 500)
       .json({ errors: err.errors || "Server error" });
