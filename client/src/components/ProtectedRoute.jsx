@@ -12,15 +12,15 @@ const ProtectedRoute = ({ children }) => {
     if (currentPath !== "/login") {
       localStorage.setItem("redirectAfterLogin", currentPath);
     }
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   if (!isCompletingProfileNow && !user.isProfileCompleted) {
-    return <Navigate to="/complete-profile" />;
+    return <Navigate to="/complete-profile" replace />;
   }
 
   if (isCompletingProfileNow && user.isProfileCompleted) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
