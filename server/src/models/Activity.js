@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Location from "./Location";
+import Location from "./Location.js";
 
 const activitySchema = new mongoose.Schema({
   name: {

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Activity from "./Activity";
+import Activity from "./Activity.js";
 
 const daySchema = new mongoose.Schema({
   title: {
