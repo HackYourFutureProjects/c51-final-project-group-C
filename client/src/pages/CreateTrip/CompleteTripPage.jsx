@@ -39,7 +39,7 @@ const CompleteTripPage = () => {
           isPublished: data.isPublished || false,
           coverPhoto: null,
           duration: data.duration || 1,
-          countries: data.countries || [],
+          countries: (data.countries || []).map((c) => c.name || c),
           days: Array.from(
             { length: data.duration || 1 },
             (_, idx) => data.days?.[idx] || { title: "", activities: [] },
