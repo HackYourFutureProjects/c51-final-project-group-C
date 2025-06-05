@@ -6,13 +6,15 @@ const locationSchema = new mongoose.Schema({
     lng: Number,
   },
   address: String,
-  userID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
-    required: true,
-  },
+  userIDs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+  ],
 });
 
-const location = mongoose.model("locations", locationSchema);
+const Location = mongoose.model("locations", locationSchema);
 
-export default location;
+export default Location;

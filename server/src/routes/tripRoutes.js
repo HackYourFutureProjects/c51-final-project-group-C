@@ -3,11 +3,12 @@ import { requireAuth } from "../middleware/requireAuth.js";
 import { validate } from "../middleware/validateData.js";
 import { createTrip } from "../controllers/trip/createTrip.js";
 import {
-  completeTripSchema,
   createTripModalSchema,
+  updateTripSchema,
 } from "../validation/schemas/tripSchemas.js";
-import { completeTrip } from "../controllers/trip/completeTrip.js";
+import { updateTrip } from "../controllers/trip/updateTrip.js";
 import { getTripById } from "../controllers/trip/getTripByID.js";
+import { toggleTripPublished } from "../controllers/trip/publishTrip.js";
 
 const tripRouter = express.Router();
 
@@ -18,11 +19,12 @@ tripRouter.post(
   createTrip,
 );
 tripRouter.post(
-  "/complete-trip/:tripID",
+  "/update-trip/:tripID",
   requireAuth,
-  validate(completeTripSchema),
-  completeTrip,
+  validate(updateTripSchema),
+  updateTrip,
 );
+tripRouter.put("/publish/:tripID", requireAuth, toggleTripPublished);
 tripRouter.get("/:tripID", getTripById);
 
 export default tripRouter;

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const tripSchema = new mongoose.Schema({
+  // Basic Info
   title: {
     type: String,
     required: true,
@@ -18,17 +19,42 @@ const tripSchema = new mongoose.Schema({
       required: true,
     },
   ],
+
+  // User & Trip Content
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
   },
-  days: [{ type: mongoose.Schema.Types.ObjectId, ref: "days" }],
+  days: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "days",
+    },
+  ],
+
+  // Creator Feedback
+  creatorOverview: {
+    type: String,
+    trim: true,
+  },
+  creatorRating: {
+    type: Number,
+    min: 0,
+    max: 5,
+  },
+
+  // Status & Metadata
+  published: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
 const Trip = mongoose.model("trips", tripSchema);
 
 export default Trip;
