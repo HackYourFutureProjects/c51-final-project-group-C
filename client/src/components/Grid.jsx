@@ -1,4 +1,4 @@
-// 👇 This is Grid component, for now we use it to display the grid of cards in different tabs ofthe ProfilePage and PublishedTripPage.
+// 👇 This is Grid component, for now we use it to display the grid of cards in different tabs of the ProfilePage and PublishedTripPage.
 // Later on we can also reuse it for HomePage, etc.
 // It automatically creates a grid layout for the elements passed as children.
 

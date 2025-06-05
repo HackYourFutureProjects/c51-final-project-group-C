@@ -26,15 +26,15 @@ const EventPhotos = ({ photos }) => {
         </div>
 
         <div className="event-photos-grid grid grid-cols-3 gap-1 sm:gap-2">
-          {photos.map((photo, index) => (
+          {photos.map((photo) => (
             <div
-              key={index}
+              key={photo}
               className="photo-item relative aspect-square overflow-hidden rounded-lg cursor-pointer shadow-sm hover:shadow-md transition-all duration-300"
               onClick={() => handlePhotoClick(photo)}
             >
               <img
                 src={photo}
-                alt={`Event photo ${index + 1}`}
+                alt={`Event photo`}
                 className="h-full w-full object-cover"
               />
             </div>

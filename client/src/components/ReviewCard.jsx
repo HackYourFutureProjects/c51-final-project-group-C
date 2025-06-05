@@ -12,7 +12,7 @@ const ReviewCard = ({ user, text, avatarSize = "medium" }) => {
           <p className="text-sm text-gray-600">{user.country}</p>
         </div>
       </div>
-      <p className="text-gray-700 italic text-sm">`&ldquo;`{text}`&ldquo;`</p>
+      <p className="text-gray-700 italic text-sm">&ldquo;{text}&rdquo;</p>
     </div>
   );
 };
