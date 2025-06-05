@@ -15,7 +15,8 @@ export const getTripById = async (req, res) => {
           },
         },
       })
-      .populate("userID", "name surname");
+      .populate("userID", "name surname")
+      .populate("countries", "name code");
 
     if (!trip) {
       return res.status(404).json({ message: "Trip not found" });

@@ -39,7 +39,7 @@ const CompleteTripPage = () => {
           isPublished: data.isPublished || false,
           coverPhoto: null,
           duration: data.duration || 1,
-          countries: (data.countries || []).map((c) => c.name || c),
+          countries: data.countries || [],
           days: Array.from(
             { length: data.duration || 1 },
             (_, idx) => data.days?.[idx] || { title: "", activities: [] },
@@ -128,11 +128,13 @@ const CompleteTripPage = () => {
             <input
               type="text"
               placeholder="Countries (comma-separated)"
-              value={(tripData.countries || []).join(", ")}
+              value={(tripData.countries || []).map((c) => c.name).join(", ")}
               onChange={(e) =>
                 setTripData({
                   ...tripData,
-                  countries: e.target.value.split(",").map((c) => c.trim()),
+                  countries: e.target.value
+                    .split(",")
+                    .map((c) => ({ name: c.trim(), code: "" })),
                 })
               }
               className="trip-countries text-base border-b border-gray-300 focus:outline-none focus:border-accent w-64"
