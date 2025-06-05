@@ -62,7 +62,10 @@ tripSchema.pre(
   { document: true, query: false },
   async function (next) {
     try {
-      await Day.deleteMany({ tripID: this._id });
+      const days = await Day.find({ tripID: this._id });
+      for (const day of days) {
+        await day.deleteOne();
+      }
       next();
     } catch (err) {
       next(err);
