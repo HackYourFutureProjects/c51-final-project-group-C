@@ -40,9 +40,7 @@ const LocationSearch = ({ value, onChange }) => {
   }, [debounced]);
 
   const handleSelect = (locationObj) => {
-    const shortName =
-      locationObj.name || locationObj.display_name.split(",")[0];
-    setInputValue(shortName);
+    setInputValue(locationObj.display_name);
     setSuggestions([]);
     onChange({
       name: locationObj.name || locationObj.display_name,
