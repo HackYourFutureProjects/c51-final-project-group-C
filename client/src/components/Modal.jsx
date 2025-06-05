@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { IoMdClose as CloseIcon } from "react-icons/io";
-import { FaArrowRight as ArrowIcon } from "react-icons/fa6";
 
 const Modal = ({
   isOpen,
@@ -57,7 +56,7 @@ const Modal = ({
         flex justify-center items-center 
         overflow-x-hidden overflow-y-auto 
         fixed inset-0 z-50 
-        outline-none focus:outline-none 
+        outline-none focus:outline-none
         transition-opacity duration-300
         ${showModal ? "bg-neutral-900/80" : "bg-transparent"}
       `}
@@ -80,7 +79,7 @@ const Modal = ({
             ${showModal ? "scale-100 opacity-100" : "scale-95 opacity-0"}
           `}
         >
-          <div className="modal-window border-0 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none min-h-[400px]">
+          <div className="modal-window border-0 rounded-2xl shadow-lg relative flex flex-col w-full bg-background outline-none focus:outline-none min-h-[400px]">
             {/* Modal Title */}
             <div className="modal-header flex items-center p-10 px-10 rounded-t justify-center relative border-b-[1px]">
               <div className="modal-title text-2xl font-semibold">{title}</div>
@@ -142,7 +141,6 @@ const Modal = ({
                       text-xl
                     `}
                   >
-                    <ArrowIcon size={20} />
                     {actionLabel}
                   </button>
                 )}

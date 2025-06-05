@@ -67,7 +67,7 @@ const Header = () => {
               onClick={() => navigate("/users/me")}
               className="focus:outline-none transition transform"
             >
-              <Avatar size="small" withBorder={true} />
+              <Avatar size="medium" withBorder={true} />
             </button>
           </>
         ) : (

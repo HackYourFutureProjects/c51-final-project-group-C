@@ -1,4 +1,4 @@
-// 👇 This is Avatar component, for now we use it in two places: in Header (small version) and ProfilePage (large version).
+// 👇 This is Avatar component, for now we use it in two places: in Header (small version) and ProfilePage (large version) , and PublishedTripPage (different versions).
 // We can pass size and withBorder props to the component.
 // Image url should be passed as a src prop. If no image is provided, we use profile icon as a fallback.
 
@@ -10,6 +10,9 @@ const Avatar = ({ size = "large", src = userImage, withBorder = false }) => {
 
   // 👇 Different Tailwind classes will be applied depending on 'size' prop.
   if (size === "small") {
+    imageSizeClasses = "w-8 h-8";
+    iconSizeClasses = "w-3 h-3";
+  } else if (size === "medium") {
     imageSizeClasses = "w-10 h-10";
     iconSizeClasses = "w-4 h-4";
   } else {
