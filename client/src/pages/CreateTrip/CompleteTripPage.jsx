@@ -3,11 +3,15 @@ import RatingStars from "../../components/RatingStars";
 import { useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import LocationSearch from "../../components/LocationSearch";
+import { useError } from "../../context/ErrorContext";
+import { useLoading } from "../../context/LoadingContext";
 
 const CompleteTripPage = () => {
   // For getting the trip data
   const { tripId } = useParams();
   const api = useFetch();
+  const { setServerApiError, clearAllServerErrors } = useError();
+  const { isLoading } = useLoading();
 
   const [tripData, setTripData] = useState({
     title: "",
@@ -21,15 +25,12 @@ const CompleteTripPage = () => {
   });
 
   const [dayIndex, setDayIndex] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!tripId) return;
+    clearAllServerErrors();
 
     const fetchTrip = async () => {
-      setLoading(true);
-      setError(null);
       try {
         const data = await api.get(`/trips/${tripId}`);
 
@@ -47,9 +48,7 @@ const CompleteTripPage = () => {
           overallReview: data.overallReview || "",
         });
       } catch (err) {
-        setError(err.message || "Failed to load trip data.");
-      } finally {
-        setLoading(false);
+        setServerApiError(err.message || "Failed to load trip data.");
       }
     };
 
@@ -75,8 +74,7 @@ const CompleteTripPage = () => {
     setTripData({ ...tripData, days: newDays });
   };
 
-  if (loading) return <p>Loading trip data...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (isLoading) return <p>Loading trip data...</p>;
 
   return (
     <div className="complete-trip-details max-w-5xl mx-auto p-4">
