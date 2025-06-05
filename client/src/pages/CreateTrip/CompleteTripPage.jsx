@@ -35,6 +35,7 @@ const CompleteTripPage = () => {
         const data = await api.get(`/trips/${tripId}`);
 
         setTripData({
+          _id: data._id,
           title: data.title || "",
           isPublished: data.isPublished || false,
           coverPhoto: null,
@@ -72,6 +73,136 @@ const CompleteTripPage = () => {
     const newDays = [...tripData.days];
     newDays[dayInd].activities[activityInd][field] = value;
     setTripData({ ...tripData, days: newDays });
+  };
+
+  const saveTrip = async () => {
+    try {
+      let tripId = tripData._id;
+
+      if (!tripId) {
+        // Create trip if no ID
+        const createdTrip = await api.post(
+          "/trips/create-trip",
+          {
+            title: tripData.title,
+            duration: tripData.duration,
+            countries: tripData.countries,
+          },
+          "Creating trip...",
+        );
+        tripId = createdTrip._id;
+
+        // Update state with new tripId
+        setTripData((prev) => ({ ...prev, _id: tripId }));
+      }
+
+      // Save days
+      const updatedDays = await Promise.all(
+        tripData.days.map(async (day, idx) => {
+          let dayId = day._id;
+          if (!dayId) {
+            const createdDay = await api.post(
+              `/trips/${tripId}/days/create-day`,
+              {
+                title: day.title,
+                dayNumber: idx + 1, // Day index + 1 for dayNumber
+              },
+              "Creating day...",
+            );
+            dayId = createdDay._id;
+          }
+
+          // Save activities for this day
+          const updatedActivities = await Promise.all(
+            day.activities.map(async (activity) => {
+              let activityId = activity._id;
+              if (!activityId) {
+                const createdActivity = await api.post(
+                  `/trips/${tripId}/days/${dayId}/activities/create-activity`,
+                  {
+                    title: activity.title,
+                    notes: activity.notes,
+                    price: activity.price,
+                  },
+                  "Creating activity...",
+                );
+                activityId = createdActivity._id;
+              }
+
+              // Save location if needed
+              if (activity.location && !activity.location._id) {
+                const createdLocation = await api.post(
+                  `/trips/${tripId}/days/${dayId}/activities/${activityId}/locations/create-location`,
+                  {
+                    coordinates: activity.location.coordinates,
+                    address: activity.location.address,
+                  },
+                  "Creating location...",
+                );
+                activity.location._id = createdLocation._id;
+              }
+
+              return {
+                ...activity,
+                _id: activityId,
+                location: activity.location,
+              };
+            }),
+          );
+
+          return {
+            ...day,
+            _id: dayId,
+            activities: updatedActivities,
+          };
+        }),
+      );
+
+      // Update trip data in state
+      setTripData((prev) => ({
+        ...prev,
+        _id: tripId,
+        days: updatedDays,
+      }));
+
+      // Update overall trip (e.g. ratings, review)
+      await api.post(
+        `/trips/update-trip/${tripId}`,
+        {
+          overallReview: tripData.overallReview,
+          overallRating: tripData.overallRating,
+        },
+        "Updating trip...",
+      );
+
+      return tripId;
+    } catch (err) {
+      setServerApiError(err.message || "Failed to save trip data.");
+    }
+  };
+
+  const publishTrip = async () => {
+    if (!tripData._id) {
+      // If no trip ID, first save the trip so it exists
+      const savedId = await saveTrip();
+      if (!savedId) return; // stop if save failed
+    }
+
+    try {
+      await api.post(
+        `/trips/update-trip/${tripData._id}`,
+        { isPublished: true },
+        "Publishing trip...",
+      );
+
+      setTripData((prev) => ({
+        ...prev,
+        isPublished: true,
+      }));
+      // Redirect or other UI feedback here
+    } catch (err) {
+      setServerApiError(err.message || "Failed to publish trip.");
+    }
   };
 
   if (isLoading) return <p>Loading trip data...</p>;
@@ -463,10 +594,17 @@ const CompleteTripPage = () => {
 
       {/* Save/Publish buttons */}
       <div className="footer-buttons mt-6 text-right space-x-6">
-        <button className="save-button bg-white text-accent border border-orange-500 px-4 py-2 rounded shadow-sm hover:bg-orange-50 transition">
+        <button
+          className="save-button bg-white text-accent border border-orange-500 px-4 py-2 rounded shadow-sm hover:bg-orange-50 transition"
+          onClick={saveTrip}
+        >
           Save
         </button>
-        <button className="publish-button bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition">
+        <button
+          disabled={tripData.isPublished}
+          className={`publish-button bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition ${tripData.isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
+          onClick={publishTrip}
+        >
           Publish
         </button>
       </div>
