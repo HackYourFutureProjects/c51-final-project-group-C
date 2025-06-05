@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import RatingStars from "../../components/RatingStars";
 import { useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
+import LocationSearch from "../../components/LocationSearch";
 
 const CompleteTripPage = () => {
   // For getting the trip data
@@ -281,19 +282,11 @@ const CompleteTripPage = () => {
                           <label className="activity-location-label text-sm font-medium block mb-1">
                             Location
                           </label>
-                          <input
-                            type="text"
-                            placeholder="Location"
-                            value={activity.location || ""}
-                            onChange={(e) =>
-                              updateActivityField(
-                                i,
-                                j,
-                                "location",
-                                e.target.value,
-                              )
+                          <LocationSearch
+                            value={activity.location}
+                            onChange={(locationObj) =>
+                              updateActivityField(i, j, "location", locationObj)
                             }
-                            className="activity-location border p-2 rounded w-full"
                           />
                         </div>
                         <div>
