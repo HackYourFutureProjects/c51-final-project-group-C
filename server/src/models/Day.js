@@ -26,7 +26,10 @@ daySchema.pre(
   { document: true, query: false },
   async function (next) {
     try {
-      await Activity.deleteMany({ day: this._id });
+      const activities = await Activity.find({ day: this._id });
+      for (const activity of activities) {
+        await activity.deleteOne();
+      }
       next();
     } catch (err) {
       next(err);
