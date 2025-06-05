@@ -317,6 +317,75 @@ const CompleteTripPage = () => {
                             rows={2}
                           ></textarea>
                         </div>
+                        {/* Photo Upload & Thumbnails */}
+                        <div>
+                          <label className="block mb-1 text-sm font-medium">
+                            Photos (max 3)
+                          </label>
+                          <label
+                            htmlFor={`activity-photo-${i}-${j}`}
+                            className="inline-block cursor-pointer bg-accent text-white px-4 py-1.5 text-sm rounded hover:bg-orange-600 transition"
+                          >
+                            + Add Photo
+                          </label>
+
+                          <input
+                            id={`activity-photo-${i}-${j}`}
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files);
+                              const currentPhotos = activity.photos || [];
+                              const totalAllowed = 3;
+
+                              const photosToAdd = files.slice(
+                                0,
+                                totalAllowed - currentPhotos.length,
+                              );
+
+                              updateActivityField(i, j, "photos", [
+                                ...currentPhotos,
+                                ...photosToAdd,
+                              ]);
+
+                              e.target.value = null; // allow same file to be added again
+                            }}
+                            className="sr-only"
+                          />
+                          {/* Photo thumbnails */}
+                          <div className="mt-2 flex gap-2">
+                            {(activity.photos || []).map((photo, idx) => (
+                              <div
+                                key={idx}
+                                className="relative w-28 h-28 rounded overflow-hidden border border-gray-300"
+                              >
+                                <img
+                                  src={URL.createObjectURL(photo)}
+                                  alt={`activity photo ${idx + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  onClick={() => {
+                                    // Remove this photo
+                                    const newPhotos = [...activity.photos];
+                                    newPhotos.splice(idx, 1);
+                                    updateActivityField(
+                                      i,
+                                      j,
+                                      "photos",
+                                      newPhotos,
+                                    );
+                                  }}
+                                  className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-800"
+                                  type="button"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                         <div className="text-right">
                           <button
                             className="activity-delete-button text-red-500"
@@ -344,6 +413,7 @@ const CompleteTripPage = () => {
                       location: "",
                       price: "",
                       notes: "",
+                      photos: [],
                     });
                     setTripData({ ...tripData, days: newDays });
                   }}
