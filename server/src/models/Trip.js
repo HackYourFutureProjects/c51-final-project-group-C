@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Day from "./Day.js";
 
 const tripSchema = new mongoose.Schema({
   // Basic Info
@@ -55,6 +56,19 @@ const tripSchema = new mongoose.Schema({
   },
 });
 
+// to delete all the days related to the trip
+tripSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    try {
+      await Day.deleteMany({ tripID: this._id });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 const Trip = mongoose.model("trips", tripSchema);
 
 export default Trip;

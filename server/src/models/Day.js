@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Activity from "./Activity";
 
 const daySchema = new mongoose.Schema({
   title: {
@@ -17,7 +18,19 @@ const daySchema = new mongoose.Schema({
     required: true,
   },
 });
-
+// to delete all activities related to that day
+daySchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    try {
+      await Activity.deleteMany({ day: this._id });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 const day = mongoose.model("days", daySchema);
 
 export default day;
