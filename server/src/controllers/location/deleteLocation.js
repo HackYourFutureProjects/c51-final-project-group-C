@@ -14,6 +14,6 @@ export const deleteLocation = async (req, res) => {
     res.status(200).json({ message: "Location deleted successfully" });
   } catch (err) {
     logError(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "server error" });
   }
 };
