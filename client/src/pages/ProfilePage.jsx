@@ -16,6 +16,10 @@ import Tabs from "../components/Tabs";
 import Grid from "../components/Grid";
 import ProfilePageSidebar from "../components/ProfilePageSidebar";
 import ProfileInfo from "../components/ProfileInfo";
+import TripCard from "../components/TripCard";
+import { allTrips } from "../assets/dummyData/mockTripData";
+
+const tripsToShow = allTrips.slice(0, 4);
 
 // 👇 If user is viewing his own profile, we show these tabs:
 
@@ -100,11 +104,6 @@ const ProfilePage = () => {
     return <div className="text-center py-8">User not found</div>;
   }
 
-  const placeholderCards = Array(9).fill({
-    id: "placeholder",
-    title: "Trip Title",
-  });
-
   // 👇 Private View Layout (how user sees his own profile)
   const renderPrivateView = () => {
     return (
@@ -118,21 +117,9 @@ const ProfilePage = () => {
 
         {/* 👇  Grid of Cards */}
         <div className="content-container lg:col-span-3 border-border border rounded-lg p-4 w-full min-h-[calc(100vh-8rem)]">
-          <Grid columns={4}>
-            {placeholderCards.map((item, index) => (
-              <div
-                key={index}
-                className="card-item border-border border rounded-lg overflow-hidden"
-              >
-                <div className="card-image aspect-square bg-gray-100 flex items-center justify-center">
-                  <span className="placeholder-text text-sm">Photo</span>
-                </div>
-                <div className="card-content p-3">
-                  <h3 className="card-title font-medium text-sm">
-                    {item.title}
-                  </h3>
-                </div>
-              </div>
+          <Grid columns={3}>
+            {tripsToShow.map((trip) => (
+              <TripCard key={trip._id} trip={trip} />
             ))}
           </Grid>
         </div>
@@ -146,30 +133,17 @@ const ProfilePage = () => {
     const renderTabsContent = () => {
       if (activeTabId === "map") {
         return (
-          <div className="map-container h-[500px] bg-gray-100 rounded-lg flex items-center justify-center">
+          <div className="map-container h-[500px] bg-background rounded-lg flex items-center justify-center border border-border">
             <MapIcon className="map-icon w-6 h-6 mr-2" />
             <span className="map-text text-2xl">Map</span>
           </div>
         );
       }
 
-      {
-        /* 👇  Grid of Cards */
-      }
       return (
         <Grid columns={4}>
-          {placeholderCards.map((item, index) => (
-            <div
-              key={index}
-              className="card-item border-border border rounded-lg overflow-hidden"
-            >
-              <div className="card-image aspect-square bg-gray-100 flex items-center justify-center">
-                <span className="placeholder-text text-sm">Photo</span>
-              </div>
-              <div className="card-content p-3">
-                <h3 className="card-title font-medium text-sm">{item.title}</h3>
-              </div>
-            </div>
+          {tripsToShow.map((trip) => (
+            <TripCard key={trip._id} trip={trip} />
           ))}
         </Grid>
       );

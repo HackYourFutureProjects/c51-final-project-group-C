@@ -26,7 +26,7 @@ function Input({
         onChange={onChange}
         min={min}
         max={max}
-        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-gray-900 text-base"
+        className="w-full px-4 py-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-gray-900 text-base bg-background"
       />
     </div>
   );
