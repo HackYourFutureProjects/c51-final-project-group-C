@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Location from "./Location.js";
 
 const activitySchema = new mongoose.Schema({
   name: {
@@ -25,7 +26,21 @@ const activitySchema = new mongoose.Schema({
     default: 0,
   },
 });
-
+// to delete the location that is related to the activity
+activitySchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    try {
+      if (this.location) {
+        await Location.findByIdAndDelete(this.location);
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 const activity = mongoose.model("activities", activitySchema);
 
 export default activity;
