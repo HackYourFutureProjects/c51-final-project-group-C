@@ -15,7 +15,7 @@ const CompleteTripPage = () => {
 
   const [tripData, setTripData] = useState({
     title: "",
-    isPublished: false,
+    published: false,
     coverPhoto: null,
     duration: 0,
     countries: [],
@@ -37,7 +37,7 @@ const CompleteTripPage = () => {
         setTripData({
           _id: data._id,
           title: data.title || "",
-          isPublished: data.isPublished || false,
+          published: data.published || false,
           coverPhoto: null,
           duration: data.duration || 1,
           countries: data.countries || [],
@@ -203,15 +203,15 @@ const CompleteTripPage = () => {
     }
 
     try {
-      await api.post(
-        `/trips/update-trip/${tripData._id}`,
-        { isPublished: true },
+      await api.put(
+        `/trips/publish/${tripData._id}`,
+        { published: true },
         "Publishing trip...",
       );
 
       setTripData((prev) => ({
         ...prev,
-        isPublished: true,
+        published: !prev.published,
       }));
       // Redirect or other UI feedback here
     } catch (err) {
@@ -620,8 +620,8 @@ const CompleteTripPage = () => {
           Save
         </button>
         <button
-          disabled={tripData.isPublished}
-          className={`publish-button bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition ${tripData.isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
+          disabled={tripData.published}
+          className={`publish-button bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition ${tripData.published ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={publishTrip}
         >
           Publish
