@@ -56,15 +56,16 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser,
-        isAuthenticated: !!user,
+        isAuthenticated: user !== null,
         isProfileCompleted: user?.isProfileCompleted,
         isLoading: isAuthChecking || isLoading,
+        isAuthChecking,
         checkAuth,
         login,
         logout,
       }}
     >
-      {!isAuthChecking && children}
+      {children}
     </AuthContext.Provider>
   );
 };

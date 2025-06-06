@@ -27,8 +27,8 @@ const ProfileInfo = ({ profileInfo }) => {
         <span>{country || "Country not set"}</span>
       </p>
       <div className="user-stats mt-2 text-xs text-gray-500">
-        <p>Published Trip Plans: {publishedTripPlans}</p>
-        <p>Times Copied by Other Users: {timesCopied}</p>
+        <p>Published Trips: {publishedTripPlans}</p>
+        <p>Times Copied by Others: {timesCopied}</p>
       </div>
     </div>
   );

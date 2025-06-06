@@ -13,6 +13,9 @@ export default {
         text: "var(--color-text)",
         accent: "var(--color-accent)",
       },
+      screens: {
+        xs: "480px",
+      },
     },
   },
   plugins: [],
