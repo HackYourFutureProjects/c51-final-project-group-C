@@ -23,7 +23,7 @@ const LocationSearch = ({ value, onChange }) => {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(debounced)}&format=json&limit=5`,
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(debounced)}&format=json&limit=5&addressdetails=1`,
         );
 
         const data = await res.json();

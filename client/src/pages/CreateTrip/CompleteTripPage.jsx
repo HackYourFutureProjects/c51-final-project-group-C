@@ -20,8 +20,8 @@ const CompleteTripPage = () => {
     duration: 0,
     countries: [],
     days: [],
-    overallRating: 0,
-    overallReview: "",
+    creatorRating: 0,
+    creatorOverview: "",
   });
 
   const [dayIndex, setDayIndex] = useState(null);
@@ -41,12 +41,9 @@ const CompleteTripPage = () => {
           coverPhoto: null,
           duration: data.duration || 1,
           countries: data.countries || [],
-          days: Array.from(
-            { length: data.duration || 1 },
-            (_, idx) => data.days?.[idx] || { title: "", activities: [] },
-          ),
-          overallRating: data.overallRating || 0,
-          overallReview: data.overallReview || "",
+          days: data.days || [],
+          creatorRating: data.creatorRating || 0,
+          creatorOverview: data.creatorOverview || "",
         });
       } catch (err) {
         setServerApiError(err.message || "Failed to load trip data.");
@@ -71,7 +68,14 @@ const CompleteTripPage = () => {
 
   const updateActivityField = (dayInd, activityInd, field, value) => {
     const newDays = [...tripData.days];
-    newDays[dayInd].activities[activityInd][field] = value;
+    const activity = newDays[dayInd].activities[activityInd];
+
+    if (field === "notes") {
+      if (!activity.notes) activity.notes = {};
+      activity.notes.text = value;
+    } else {
+      activity[field] = value;
+    }
     setTripData({ ...tripData, days: newDays });
   };
 
@@ -120,9 +124,17 @@ const CompleteTripPage = () => {
                 const createdActivity = await api.post(
                   `/trips/${tripId}/days/${dayId}/activities/create-activity`,
                   {
-                    title: activity.title,
-                    notes: activity.notes,
-                    price: activity.price,
+                    name: activity.name || "",
+                    notes: activity.notes
+                      ? {
+                          index: 0,
+                          text:
+                            typeof activity.notes === "string"
+                              ? activity.notes
+                              : "",
+                        }
+                      : undefined,
+                    price: Number(activity.price),
                   },
                   "Creating activity...",
                 );
@@ -134,7 +146,10 @@ const CompleteTripPage = () => {
                 const createdLocation = await api.post(
                   `/trips/${tripId}/days/${dayId}/activities/${activityId}/locations/create-location`,
                   {
-                    coordinates: activity.location.coordinates,
+                    coordinates: {
+                      lat: Number(activity.location.lat),
+                      lng: Number(activity.location.lng),
+                    },
                     address: activity.location.address,
                   },
                   "Creating location...",
@@ -157,7 +172,6 @@ const CompleteTripPage = () => {
           };
         }),
       );
-
       // Update trip data in state
       setTripData((prev) => ({
         ...prev,
@@ -169,8 +183,8 @@ const CompleteTripPage = () => {
       await api.post(
         `/trips/update-trip/${tripId}`,
         {
-          overallReview: tripData.overallReview,
-          overallRating: tripData.overallRating,
+          creatorOverview: tripData.creatorOverview,
+          creatorRating: tripData.creatorRating,
         },
         "Updating trip...",
       );
@@ -402,7 +416,7 @@ const CompleteTripPage = () => {
                           <input
                             type="text"
                             placeholder="Activity title"
-                            value={activity.title}
+                            value={activity.name}
                             onChange={(e) =>
                               updateActivityField(i, j, "title", e.target.value)
                             }
@@ -440,7 +454,7 @@ const CompleteTripPage = () => {
                           </label>
                           <textarea
                             placeholder="Activity Notes"
-                            value={activity.notes || ""}
+                            value={activity.notes?.text || ""}
                             onChange={(e) =>
                               updateActivityField(i, j, "notes", e.target.value)
                             }
@@ -541,9 +555,14 @@ const CompleteTripPage = () => {
                     const newDays = [...tripData.days];
                     newDays[i].activities.push({
                       title: "",
-                      location: "",
+                      location: {
+                        lat: null,
+                        lng: null,
+                        address: "",
+                        _id: null,
+                      },
                       price: "",
-                      notes: "",
+                      notes: { text: "" },
                       photos: [],
                     });
                     setTripData({ ...tripData, days: newDays });
@@ -575,18 +594,18 @@ const CompleteTripPage = () => {
         {/* Simple stars and overview section */}
         <div className="ratings-container mb-8">
           <RatingStars
-            rating={tripData.overallRating}
+            rating={tripData.creatorRating}
             onRate={(newRating) =>
-              setTripData({ ...tripData, overallRating: newRating })
+              setTripData({ ...tripData, creatorRating: newRating })
             }
           />
         </div>
         <textarea
           rows={4}
           placeholder="Write your overall review here..."
-          value={tripData.overallReview}
+          value={tripData.creatorOverview}
           onChange={(e) =>
-            setTripData({ ...tripData, overallReview: e.target.value })
+            setTripData({ ...tripData, creatorOverview: e.target.value })
           }
           className="overall-review w-full border border-gray-300 rounded p-2"
         ></textarea>
