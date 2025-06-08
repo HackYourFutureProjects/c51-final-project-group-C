@@ -67,9 +67,9 @@ const LocationSearch = ({ value, onChange }) => {
       )}
       {suggestions.length > 0 && (
         <ul className="absolute z-10 bg-white border rounded mt-1 w-full max-h-48 overflow-y-auto shadow">
-          {suggestions.map((place, idx) => (
+          {suggestions.map((place) => (
             <li
-              key={idx}
+              key={place.place_id}
               className="p-2 hover:bg-orange-100 cursor-pointer text-sm"
               onClick={() => handleSelect(place)}
             >

@@ -22,19 +22,29 @@ function RatingStars({ rating, onRate }) {
         }
 
         return (
-          <span
-            key={i}
-            className="relative cursor-pointer w-6 h-6"
-            style={{ position: "relative" }}
-          >
+          <span key={i} className="relative cursor-pointer w-6 h-6">
             {icon}
             <span
+              role="button"
+              tabIndex={0}
               className="absolute top-0 left-0 w-1/2 h-full"
               onClick={() => onRate && onRate(i + 0.5)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onRate && onRate(i + 0.5);
+                }
+              }}
             />
             <span
+              role="button"
+              tabIndex={0}
               className="absolute top-0 right-0 w-1/2 h-full"
               onClick={() => onRate && onRate(i + 1)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onRate && onRate(i + 1);
+                }
+              }}
             />
           </span>
         );
