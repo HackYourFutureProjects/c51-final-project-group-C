@@ -41,7 +41,10 @@ const CompleteTripPage = () => {
           coverPhoto: null,
           duration: data.duration || 1,
           countries: data.countries || [],
-          days: data.days || [],
+          days: Array.from(
+            { length: data.duration || 1 },
+            (_, idx) => data.days?.[idx] || { title: "", activities: [] },
+          ),
           creatorRating: data.creatorRating || 0,
           creatorOverview: data.creatorOverview || "",
         });
@@ -94,8 +97,8 @@ const CompleteTripPage = () => {
           },
           "Creating trip...",
         );
+        console.log("Trip created:", createdTrip);
         tripId = createdTrip._id;
-
         // Update state with new tripId
         setTripData((prev) => ({ ...prev, _id: tripId }));
       }
@@ -105,6 +108,11 @@ const CompleteTripPage = () => {
         tripData.days.map(async (day, idx) => {
           let dayId = day._id;
           if (!dayId) {
+            // Before creating day:
+            console.log("Creating day with data:", {
+              title: day.title,
+              dayNumber: idx + 1,
+            });
             const createdDay = await api.post(
               `/trips/${tripId}/days/create-day`,
               {
@@ -113,25 +121,30 @@ const CompleteTripPage = () => {
               },
               "Creating day...",
             );
+            console.log("create-day response:", createdDay);
             dayId = createdDay._id;
           }
-
           // Save activities for this day
           const updatedActivities = await Promise.all(
             day.activities.map(async (activity) => {
               let activityId = activity._id;
               if (!activityId) {
+                // Before creating activity:
+                console.log("Creating activity with data:", {
+                  name: activity.name || "",
+                  notes: activity.notes?.text
+                    ? { noteNumber: 0, text: activity.notes.text }
+                    : undefined,
+                  price: Number(activity.price) || 0,
+                });
                 const createdActivity = await api.post(
                   `/trips/${tripId}/days/${dayId}/activities/create-activity`,
                   {
                     name: activity.name || "",
-                    notes: activity.notes
+                    notes: activity.notes?.text
                       ? {
-                          index: 0,
-                          text:
-                            typeof activity.notes === "string"
-                              ? activity.notes
-                              : "",
+                          noteNumber: 0,
+                          text: activity.notes.text,
                         }
                       : undefined,
                     price: Number(activity.price),
@@ -139,6 +152,7 @@ const CompleteTripPage = () => {
                   "Creating activity...",
                 );
                 activityId = createdActivity._id;
+                console.log("Activity created:", createdActivity);
               }
 
               // Save location if needed
@@ -418,7 +432,7 @@ const CompleteTripPage = () => {
                             placeholder="Activity title"
                             value={activity.name}
                             onChange={(e) =>
-                              updateActivityField(i, j, "title", e.target.value)
+                              updateActivityField(i, j, "name", e.target.value)
                             }
                             className="activity-title border p-2 rounded w-full"
                           />

@@ -46,7 +46,7 @@ const LocationSearch = ({ value, onChange }) => {
       name: locationObj.name || locationObj.display_name,
       display_name: locationObj.display_name,
       lat: parseFloat(locationObj.lat),
-      lon: parseFloat(locationObj.lon),
+      lng: parseFloat(locationObj.lon),
     });
   };
 

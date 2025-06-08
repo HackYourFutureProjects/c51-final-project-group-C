@@ -83,25 +83,6 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/complete-profile"
-                element={
-                  <ProtectedRoute>
-                    <CompleteProfileModal />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/users/me"
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/users/:userId" element={<ProfilePage />} />
-            </Route>
-          </Routes>
             </Routes>
           </RouteAccessChecker>
         </AuthProvider>
