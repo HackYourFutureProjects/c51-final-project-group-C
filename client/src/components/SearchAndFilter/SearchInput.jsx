@@ -1,9 +1,16 @@
 import { LuArrowRight } from "react-icons/lu";
 
-const SearchInput = () => {
+const SearchInput = ({ search, setSearch }) => {
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+  };
+
   return (
     <div className="relative w-full max-w-md">
       <input
+        value={search || ""}
+        onChange={handleChange}
         type="text"
         placeholder="Search for a trip by name..."
         className="
@@ -22,7 +29,7 @@ const SearchInput = () => {
           duration-300
         "
       />
-      <button
+      <span
         type="submit"
         aria-label="Search"
         className="
@@ -38,7 +45,7 @@ const SearchInput = () => {
         "
       >
         <LuArrowRight className="w-6 h-6" />
-      </button>
+      </span>
     </div>
   );
 };
