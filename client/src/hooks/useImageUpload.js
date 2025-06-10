@@ -90,7 +90,8 @@ const useImageUpload = () => {
     }
   };
 
-  // Generic function for uploading images to any entity
+  // 👇 Generic function for uploading images for trip cover and activity photos
+  // (We use separate one for profile photo as there we also update authContext)
   const uploadImage = async (
     file,
     type,
