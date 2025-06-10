@@ -1,9 +1,9 @@
 import { FaSliders } from "react-icons/fa6";
 
-const FilterButton = () => {
+const FilterButton = ({ onClick }) => {
   return (
     <button
-      onClick={() => {}}
+      onClick={onClick}
       className="
         flex 
         items-center 
@@ -24,8 +24,8 @@ const FilterButton = () => {
       "
       aria-label="Filter"
     >
-      <FaSliders className="w-5 h-5 text-accent" />
       Filters
+      <FaSliders className="w-5 h-5 text-accent" />
     </button>
   );
 };

@@ -17,6 +17,7 @@ import CreateTripModal from "./pages/CreateTrip/CreateTripModal";
 import PublishedTripPage from "./pages/TripPages/PublishedTripPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorModal from "./components/ErrorModal";
+import FilterPage from "./pages/filters/FilterPage";
 
 const App = () => {
   return (
@@ -41,7 +42,7 @@ const App = () => {
                   element={<ResetPasswordPage />}
                 />
                 <Route path="/verify-email" element={<EmailVerification />} />
-
+                <Route path="/filters" element={<FilterPage />} />
                 <Route
                   path="/create-trip-plan"
                   element={
