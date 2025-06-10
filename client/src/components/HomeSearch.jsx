@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SearchInput from "./SearchAndFilter/SearchInput";
 import DropDownMenu from "./DropDownMenu";
 const SortBy = ["Rating", "Duration"];
-// the onClick function for dropdown will be one for all the options in a one if statement (if item===option 1 do this else if item === option 2 do that )
+
 const HomeSearch = () => {
   const navigate = useNavigate();
   return (
