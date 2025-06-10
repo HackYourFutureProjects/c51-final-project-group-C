@@ -24,6 +24,8 @@ const activitySchema = new mongoose.Schema({
     // optional: assume free if not provided
     default: 0,
   },
+
+  activityPhotoUrls: { type: [String], default: [] },
 });
 
 const activity = mongoose.model("activities", activitySchema);

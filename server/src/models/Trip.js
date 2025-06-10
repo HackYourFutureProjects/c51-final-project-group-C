@@ -26,6 +26,9 @@ const tripSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
+
+  coverPhotoUrl: { type: String, default: null },
+
   days: [
     {
       type: mongoose.Schema.Types.ObjectId,
