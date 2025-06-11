@@ -1,5 +1,9 @@
 const NoResultFound = () => {
-  return <div>sorry no result found</div>;
+  return (
+    <div className="no-result-found flex items-center justify-center  h-full">
+      <h2>We could not find anything matching your search.</h2>
+    </div>
+  );
 };
 
 export default NoResultFound;

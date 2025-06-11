@@ -18,7 +18,19 @@ const FilterPage = () => {
 
   const [durationRange, setDurationRange] = useState(initialDuration);
   const [countries, setCountries] = useState([]);
+  const buildAndNavigateToQuery = (durationRange, countries, navigate) => {
+    const [min, max] = durationRange;
+    const durationParam = `duration=${min}-${max}`;
 
+    const countryParam =
+      countries.length > 0
+        ? `country=${countries.map((c) => c.value).join(",")}`
+        : null;
+
+    const query = [durationParam, countryParam].filter(Boolean).join("&");
+
+    navigate(`/?${query}`);
+  };
   return (
     <Modal
       isOpen={true}
@@ -39,17 +51,7 @@ const FilterPage = () => {
         </div>
       }
       onClose={() => {
-        const [min, max] = durationRange;
-        const durationParam = `duration=${min}-${max}`;
-
-        const countryParam =
-          countries.length > 0
-            ? `country=${countries.map((c) => c.value).join(",")}`
-            : null;
-
-        const query = [durationParam, countryParam].filter(Boolean).join("&");
-
-        navigate(`/?${query}`);
+        buildAndNavigateToQuery(durationRange, countries, navigate);
       }}
       footer={
         <div className="flex justify-between">
@@ -58,26 +60,15 @@ const FilterPage = () => {
             onClick={() => {
               setDurationRange([1, 50]);
               setCountries([]);
+              navigate("/");
             }}
           />
           <TripActionButton
             label={"Show results"}
             isPrimary={true}
-            onClick={() => {
-              const [min, max] = durationRange;
-              const durationParam = `duration=${min}-${max}`;
-
-              const countryParam =
-                countries.length > 0
-                  ? `country=${countries.map((c) => c.value).join(",")}`
-                  : null;
-
-              const query = [durationParam, countryParam]
-                .filter(Boolean)
-                .join("&");
-
-              navigate(`/?${query}`);
-            }}
+            onClick={() =>
+              buildAndNavigateToQuery(durationRange, countries, navigate)
+            }
           />
         </div>
       }

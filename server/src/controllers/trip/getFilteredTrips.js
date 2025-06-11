@@ -3,41 +3,45 @@ import { logError } from "../../util/logging.js";
 
 export const getFilteredTrips = async (req, res) => {
   try {
-    const { country, city, duration, title, sort } = req.query;
+    const {
+      country,
+      city,
+      duration,
+      title,
+      sort,
+      skip = 0,
+      limit = 20,
+    } = req.query;
 
-    // get only published trips
     const filter = { published: true };
 
-    // Country filter (multiple)
     if (country) {
       const countryIDs = country.split(",");
       filter.countries = { $in: countryIDs };
     }
 
-    // City filter (multiple)
     if (city) {
       const cities = city.split(",");
       filter.city = { $in: cities };
     }
 
-    // Duration filter (range)
     if (duration) {
       const [min, max] = duration.split("-").map(Number);
       filter.duration = { $gte: min, $lte: max };
     }
 
-    // Title filter (case-insensitive partial match)
     if (title) {
       filter.title = { $regex: title, $options: "i" };
     }
 
-    // Sorting
     let sortOption = {};
     if (sort === "rating") sortOption.creatorRating = -1;
     else if (sort === "duration") sortOption.duration = -1;
 
     const filteredTrips = await Trip.find(filter)
       .sort(sortOption)
+      .skip(Number(skip))
+      .limit(Number(limit))
       .populate("countries");
 
     res.json(filteredTrips);
