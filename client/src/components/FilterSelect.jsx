@@ -14,6 +14,7 @@ const FilterSelect = ({
   placeholder,
   entity,
   url,
+  preSelected,
 }) => {
   const [options, setOptions] = useState([]);
   const api = useFetch();
@@ -21,32 +22,40 @@ const FilterSelect = ({
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   useEffect(() => {
-    const fetchCountries = async () => {
+    const fetchData = async () => {
       try {
         startLoading(`Loading ${entity}...`);
         const data = await api.get(url);
 
-        const formattedData = data.map((country) => ({
-          value: country._id,
-          label: country.name,
+        const formattedData = data.map((item) => ({
+          value: item._id,
+          label: item.name,
         }));
 
         setOptions(formattedData);
+
+        if (preSelected) {
+          const selected = preSelected
+            .split(",")
+            .map((id) => formattedData.find((c) => c.value === id))
+            .filter(Boolean);
+          onChange(selected);
+        }
       } catch (err) {
-        console.error(`Failed to fetch${entity} : `, err);
+        console.error(`Failed to fetch ${entity}: `, err);
         setServerApiError(err.message);
       } finally {
         stopLoading();
       }
     };
 
-    fetchCountries();
+    fetchData();
   }, []);
 
   return (
     <div className="w-full">
       {isLoading && options.length === 0 ? (
-        <p>Loading countries...</p>
+        <p>Loading {entity.toLowerCase()}...</p>
       ) : (
         <>
           <Select
@@ -73,9 +82,7 @@ const FilterSelect = ({
             }}
             className="w-full"
             styles={FilterStyle}
-            components={{
-              IndicatorSeparator: () => null,
-            }}
+            components={{ IndicatorSeparator: () => null }}
           />
           <FormError message={error} />
         </>

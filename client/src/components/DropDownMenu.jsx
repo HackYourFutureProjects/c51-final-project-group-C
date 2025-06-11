@@ -3,6 +3,7 @@ import { HiChevronDown } from "react-icons/hi";
 
 function DropDownMenu({ name, items, onClick }) {
   const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(null); // <-- track selected option
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -17,31 +18,49 @@ function DropDownMenu({ name, items, onClick }) {
     };
   }, []);
 
+  const handleSelect = (item) => {
+    if (item === "Clear") {
+      setSelected(null);
+      onClick(null);
+    } else {
+      setSelected(item);
+      onClick(item);
+    }
+    setOpen(false);
+  };
+
   return (
-    <div ref={menuRef} className="relative inline-block text-left ">
+    <div ref={menuRef} className="relative inline-block text-left">
       <button
         onClick={() => setOpen(!open)}
         className="
-        flex 
-        items-center 
-        gap-2 
-        px-4 
-        py-2 
-        h-9
-        rounded-full 
-        border 
-        border-border
-       bg-background
-        hover:bg-accent/10 
-        transition 
-        duration-300
-        focus:outline-none
-        focus:border-accent
-        focus:ring-accent
-      "
+          flex 
+          items-center 
+          gap-2 
+          px-4 
+          py-2 
+          h-9
+          rounded-full 
+          border 
+          border-border
+          bg-background
+          hover:bg-accent/10 
+          transition 
+          duration-300
+          focus:outline-none
+          focus:border-accent
+          focus:ring-accent
+        "
       >
-        <span className="text-base font-medium">{name}</span>
-        <HiChevronDown className="w-5 h-5" />
+        <span className="text-base font-medium">
+          {name}
+          {selected && (
+            <span className="ml-2 font-normal text-sm text-gray-500">
+              : {selected}
+            </span>
+          )}
+        </span>
+        <HiChevronDown className="w-5 h-5 text-accent" />
       </button>
 
       {open && (
@@ -50,10 +69,7 @@ function DropDownMenu({ name, items, onClick }) {
             {items.map((item, index) => (
               <li key={index}>
                 <button
-                  onClick={() => {
-                    onClick(item);
-                    setOpen(false);
-                  }}
+                  onClick={() => handleSelect(item)}
                   className="block w-full px-4 py-2 text-left text-accent rounded hover:bg-accent hover:text-white transition-colors duration-200"
                 >
                   {item}

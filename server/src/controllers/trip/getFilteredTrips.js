@@ -4,18 +4,19 @@ import { logError } from "../../util/logging.js";
 export const getFilteredTrips = async (req, res) => {
   try {
     const { country, city, duration, title, sort } = req.query;
+
     // get only published trips
     const filter = { published: true };
 
     // Country filter (multiple)
     if (country) {
-      const countryIDs = country.split(","); // e.g., ["Netherlands", "Germany"]
+      const countryIDs = country.split(",");
       filter.countries = { $in: countryIDs };
     }
 
     // City filter (multiple)
     if (city) {
-      const cities = city.split(","); // e.g., ["Amsterdam", "Berlin"]
+      const cities = city.split(",");
       filter.city = { $in: cities };
     }
 
@@ -32,7 +33,7 @@ export const getFilteredTrips = async (req, res) => {
 
     // Sorting
     let sortOption = {};
-    if (sort === "rating") sortOption.rating = -1;
+    if (sort === "rating") sortOption.creatorRating = -1;
     else if (sort === "duration") sortOption.duration = -1;
 
     const filteredTrips = await Trip.find(filter)

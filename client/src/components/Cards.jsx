@@ -1,7 +1,6 @@
-import trips from "../assets/dummyData/dummyTrips.js";
 import RatingStars from "./RatingStars.jsx";
 
-function Cards() {
+function Cards({ trips }) {
   return (
     <div className="cards-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-9 m-20 mt-2">
       {trips.map((trip) => {
@@ -17,13 +16,16 @@ function Cards() {
             />
             <header>
               <h2 className="card-title p-1 font-bold text-text">
-                {trip.tripName}
+                {trip.title}
+              </h2>
+              <h2 className="card-title p-1 font-bold text-text">
+                {trip.duration}{" "}
               </h2>
             </header>
             <div className="card-details p-1">
               <p>
                 Created by {trip.creatorName}{" "}
-                <RatingStars rating={trip.rating} />
+                <RatingStars rating={trip.creatorRating} />
               </p>
             </div>
             <footer>
