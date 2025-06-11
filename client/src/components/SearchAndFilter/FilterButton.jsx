@@ -1,10 +1,11 @@
 import { FaSliders } from "react-icons/fa6";
 
-const FilterButton = ({ onClick }) => {
+const FilterButton = ({ onClick, count }) => {
   return (
     <button
       onClick={onClick}
       className="
+        relative
         flex 
         items-center 
         gap-2 
@@ -14,7 +15,7 @@ const FilterButton = ({ onClick }) => {
         rounded-full 
         border 
         border-border
-       bg-background
+        bg-background
         hover:bg-accent/10 
         transition 
         duration-300
@@ -26,6 +27,28 @@ const FilterButton = ({ onClick }) => {
     >
       Filters
       <FaSliders className="w-5 h-5 text-accent" />
+      {count > 0 && (
+        <span
+          className="
+            absolute 
+            -top-1 
+            -right-1 
+            text-xs 
+            bg-accent 
+            text-white 
+            w-5 
+            h-5
+            flex 
+            items-center 
+            justify-center 
+            rounded-full 
+            border-2 
+            border-white
+          "
+        >
+          {count}
+        </span>
+      )}
     </button>
   );
 };

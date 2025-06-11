@@ -30,7 +30,7 @@ function DropDownMenu({ name, items, onClick }) {
   };
 
   return (
-    <div ref={menuRef} className="relative inline-block text-left">
+    <div ref={menuRef} className="relative inline-block text-right ">
       <button
         onClick={() => setOpen(!open)}
         className="
@@ -50,6 +50,7 @@ function DropDownMenu({ name, items, onClick }) {
           focus:outline-none
           focus:border-accent
           focus:ring-accent
+         
         "
       >
         <span className="text-base font-medium">
