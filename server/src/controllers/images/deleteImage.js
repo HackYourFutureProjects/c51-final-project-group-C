@@ -10,7 +10,7 @@ export const deleteImage = async (req, res) => {
     const { type, targetObjectId, imageUrl } = req.body;
 
     // 👇 To convert targetObjectId we got in request body to actual MongoDB ObjectId
-    const objectId = mongoose.Types.ObjectId(targetObjectId);
+    const objectId = new mongoose.Types.ObjectId(targetObjectId);
 
     // 👇 And then we update the target object (user, trip or activity) by removing current image url
     let updatedDocument;

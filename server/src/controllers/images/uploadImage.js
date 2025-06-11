@@ -17,7 +17,7 @@ export const uploadImage = async (req, res) => {
     const { type, targetObjectId } = req.body;
 
     // 👇 To convert targetObjectId we got in request body to valid MongoDB ObjectId
-    const objectId = mongoose.Types.ObjectId(targetObjectId);
+    const objectId = new mongoose.Types.ObjectId(targetObjectId);
 
     // 👇 Check if the target object (user, trip or activity) already has some uploaded image - to remove it after uploading new one
     let existingDocument;
