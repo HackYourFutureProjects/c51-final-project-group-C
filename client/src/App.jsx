@@ -14,6 +14,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Layout } from "./components/Layout";
 import CreateTripModal from "./pages/CreateTrip/CreateTripModal";
+import CompleteTripPage from "./pages/CreateTrip/CompleteTripPage";
 import PublishedTripPage from "./pages/TripPages/PublishedTripPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorModal from "./components/ErrorModal";
@@ -74,6 +75,14 @@ const App = () => {
                 {/* later we will have url like this: /trips/:tripId */}
                 <Route path="/trips/123" element={<PublishedTripPage />} />
               </Route>
+              <Route
+                path="/complete-trip/:tripId"
+                element={
+                  <ProtectedRoute>
+                    <CompleteTripPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </RouteAccessChecker>
         </AuthProvider>
