@@ -12,7 +12,7 @@ const FilterButton = ({ onClick, count }) => {
         px-4 
         py-2 
         h-9
-        rounded-full 
+        rounded-md
         border 
         border-border
         bg-background
@@ -31,8 +31,8 @@ const FilterButton = ({ onClick, count }) => {
         <span
           className="
             absolute 
-            -top-1 
-            -right-1 
+            -top-3
+            -right-2
             text-xs 
             bg-accent 
             text-white 

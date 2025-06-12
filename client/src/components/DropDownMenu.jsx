@@ -3,7 +3,7 @@ import { HiChevronDown } from "react-icons/hi";
 
 function DropDownMenu({ name, items, onClick }) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(null); // <-- track selected option
+  const [selected, setSelected] = useState(null);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ function DropDownMenu({ name, items, onClick }) {
           px-4 
           py-2 
           h-9
-          rounded-full 
+          rounded-md
           border 
           border-border
           bg-background
@@ -56,7 +56,7 @@ function DropDownMenu({ name, items, onClick }) {
         <span className="text-base font-medium">
           {name}
           {selected && (
-            <span className="ml-2 font-normal text-sm text-gray-500">
+            <span className=" font-normal text-sm text-gray-500">
               : {selected}
             </span>
           )}
@@ -71,7 +71,7 @@ function DropDownMenu({ name, items, onClick }) {
               <li key={index}>
                 <button
                   onClick={() => handleSelect(item)}
-                  className="block w-full px-4 py-2 text-left text-accent rounded hover:bg-accent hover:text-white transition-colors duration-200"
+                  className="block w-full px-4 py-2 text-base text-left text-accent rounded hover:bg-accent hover:text-white transition-colors duration-200"
                 >
                   {item}
                 </button>

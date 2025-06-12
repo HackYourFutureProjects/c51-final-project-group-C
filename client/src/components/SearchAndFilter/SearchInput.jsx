@@ -1,5 +1,4 @@
-import { LuArrowRight } from "react-icons/lu";
-
+import { FiSearch } from "react-icons/fi";
 const SearchInput = ({ search, setSearch }) => {
   const handleChange = (e) => {
     const value = e.target.value;
@@ -12,7 +11,7 @@ const SearchInput = ({ search, setSearch }) => {
         value={search || ""}
         onChange={handleChange}
         type="text"
-        placeholder="Search for a trip by name..."
+        placeholder="Search trips by title"
         className="
           w-full 
           pr-12 
@@ -20,7 +19,7 @@ const SearchInput = ({ search, setSearch }) => {
           pl-4 
           border 
           border-border
-          rounded-full 
+          rounded-md
           focus:outline-none 
           text-sm
           focus:ring-accent
@@ -38,13 +37,13 @@ const SearchInput = ({ search, setSearch }) => {
           top-1/2 
           transform 
           -translate-y-1/2 
-          text-accent 
+          text-border 
           hover:text-accent/80 
           transition 
           duration-300
         "
       >
-        <LuArrowRight className="w-6 h-6" />
+        <FiSearch className="w-6 h-6" />
       </span>
     </div>
   );
