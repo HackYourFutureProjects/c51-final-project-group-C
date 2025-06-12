@@ -1,23 +1,57 @@
-import Slider from "react-slider";
+import Slider from "@mui/material/Slider";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const RangeSlider = ({ value, onChange }) => {
   return (
-    <div className="Box w-full max-w-[400px] py-4 pb-6 px-6 bg-background rounded-[10px] shadow-sm h-auto border-border border-solid border-[2px]">
-      <h4 className="title text-2xl mb-2 font-small text-accent">
-        <span>Duration</span>
-      </h4>
-      <div className="values m-0 font-medium">
-        {value[0]}-{value[1]} Days
-      </div>
+    <div className="range-slider-container ">
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 400,
+          p: 3,
 
-      <Slider
-        className="slider w-full h-[2px] bg-accent mt-4"
-        thumbClassName="bg-white w-[18px] h-[18px] rounded-full cursor-grab border-2 border-solid border-accent -top-[7px]"
-        value={value}
-        min={1}
-        max={50}
-        onChange={onChange}
-      />
+          bgcolor: "var( --color-background)",
+          borderRadius: 2,
+          border: "2px solid",
+          borderColor: "var(--color-border)",
+        }}
+      >
+        <Typography variant="h6" color="var(--color-accent)" gutterBottom>
+          Duration
+        </Typography>
+        <Typography variant="body1" fontWeight={500}>
+          {value[0]} - {value[1]} Days
+        </Typography>
+
+        <Slider
+          value={value}
+          onChange={(e, newValue) => onChange(newValue)}
+          valueLabelDisplay="auto"
+          min={1}
+          max={50}
+          sx={{
+            mt: 1,
+            mb: -1,
+            height: 2,
+            color: "var(--color-accent)",
+            "& .MuiSlider-thumb": {
+              backgroundColor: "#fff",
+              border: "2px solid var(--color-accent)",
+              "&:hover, &.Mui-focusVisible, &.Mui-active": {
+                boxShadow: "none", // remove shadow/glow on hover/focus/active
+                // optionally override color or other styles here if needed
+              },
+            },
+            "& .MuiSlider-valueLabel": {
+              display: "none",
+              "&:before": {
+                display: "none",
+              },
+            },
+          }}
+        />
+      </Box>
     </div>
   );
 };
