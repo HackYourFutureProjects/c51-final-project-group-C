@@ -28,7 +28,7 @@ tripRouter.post(
 );
 tripRouter.put("/publish/:tripID", requireAuth, toggleTripPublished);
 tripRouter.get("/:tripID", getTripById);
-tripRouter.delete("/:tripID", requireAuth, deleteTrip);
 tripRouter.get("/", getFilteredTrips);
+tripRouter.delete("/:tripID", requireAuth, deleteTrip);
 
 export default tripRouter;

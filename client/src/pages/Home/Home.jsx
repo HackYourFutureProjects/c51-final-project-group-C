@@ -27,14 +27,13 @@ const Home = () => {
   const setServerApiError = useError();
   const [count, setCount] = useState();
   // to calculate the filters numbers
-  console.log(duration);
   useEffect(() => {
     let total = 0;
     if (duration && duration !== "1-50") total += 1;
     if (country) total += 1;
     setCount(total);
   }, [duration, country]);
-  console.log(duration, country);
+
   // Debounce the search input
   useEffect(() => {
     const handler = setTimeout(() => {
