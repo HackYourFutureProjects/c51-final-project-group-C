@@ -47,3 +47,13 @@ export const urlSchema = z
   .string()
   .url("Invalid URL format")
   .max(2048, "URL must not exceed 2048 characters");
+
+// Title schema (for trip title, activity name, etc)
+export const titleSchema = z
+  .string({
+    required_error: "Title is required",
+    invalid_type_error: "Title must be a string",
+  })
+  .trim()
+  .min(3, "Title must be at least 3 characters")
+  .max(80, "Title must not exceed 80 characters");

@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import Avatar from "./Avatar";
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -67,7 +67,11 @@ const Header = () => {
               onClick={() => navigate("/users/me")}
               className="focus:outline-none transition transform"
             >
-              <Avatar size="medium" withBorder={true} />
+              <Avatar
+                size="medium"
+                src={user?.profileImageUrl}
+                withBorder={true}
+              />
             </button>
           </>
         ) : (

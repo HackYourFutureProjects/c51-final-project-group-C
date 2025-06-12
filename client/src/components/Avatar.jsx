@@ -3,9 +3,8 @@
 // Image url should be passed as a src prop. If no image is provided, we use profile icon as a fallback.
 
 import { LuUser as UserIcon } from "react-icons/lu";
-import userImage from "../assets/user.jpg";
 
-const Avatar = ({ size = "large", src = userImage, withBorder = false }) => {
+const Avatar = ({ size = "large", src, withBorder = false }) => {
   let imageSizeClasses, iconSizeClasses;
 
   // 👇 Different Tailwind classes will be applied depending on 'size' prop.

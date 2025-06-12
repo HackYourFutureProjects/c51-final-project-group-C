@@ -12,13 +12,14 @@ const ProfileInfo = ({ profileInfo }) => {
     name,
     surname,
     country,
+    profileImageUrl,
     publishedTripPlans = 0,
     timesCopied = 0,
   } = profileInfo;
 
   return (
     <div className="user-info text-center">
-      <Avatar size="large" />
+      <Avatar size="large" src={profileImageUrl} />
       <h2 className="user-name text-xl font-semibold mt-4">
         {name} {surname}
       </h2>

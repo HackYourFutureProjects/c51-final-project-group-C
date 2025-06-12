@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { nameSchema, countryIdArraySchema } from "./commonSchemas.js";
+import { titleSchema, countryIdArraySchema } from "./commonSchemas.js";
 
 export const createTripModalSchema = z
   .object({
-    title: nameSchema,
+    title: titleSchema,
     duration: z
       .number({
         required_error: "Duration is required",

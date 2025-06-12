@@ -20,6 +20,7 @@ export async function getCurrentUser(req, res) {
         name: user.name || null,
         surname: user.surname || null,
         country: user.country || null,
+        profileImageUrl: user.profileImageUrl || null,
       },
       isProfileCompleted,
     });
