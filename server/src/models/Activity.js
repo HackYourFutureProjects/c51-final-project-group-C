@@ -25,6 +25,8 @@ const activitySchema = new mongoose.Schema({
     // optional: assume free if not provided
     default: 0,
   },
+
+  activityPhotoUrls: { type: [String], default: [] },
 });
 // to delete the location that is related to the activity
 activitySchema.pre(

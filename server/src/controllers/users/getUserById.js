@@ -10,7 +10,9 @@ export const getUserById = async (req, res) => {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const user = await User.findById(id).select("name surname country email");
+    const user = await User.findById(id).select(
+      "name surname country email profileImageUrl",
+    );
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

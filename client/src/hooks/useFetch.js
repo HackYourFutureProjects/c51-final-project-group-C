@@ -20,23 +20,22 @@ const useFetch = () => {
 
     // 👇 This is to clear any errors from ErrorContext before making a new request to backend,
     // so previous errors will not will not be shown in the ErrorModal/FormError
+
     clearAllServerErrors();
     startLoading(loadingMessage);
 
+    const isFormData = body instanceof FormData;
+
     const baseOptions = {
       method,
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
+      headers: isFormData ? {} : { "Content-Type": "application/json" },
+      body: body ? (isFormData ? body : JSON.stringify(body)) : null,
     };
 
-    const options = { ...baseOptions };
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
     try {
-      const apiUrl = route.startsWith("/api") ? route : `/api${route}`;
-      const response = await fetch(apiUrl, options);
+      const apiUrl = `/api${route}`;
+      const response = await fetch(apiUrl, baseOptions);
       const data = await response.json();
 
       if (!response.ok) {
@@ -62,8 +61,8 @@ const useFetch = () => {
     performFetch(route, "POST", body, loadingMessage);
   const put = (route, body, loadingMessage) =>
     performFetch(route, "PUT", body, loadingMessage);
-  const del = (route, loadingMessage) =>
-    performFetch(route, "DELETE", null, loadingMessage);
+  const del = (route, body = null, loadingMessage) =>
+    performFetch(route, "DELETE", body, loadingMessage);
 
   return {
     get,

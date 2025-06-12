@@ -17,6 +17,7 @@ import Grid from "../components/Grid";
 import ProfilePageSidebar from "../components/ProfilePageSidebar";
 import ProfileInfo from "../components/ProfileInfo";
 import TripCard from "../components/TripCard";
+import ProfileSettings from "../components/ProfileSettings";
 import { allTrips } from "../assets/dummyData/mockTripData";
 
 const tripsToShow = allTrips.slice(0, 4);
@@ -90,7 +91,6 @@ const ProfilePage = () => {
   }, [userId, isOwnProfile, user, navigate]);
 
   // 👇 We will have better error/loading handling later on
-  // !TODO: Add better error/loading handling
 
   if (isLoading) {
     return <div className="text-center py-8">Loading...</div>;
@@ -105,7 +105,26 @@ const ProfilePage = () => {
   }
 
   // 👇 Private View Layout (how user sees his own profile)
+
   const renderPrivateView = () => {
+    const renderPrivateTabContent = () => {
+      switch (activeTabId) {
+        case "settings":
+          return <ProfileSettings />;
+        case "past-trips":
+        case "future-trips":
+        case "bookmarks":
+        default:
+          return (
+            <Grid columns={3}>
+              {tripsToShow.map((trip) => (
+                <TripCard key={trip._id} trip={trip} />
+              ))}
+            </Grid>
+          );
+      }
+    };
+
     return (
       <div className="profile-layout grid grid-cols-1 lg:grid-cols-4 gap-8">
         <ProfilePageSidebar
@@ -115,13 +134,9 @@ const ProfilePage = () => {
           tabItems={tabsForPrivateProfileView}
         />
 
-        {/* 👇  Grid of Cards */}
-        <div className="content-container lg:col-span-3 border-border border rounded-lg p-4 w-full min-h-[calc(100vh-8rem)]">
-          <Grid columns={3}>
-            {tripsToShow.map((trip) => (
-              <TripCard key={trip._id} trip={trip} />
-            ))}
-          </Grid>
+        {/* 👇  Content Container */}
+        <div className="content-container lg:col-span-3 w-full min-h-[calc(100vh-8rem)]">
+          {renderPrivateTabContent()}
         </div>
       </div>
     );

@@ -8,6 +8,7 @@ import countryRouter from "./routes/countryRoutes.js";
 import dayRouter from "./routes/dayRoutes.js";
 import locationRouter from "./routes/locationRoutes.js";
 import activityRouter from "./routes/activityRoutes.js";
+import imageRouter from "./routes/imageRoutes.js";
 
 // Create an express server
 const app = express();
@@ -40,5 +41,6 @@ app.use(
   "/api/trips/:tripID/days/:dayID/activities/:activityID/locations",
   locationRouter,
 );
+app.use("/api/images", imageRouter);
 
 export default app;
