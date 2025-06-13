@@ -26,6 +26,10 @@ export const updateTrip = async (req, res) => {
       { new: true, runValidators: true },
     );
 
+    if (!updatedTrip) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+
     res.status(200).json(updatedTrip);
   } catch (err) {
     res

@@ -12,6 +12,9 @@ export const createActivitySchema = z.object({
     .number()
     .nonnegative("Price must be a non-negative number")
     .optional(),
+  activityPhotoUrls: z
+    .array(z.string().url("Each photo URL must be a valid URL"))
+    .optional(),
 });
 
 export const updateActivitySchema = createActivitySchema.partial();

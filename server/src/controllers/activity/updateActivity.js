@@ -3,12 +3,12 @@ import { logError } from "../../util/logging";
 
 export const updateActivity = async (req, res) => {
   const { activityID } = req.params;
-  const { name, price, notes } = req.body;
+  const { name, price, notes, activityPhotoUrls } = req.body;
 
   try {
     const updatedActivity = await Activity.findByIdAndUpdate(
       activityID,
-      { name, price, notes },
+      { name, price, notes, activityPhotoUrls },
       { new: true, runValidators: true },
     );
 

@@ -19,7 +19,7 @@ activityRouter.post(
   createActivity,
 );
 activityRouter.put(
-  "/activityID",
+  "/:activityID",
   requireAuth,
   validate(updateActivitySchema),
   updateActivity,
