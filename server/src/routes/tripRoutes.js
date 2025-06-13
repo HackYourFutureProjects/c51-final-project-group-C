@@ -10,6 +10,7 @@ import { updateTrip } from "../controllers/trip/updateTrip.js";
 import { getTripById } from "../controllers/trip/getTripByID.js";
 import { toggleTripPublished } from "../controllers/trip/publishTrip.js";
 import { deleteTrip } from "../controllers/trip/deleteTrip.js";
+import { getFilteredTrips } from "../controllers/trip/getFilteredTrips.js";
 
 const tripRouter = express.Router();
 
@@ -27,6 +28,7 @@ tripRouter.post(
 );
 tripRouter.put("/publish/:tripID", requireAuth, toggleTripPublished);
 tripRouter.get("/:tripID", getTripById);
+tripRouter.get("/", getFilteredTrips);
 tripRouter.delete("/:tripID", requireAuth, deleteTrip);
 
 export default tripRouter;
