@@ -2,13 +2,27 @@ import Trip from "../../models/Trip.js";
 import { logError } from "../../util/logging.js";
 
 export const updateTrip = async (req, res) => {
-  const { creatorOverview, creatorRating } = req.body;
+  const {
+    title,
+    duration,
+    countries,
+    coverPhotoUrl,
+    creatorOverview,
+    creatorRating,
+  } = req.body;
   const { tripID } = req.params;
 
   try {
     const updatedTrip = await Trip.findByIdAndUpdate(
       tripID,
-      { creatorOverview, creatorRating },
+      {
+        title,
+        duration,
+        countries,
+        coverPhotoUrl,
+        creatorOverview,
+        creatorRating,
+      },
       { new: true, runValidators: true },
     );
 
