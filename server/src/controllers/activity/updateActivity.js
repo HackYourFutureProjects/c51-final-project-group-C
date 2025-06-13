@@ -1,5 +1,5 @@
-import Activity from "../../models/Activity";
-import { logError } from "../../util/logging";
+import Activity from "../../models/Activity.js";
+import { logError } from "../../util/logging.js";
 
 export const updateActivity = async (req, res) => {
   const { activityID } = req.params;

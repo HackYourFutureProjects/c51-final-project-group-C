@@ -1,5 +1,5 @@
-import Location from "../../models/Location";
-import { logError } from "../../util/logging";
+import Location from "../../models/Location.js";
+import { logError } from "../../util/logging.js";
 
 export const updateLocation = async (req, res) => {
   const { locationID } = req.params;

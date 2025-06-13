@@ -1,5 +1,5 @@
-import Day from "../../models/Day";
-import { logError } from "../../util/logging";
+import Day from "../../models/Day.js";
+import { logError } from "../../util/logging.js";
 
 export const updateDay = async (req, res) => {
   const { dayID } = req.params;
