@@ -7,3 +7,5 @@ export const createDaySchema = z.object({
     .int()
     .nonnegative("Day number must be a non-negative integer"),
 });
+
+export const updateDaySchema = createDaySchema.partial();

@@ -17,8 +17,12 @@ export const updateDay = async (req, res) => {
     }
 
     // Check for duplicate dayNumber in the same trip
-    if (dayNumber && dayNumber !== Day.dayNumber) {
-      const exists = await Day.findOne({ tripID: Day.tripID, dayNumber });
+    if (dayNumber && dayNumber !== updatedDay.dayNumber) {
+      const exists = await Day.findOne({
+        tripID: updatedDay.tripID,
+        dayNumber,
+        _id: { $ne: updatedDay._id },
+      });
       if (exists) {
         return res.status(400).json({
           message: "Day with this number already exists for this trip",

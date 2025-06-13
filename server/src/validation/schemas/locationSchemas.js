@@ -17,3 +17,5 @@ export const createLocationSchema = z
     address: z.string().min(1, "Address is required").optional(),
   })
   .optional();
+
+export const updateLocationSchema = createLocationSchema;

@@ -13,3 +13,5 @@ export const createActivitySchema = z.object({
     .nonnegative("Price must be a non-negative number")
     .optional(),
 });
+
+export const updateActivitySchema = createActivitySchema.partial();

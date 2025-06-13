@@ -17,6 +17,15 @@ export const createTripModalSchema = z
   .strict();
 
 export const updateTripSchema = z.object({
+  title: titleSchema.optional(),
+  duration: z
+    .number()
+    .int("Duration must be an integer")
+    .min(1, "Duration must be at least 1 day")
+    .max(60, "Duration must not exceed 60 days")
+    .optional(),
+  countries: countryIdArraySchema.optional(),
+  coverPhotoUrl: z.string().url("Must be a valid URL").optional(),
   creatorOverview: z
     .string()
     .trim()
