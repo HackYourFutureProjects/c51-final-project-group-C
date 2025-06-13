@@ -19,12 +19,7 @@ tripRouter.post(
   validate(createTripModalSchema),
   createTrip,
 );
-tripRouter.post(
-  "/update-trip/:tripID",
-  requireAuth,
-  validate(updateTripSchema),
-  updateTrip,
-);
+tripRouter.put("/:tripID", requireAuth, validate(updateTripSchema), updateTrip);
 tripRouter.put("/publish/:tripID", requireAuth, toggleTripPublished);
 tripRouter.get("/:tripID", getTripById);
 tripRouter.delete("/:tripID", requireAuth, deleteTrip);

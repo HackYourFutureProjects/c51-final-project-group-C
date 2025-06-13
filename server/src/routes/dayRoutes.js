@@ -3,8 +3,12 @@ import express from "express";
 import { createDay } from "../controllers/day/createDay.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { validate } from "../middleware/validateData.js";
-import { createDaySchema } from "../validation/schemas/daysSchema.js";
+import {
+  createDaySchema,
+  updateDaySchema,
+} from "../validation/schemas/daysSchema.js";
 import { deleteDay } from "../controllers/day/deleteDay.js";
+import { updateDay } from "../controllers/day/updateDay.js";
 
 const dayRouter = express.Router({ mergeParams: true });
 
@@ -14,6 +18,7 @@ dayRouter.post(
   validate(createDaySchema),
   createDay,
 );
+dayRouter.put("/:dayID", requireAuth, validate(updateDaySchema), updateDay);
 dayRouter.delete("/:dayID", requireAuth, deleteDay);
 
 export default dayRouter;
