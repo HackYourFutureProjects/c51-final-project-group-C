@@ -13,18 +13,19 @@ export const updateTrip = async (req, res) => {
   const { tripID } = req.params;
 
   try {
-    const updatedTrip = await Trip.findByIdAndUpdate(
-      tripID,
-      {
-        title,
-        duration,
-        countries,
-        coverPhotoUrl,
-        creatorOverview,
-        creatorRating,
-      },
-      { new: true, runValidators: true },
-    );
+    const updateFields = {};
+    if (title !== undefined) updateFields.title = title;
+    if (duration !== undefined) updateFields.duration = duration;
+    if (countries !== undefined) updateFields.countries = countries;
+    if (coverPhotoUrl !== undefined) updateFields.coverPhotoUrl = coverPhotoUrl;
+    if (creatorOverview !== undefined)
+      updateFields.creatorOverview = creatorOverview;
+    if (creatorRating !== undefined) updateFields.creatorRating = creatorRating;
+
+    const updatedTrip = await Trip.findByIdAndUpdate(tripID, updateFields, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedTrip) {
       return res.status(404).json({ error: "Trip not found" });

@@ -25,11 +25,14 @@ export const updateDay = async (req, res) => {
       }
     }
 
-    const updatedDay = await Day.findByIdAndUpdate(
-      dayID,
-      { title, dayNumber },
-      { new: true, runValidators: true },
-    );
+    const updateFields = {};
+    if (title !== undefined) updateFields.title = title;
+    if (dayNumber !== undefined) updateFields.dayNumber = dayNumber;
+
+    const updatedDay = await Day.findByIdAndUpdate(dayID, updateFields, {
+      new: true,
+      runValidators: true,
+    });
 
     res.status(200).json(updatedDay);
   } catch (err) {

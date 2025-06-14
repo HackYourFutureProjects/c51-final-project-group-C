@@ -6,9 +6,14 @@ export const updateLocation = async (req, res) => {
   const { coordinates, address } = req.body;
 
   try {
+    const updateFields = {};
+
+    if (coordinates !== undefined) updateFields.coordinates = coordinates;
+    if (address !== undefined) updateFields.address = address;
+
     const updatedLocation = await Location.findByIdAndUpdate(
       locationID,
-      { coordinates, address },
+      updateFields,
       { new: true, runValidators: true },
     );
 

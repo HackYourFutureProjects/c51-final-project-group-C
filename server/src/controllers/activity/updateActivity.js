@@ -6,9 +6,17 @@ export const updateActivity = async (req, res) => {
   const { name, price, notes, activityPhotoUrls } = req.body;
 
   try {
+    const updateFields = {};
+
+    if (name !== undefined) updateFields.name = name;
+    if (price !== undefined) updateFields.price = price;
+    if (notes !== undefined) updateFields.notes = notes;
+    if (activityPhotoUrls !== undefined)
+      updateFields.activityPhotoUrls = activityPhotoUrls;
+
     const updatedActivity = await Activity.findByIdAndUpdate(
       activityID,
-      { name, price, notes, activityPhotoUrls },
+      updateFields,
       { new: true, runValidators: true },
     );
 
