@@ -34,6 +34,23 @@ const CompleteTripPage = () => {
       try {
         const data = await api.get(`/trips/${tripId}`);
 
+        // Normalize locations so each activity.location has a display_name
+        const normalizedDays = (data.days || []).map((day) => ({
+          ...day,
+          activities: (day.activities || []).map((activity) => ({
+            ...activity,
+            location: activity.location
+              ? {
+                  ...activity.location,
+                  display_name:
+                    activity.location.display_name ||
+                    activity.location.address ||
+                    "",
+                }
+              : null,
+          })),
+        }));
+
         setTripData({
           _id: data._id,
           title: data.title || "",
@@ -41,10 +58,13 @@ const CompleteTripPage = () => {
           coverPhoto: null,
           duration: data.duration || 1,
           countries: data.countries || [],
-          days: Array.from(
-            { length: data.duration || 1 },
-            (_, idx) => data.days?.[idx] || { title: "", activities: [] },
-          ),
+          days:
+            normalizedDays.length > 0
+              ? normalizedDays
+              : Array.from(
+                  { length: data.duration || 1 },
+                  (_, idx) => data.days?.[idx] || { title: "", activities: [] },
+                ),
           creatorRating: data.creatorRating || 0,
           creatorOverview: data.creatorOverview || "",
         });
@@ -102,6 +122,19 @@ const CompleteTripPage = () => {
         setTripData((prev) => ({ ...prev, _id: tripId }));
       }
 
+      // Update overall trip (e.g. ratings, review)
+      await api.put(
+        `/trips/${tripId}`,
+        {
+          title: tripData.title,
+          duration: tripData.duration,
+          countries: tripData.countries.map((c) => c._id),
+          creatorOverview: tripData.creatorOverview,
+          creatorRating: tripData.creatorRating,
+        },
+        "Updating trip...",
+      );
+
       // Save days
       const updatedDays = await Promise.all(
         tripData.days.map(async (day, idx) => {
@@ -116,6 +149,16 @@ const CompleteTripPage = () => {
               "Creating day...",
             );
             dayId = createdDay._id;
+          } else {
+            // UPDATE existing day
+            await api.put(
+              `/trips/${tripId}/days/${dayId}`,
+              {
+                title: day.title,
+                dayNumber: idx + 1,
+              },
+              "Updating day...",
+            );
           }
           // Save activities for this day
           const updatedActivities = await Promise.all(
@@ -137,6 +180,22 @@ const CompleteTripPage = () => {
                   "Creating activity...",
                 );
                 activityId = createdActivity._id;
+              } else {
+                // UPDATE existing activity
+                await api.put(
+                  `/trips/${tripId}/days/${dayId}/activities/${activityId}`,
+                  {
+                    name: activity.name || "",
+                    price: Number(activity.price),
+                    notes: activity.notes?.text
+                      ? {
+                          noteNumber: 0,
+                          text: activity.notes.text,
+                        }
+                      : undefined,
+                  },
+                  "Updating activity...",
+                );
               }
 
               // Save location if needed
@@ -148,11 +207,27 @@ const CompleteTripPage = () => {
                       lat: Number(activity.location.lat),
                       lng: Number(activity.location.lng),
                     },
-                    address: activity.location.address,
+                    address:
+                      activity.location.display_name ||
+                      activity.location.address,
                   },
                   "Creating location...",
                 );
                 activity.location._id = createdLocation._id;
+              } else {
+                await api.put(
+                  `/trips/${tripId}/days/${dayId}/activities/${activityId}/locations/${activity.location._id}`,
+                  {
+                    coordinates: {
+                      lat: Number(activity.location.lat),
+                      lng: Number(activity.location.lng),
+                    },
+                    address:
+                      activity.location.display_name ||
+                      activity.location.address,
+                  },
+                  "Updating location...",
+                );
               }
 
               return {
@@ -176,16 +251,6 @@ const CompleteTripPage = () => {
         _id: tripId,
         days: updatedDays,
       }));
-
-      // Update overall trip (e.g. ratings, review)
-      await api.post(
-        `/trips/update-trip/${tripId}`,
-        {
-          creatorOverview: tripData.creatorOverview,
-          creatorRating: tripData.creatorRating,
-        },
-        "Updating trip...",
-      );
 
       return tripId;
     } catch (err) {

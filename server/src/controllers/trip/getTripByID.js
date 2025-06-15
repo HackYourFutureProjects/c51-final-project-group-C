@@ -59,11 +59,15 @@ export const getTripById = async (req, res) => {
 
             // Clean location if it exists
             if (activity.location) {
-              delete activity.location.__v;
+              const { _id, address, coordinates, userID } = activity.location;
 
-              // Rename location.userID to location.user for clarity
-              activity.location.user = activity.location.userID;
-              delete activity.location.userID;
+              activity.location = {
+                _id,
+                address,
+                lat: coordinates?.lat,
+                lng: coordinates?.lng,
+                user: userID,
+              };
             }
 
             // Return a new activity object with ordered keys
