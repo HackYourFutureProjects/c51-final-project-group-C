@@ -89,6 +89,39 @@ const CompleteTripPage = () => {
     setDayIndex(dayIndex === index ? null : index);
   };
 
+  const deleteDay = async (dayId) => {
+    try {
+      if (dayId) {
+        await api.del(`/trips/${tripId}/days/${dayId}`);
+      }
+
+      // Remove the deleted day and reindex
+      const remainingDays = tripData.days
+        .filter((day) => day._id !== dayId)
+        .sort((a, b) => a.dayNumber - b.dayNumber);
+
+      const updatedDays = await Promise.all(
+        remainingDays.map(async (day, idx) => {
+          const newDayNumber = idx + 1;
+          if (day.dayNumber !== newDayNumber) {
+            await api.put(`/trips/${tripData._id}/days/${day._id}`, {
+              dayNumber: newDayNumber,
+            });
+          }
+          return { ...day, dayNumber: newDayNumber };
+        }),
+      );
+
+      setTripData((prev) => ({
+        ...prev,
+        days: updatedDays,
+        duration: updatedDays.length,
+      }));
+    } catch (err) {
+      setServerApiError(err.message || "Failed to delete day.");
+    }
+  };
+
   const updateActivityField = (dayInd, activityInd, field, value) => {
     const newDays = [...tripData.days];
     const activity = newDays[dayInd].activities[activityInd];
@@ -100,6 +133,27 @@ const CompleteTripPage = () => {
       activity[field] = value;
     }
     setTripData({ ...tripData, days: newDays });
+  };
+
+  const deleteActivity = async (dayId, activityId) => {
+    try {
+      await api.del(`/trips/${tripId}/days/${dayId}/activities/${activityId}`);
+
+      const updatedDays = tripData.days.map((day) => {
+        if (day._id !== dayId) return day;
+        return {
+          ...day,
+          activities: day.activities.filter((act) => act._id !== activityId),
+        };
+      });
+
+      setTripData((prev) => ({
+        ...prev,
+        days: updatedDays,
+      }));
+    } catch (err) {
+      setServerApiError(err.message || "Failed to delete activity.");
+    }
   };
 
   const saveTrip = async () => {
@@ -426,14 +480,7 @@ const CompleteTripPage = () => {
                   className="delete-day-button text-red-500 text-sm underline"
                   onClick={(e) => {
                     e.stopPropagation();
-                    const updatedDays = tripData.days.filter(
-                      (_, index) => index !== i,
-                    );
-                    setTripData({
-                      ...tripData,
-                      days: updatedDays,
-                      duration: updatedDays.length,
-                    });
+                    deleteDay(day._id);
                   }}
                 >
                   Delete
@@ -448,7 +495,7 @@ const CompleteTripPage = () => {
                 <input
                   type="text"
                   placeholder="Day Title"
-                  value={day.title}
+                  value={day.title || ""}
                   onChange={(e) => {
                     const newDays = [...tripData.days];
                     newDays[i].title = e.target.value;
@@ -479,7 +526,7 @@ const CompleteTripPage = () => {
                           <input
                             type="text"
                             placeholder="Activity title"
-                            value={activity.name}
+                            value={activity.name || ""}
                             onChange={(e) =>
                               updateActivityField(i, j, "name", e.target.value)
                             }
@@ -597,11 +644,9 @@ const CompleteTripPage = () => {
                         <div className="text-right">
                           <button
                             className="activity-delete-button text-red-500"
-                            onClick={() => {
-                              const newDays = [...tripData.days];
-                              newDays[i].activities.splice(j, 1);
-                              setTripData({ ...tripData, days: newDays });
-                            }}
+                            onClick={() =>
+                              deleteActivity(day._id, activity._id)
+                            }
                           >
                             Delete
                           </button>
@@ -666,7 +711,7 @@ const CompleteTripPage = () => {
         <textarea
           rows={4}
           placeholder="Write your overall review here..."
-          value={tripData.creatorOverview}
+          value={tripData.creatorOverview || ""}
           onChange={(e) =>
             setTripData({ ...tripData, creatorOverview: e.target.value })
           }
