@@ -319,11 +319,13 @@ const CompleteTripPage = () => {
       if (!savedId) return; // stop if save failed
     }
 
+    const newStatus = !tripData.published;
+
     try {
       await api.put(
         `/trips/publish/${tripData._id}`,
-        { published: true },
-        "Publishing trip...",
+        { published: newStatus },
+        newStatus ? "Publishing trip..." : "Unpublish trip...",
       );
 
       setTripData((prev) => ({
@@ -732,7 +734,7 @@ const CompleteTripPage = () => {
           className={`publish-button bg-accent text-white px-4 py-2 rounded shadow-sm hover:bg-orange-600 transition ${tripData.published ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={publishTrip}
         >
-          Publish
+          {tripData.published ? "Unpublish" : "Publish"}
         </button>
       </div>
     </div>
