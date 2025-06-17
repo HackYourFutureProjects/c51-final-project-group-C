@@ -16,16 +16,35 @@ export const createTripModalSchema = z
   })
   .strict();
 
-export const updateTripSchema = z.object({
-  creatorOverview: z
-    .string()
-    .trim()
-    .min(1, "Overview cannot be empty")
-    .max(1000, "Overview is too long")
-    .optional(),
-  creatorRating: z
-    .number()
-    .min(0, "Rating must be at least 0")
-    .max(5, "Rating cannot be more than 5")
-    .optional(),
-});
+export const updateTripSchema = z
+  .object({
+    title: titleSchema.optional(),
+    duration: z
+      .number({
+        invalid_type_error: "Duration must be a number",
+      })
+      .int("Duration must be an integer")
+      .min(1, "Duration must be at least 1 day")
+      .max(60, "Duration must not exceed 60 days")
+      .optional(),
+    countries: z.array(z.string()).optional(),
+    creatorOverview: z
+      .string()
+      .trim()
+      .max(1000, "Overview is too long, length must not exceed 1000 characters")
+      .optional()
+      .nullable(),
+    creatorRating: z
+      .number()
+      .min(1, "Rating must be at least 1")
+      .max(5, "Rating cannot be more than 5")
+      .optional()
+      .nullable(),
+    coverPhotoUrl: z
+      .string()
+      .trim()
+      .url("Cover photo URL must be a valid URL")
+      .optional()
+      .nullable(),
+  })
+  .strict();
