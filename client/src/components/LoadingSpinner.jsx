@@ -1,9 +1,9 @@
 import { useLoading } from "../context/LoadingContext";
 
 const LoadingSpinner = () => {
-  const { isLoading, loadingMessage } = useLoading();
+  const { showSpinner, loadingMessage } = useLoading();
 
-  if (!isLoading) return null;
+  if (!showSpinner) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
