@@ -83,9 +83,10 @@ export const getTripById = async (req, res) => {
             // Return a new activity object with ordered keys
             return {
               _id: activity._id,
-              name: activity.title,
+              title: activity.title,
               notes: activity.notes,
-              price: activity.price, // include price if it exists in activity
+              price: activity.price,
+              rating: activity.rating,
               location: activity.location,
               activityPhotoUrls: activity.activityPhotoUrls || [],
             };

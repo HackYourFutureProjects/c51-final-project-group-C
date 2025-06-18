@@ -35,12 +35,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/trips", tripRouter);
 app.use("/api/countries", countryRouter);
-app.use("/api/trips/:tripID/days", dayRouter);
-app.use("/api/trips/:tripID/days/:dayID/activities", activityRouter);
-app.use(
-  "/api/trips/:tripID/days/:dayID/activities/:activityID/locations",
-  locationRouter,
-);
+app.use("/api/trips/:tripId/days", dayRouter);
+app.use("/api/trips/:tripId/days/:dayId/activities", activityRouter);
 app.use("/api/images", imageRouter);
+app.use("/api/locations", locationRouter);
 
 export default app;

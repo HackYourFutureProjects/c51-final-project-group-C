@@ -8,10 +8,11 @@ import {
 } from "../validation/schemas/tripSchemas.js";
 import { updateTrip } from "../controllers/trip/updateTrip.js";
 import { getTripById } from "../controllers/trip/getTripByID.js";
-import { publishTrip, unpublishTrip } from "../controllers/trip/publishTrip.js";
+import { publishTrip } from "../controllers/trip/publishTrip.js";
+import { unpublishTrip } from "../controllers/trip/unpublishTrip.js";
 import { copyTrip } from "../controllers/trip/copyTrip.js";
 import { deleteTrip } from "../controllers/trip/deleteTrip.js";
-import { getFilteredTrips } from "../controllers/getFilteredTrips.js";
+import { getFilteredTrips } from "../controllers/trip/getFilteredTrips.js";
 import { getPublishedTrips } from "../controllers/trip/getPublishedTrips.js";
 
 const tripRouter = express.Router();
