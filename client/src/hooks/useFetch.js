@@ -61,6 +61,8 @@ const useFetch = () => {
     performFetch(route, "POST", body, loadingMessage);
   const put = (route, body, loadingMessage) =>
     performFetch(route, "PUT", body, loadingMessage);
+  const patch = (route, body, loadingMessage) =>
+    performFetch(route, "PATCH", body, loadingMessage);
   const del = (route, body = null, loadingMessage) =>
     performFetch(route, "DELETE", body, loadingMessage);
 
@@ -68,6 +70,7 @@ const useFetch = () => {
     get,
     post,
     put,
+    patch,
     del,
   };
 };
