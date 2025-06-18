@@ -1,7 +1,3 @@
-// 👇 This is Avatar component, for now we use it in in Header (small version), ProfilePage (large version) and PublishedTripPage (different versions).
-// We can pass size and withBorder props to the component.
-// Image url should be passed as a src prop. If no image is provided, we use profile icon as a fallback.
-
 import { LuUser as UserIcon } from "react-icons/lu";
 
 const Avatar = ({ size = "large", src, withBorder = false }) => {

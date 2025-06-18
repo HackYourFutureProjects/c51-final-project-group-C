@@ -78,8 +78,14 @@ const CreateTripModal = () => {
         "Creating trip plan...",
       );
 
+      const tripId = newTrip?.trip?._id;
+
+      if (!tripId) {
+        throw new Error("Missing tripId.");
+      }
+
       // Redirect the users to the Trip Details Page with navigate
-      navigate(`/complete-trip/${newTrip._id}`);
+      navigate(`/trips/${tripId}/edit`);
     } catch (err) {
       console.error("submit:", err.message);
       setErrors((prev) => ({
