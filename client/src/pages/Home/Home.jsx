@@ -20,7 +20,9 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const duration = searchParams.get("duration");
   const country = searchParams.get("country");
+  const cities = searchParams.get("cities");
   const [trips, setTrips] = useState([]);
+  console.log(trips);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const api = useFetch();
@@ -31,8 +33,9 @@ const Home = () => {
     let total = 0;
     if (duration && duration !== "1-50") total += 1;
     if (country) total += 1;
+    if (cities) total += 1;
     setCount(total);
-  }, [duration, country]);
+  }, [duration, country, cities]);
 
   // Debounce the search input
   useEffect(() => {
@@ -47,12 +50,12 @@ const Home = () => {
     setTrips([]);
     setSkip(0);
     setHasMore(true);
-  }, [debouncedSearch, selectedSort, duration, country]);
+  }, [debouncedSearch, selectedSort, duration, country, cities]);
 
   // Fetch trips when skip or filters change
   useEffect(() => {
     fetchTrips();
-  }, [skip, debouncedSearch, selectedSort, duration, country]);
+  }, [skip, debouncedSearch, selectedSort, duration, country, cities]);
 
   const fetchTrips = async () => {
     try {
@@ -63,6 +66,7 @@ const Home = () => {
         params.append("sort", selectedSort.toLowerCase());
       if (duration) params.append("duration", duration);
       if (country) params.append("country", country);
+      if (cities) params.append("cities", cities);
       params.append("limit", LIMIT);
       params.append("skip", skip);
 

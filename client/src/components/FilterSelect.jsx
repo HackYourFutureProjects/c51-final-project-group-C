@@ -15,6 +15,7 @@ const FilterSelect = ({
   entity,
   url,
   preSelected,
+  isSimple = false, // NEW
 }) => {
   const [options, setOptions] = useState([]);
   const api = useFetch();
@@ -27,17 +28,18 @@ const FilterSelect = ({
         startLoading(`Loading ${entity}...`);
         const data = await api.get(url);
 
-        const formattedData = data.map((item) => ({
-          value: item._id,
-          label: item.name,
-        }));
+        const formattedData = data.map((item) =>
+          isSimple
+            ? { value: item, label: item }
+            : { value: item._id, label: item.name },
+        );
 
         setOptions(formattedData);
 
         if (preSelected) {
           const selected = preSelected
             .split(",")
-            .map((id) => formattedData.find((c) => c.value === id))
+            .map((val) => formattedData.find((c) => c.value === val))
             .filter(Boolean);
           onChange(selected);
         }
@@ -50,7 +52,7 @@ const FilterSelect = ({
     };
 
     fetchData();
-  }, []);
+  }, [url]);
 
   return (
     <div className="w-full">
