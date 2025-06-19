@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { LuMapPin as LocationIcon } from "react-icons/lu";
-import { FaStar as StarIcon } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { GrMoney as EventPriceIcon } from "react-icons/gr";
 import LocationSearch from "../../LocationSearch";
+import RatingStars from "../../RatingStars";
 
 const EventDetails = ({ activity, isEditable, onUpdate }) => {
   const [isEditingLocation, setIsEditingLocation] = useState(false);
@@ -198,16 +198,11 @@ const EventDetails = ({ activity, isEditable, onUpdate }) => {
             Rating
           </span>
           <div className="flex items-center gap-2 flex-grow">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRatingInput(star)}
-                className={`p-1 ${star <= ratingInput ? "text-accent" : "text-gray-300"}`}
-              >
-                <StarIcon size={16} />
-              </button>
-            ))}
+            <RatingStars
+              rating={ratingInput}
+              onRate={setRatingInput}
+              size={20}
+            />
             <button
               onClick={handleSaveRating}
               className="px-2 py-1 bg-accent text-white rounded text-xs"
@@ -232,14 +227,7 @@ const EventDetails = ({ activity, isEditable, onUpdate }) => {
           </span>
           <div className="flex items-center gap-1 text-xs sm:text-sm">
             {activity.rating ? (
-              <div className="flex items-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <StarIcon
-                    key={star}
-                    className={`w-3 h-3 ${star <= activity.rating ? "text-accent" : "text-gray-300"}`}
-                  />
-                ))}
-              </div>
+              <RatingStars rating={activity.rating} size={20} />
             ) : (
               "Not rated"
             )}

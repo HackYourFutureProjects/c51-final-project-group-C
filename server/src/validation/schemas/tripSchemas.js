@@ -36,7 +36,7 @@ export const updateTripSchema = z
       .nullable(),
     creatorRating: z
       .number()
-      .min(1, "Rating must be at least 1")
+      .min(0.5, "Rating must be at least 0.5")
       .max(5, "Rating cannot be more than 5")
       .optional()
       .nullable(),

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { LuPencil as EditIcon } from "react-icons/lu";
-import { FaStar as StarIcon } from "react-icons/fa";
 import Avatar from "../../components/Avatar";
+import RatingStars from "../RatingStars";
 
 const TripAuthorReviewSection = ({
   trip,
@@ -45,18 +45,7 @@ const TripAuthorReviewSection = ({
         <div className="space-y-4">
           <div>
             <label className="block mb-2 font-medium">Rating (1-5)</label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRatingInput(star)}
-                  className={`p-1 ${star <= ratingInput ? "text-accent" : "text-gray-300"}`}
-                >
-                  <StarIcon size={24} />
-                </button>
-              ))}
-            </div>
+            <RatingStars rating={ratingInput} onRate={setRatingInput} />
           </div>
 
           <div>
@@ -106,14 +95,7 @@ const TripAuthorReviewSection = ({
           {/* Rating stars */}
           {trip.creatorRating > 0 && (
             <div className="mb-4">
-              <div className="flex items-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <StarIcon
-                    key={star}
-                    className={`w-5 h-5 ${star <= trip.creatorRating ? "text-accent" : "text-gray-300"}`}
-                  />
-                ))}
-              </div>
+              <RatingStars rating={trip.creatorRating} />
             </div>
           )}
 
