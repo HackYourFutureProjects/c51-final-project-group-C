@@ -23,7 +23,6 @@ const Home = () => {
   const country = searchParams.get("country");
   const cities = searchParams.get("cities");
   const [trips, setTrips] = useState([]);
-  console.log(trips.map((t) => t.userId.name));
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const api = useFetch();

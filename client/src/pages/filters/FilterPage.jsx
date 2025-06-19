@@ -19,7 +19,6 @@ const FilterPage = () => {
   const [durationRange, setDurationRange] = useState(initialDuration);
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
-  console.log(cities);
   const buildAndNavigateToQuery = (
     durationRange,
     countries,

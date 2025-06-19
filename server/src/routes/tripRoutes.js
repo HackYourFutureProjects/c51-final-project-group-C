@@ -14,7 +14,7 @@ import { copyTrip } from "../controllers/trip/copyTrip.js";
 import { deleteTrip } from "../controllers/trip/deleteTrip.js";
 import { getFilteredTrips } from "../controllers/trip/getFilteredTrips.js";
 import { getPublishedTrips } from "../controllers/trip/getPublishedTrips.js";
-import { getCities } from "../controllers/trip/getcities.js";
+import { getCities } from "../controllers/trip/getCities.js";
 
 const tripRouter = express.Router();
 
