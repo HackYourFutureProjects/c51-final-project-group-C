@@ -2,10 +2,10 @@ import Trip from "../../models/Trip.js";
 import { logError } from "../../util/logging.js";
 
 export const getTripById = async (req, res) => {
-  const { tripID } = req.params;
+  const { tripId } = req.params;
 
   try {
-    const trip = await Trip.findById(tripID)
+    const trip = await Trip.findById(tripId)
       .populate({
         path: "days",
         populate: {
@@ -15,8 +15,8 @@ export const getTripById = async (req, res) => {
           },
         },
       })
-      .populate("userID", "name surname")
-      .populate("countries", "name code");
+      .populate("userId", "name surname _id profileImageUrl")
+      .populate("countries");
 
     if (!trip) {
       return res.status(404).json({ message: "Trip not found" });
@@ -29,18 +29,27 @@ export const getTripById = async (req, res) => {
     delete tripObj.__v;
 
     // Rename userID field to user for clearer API response
-    tripObj.user = tripObj.userID;
-    delete tripObj.userID;
-
-    // Clean internal version key from user object if exists
+    tripObj.user = tripObj.userId;
     if (tripObj.user) {
+      tripObj.user.id = tripObj.user._id;
       delete tripObj.user.__v;
+    }
+    delete tripObj.userId;
+
+    // Clean countries data if exists
+    if (tripObj.countries && Array.isArray(tripObj.countries)) {
+      tripObj.countries = tripObj.countries.map((country) => {
+        if (country) {
+          delete country.__v;
+        }
+        return country;
+      });
     }
 
     // Ensure days exist and are an array before processing
     if (tripObj.days && Array.isArray(tripObj.days)) {
-      // Sort days by their index for proper order
-      tripObj.days.sort((a, b) => a.index - b.index);
+      // Sort days by their dayNumber for correct order
+      tripObj.days.sort((a, b) => a.dayNumber - b.dayNumber);
 
       tripObj.days.forEach((day) => {
         // Remove internal __v key from each day
@@ -48,8 +57,8 @@ export const getTripById = async (req, res) => {
 
         // If activities exist for the day, sort and clean them
         if (day.activities && Array.isArray(day.activities)) {
-          // Sort activities alphabetically by name
-          day.activities.sort((a, b) => a.name.localeCompare(b.name));
+          // Sort activities alphabetically by title
+          day.activities.sort((a, b) => a.title.localeCompare(b.title));
 
           // Rebuild each activity to order fields and clean unwanted ones
           day.activities = day.activities.map((activity) => {
@@ -62,17 +71,24 @@ export const getTripById = async (req, res) => {
               delete activity.location.__v;
 
               // Rename location.userID to location.user for clarity
-              activity.location.user = activity.location.userID;
-              delete activity.location.userID;
+              if (activity.location.userId) {
+                activity.location.user = activity.location.userId;
+                if (activity.location.user) {
+                  activity.location.user.id = activity.location.user._id;
+                }
+                delete activity.location.userID;
+              }
             }
 
             // Return a new activity object with ordered keys
             return {
               _id: activity._id,
-              name: activity.name,
+              title: activity.title,
               notes: activity.notes,
-              price: activity.price, // include price if it exists in activity
+              price: activity.price,
+              rating: activity.rating,
               location: activity.location,
+              activityPhotoUrls: activity.activityPhotoUrls || [],
             };
           });
         }
@@ -84,7 +100,7 @@ export const getTripById = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ errors: err.errors || "Server error" });
+      .json({ errors: err.message || "Server error" });
     logError(err);
   }
 };

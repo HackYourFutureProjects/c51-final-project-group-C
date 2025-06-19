@@ -1,39 +1,69 @@
 import Day from "../../models/Day.js";
-import Trip from "../../models/Trip.js";
+import {
+  getTripIfExists,
+  checkUserIsOwner,
+  getNextDayNumber,
+  getNextDayOrder,
+} from "../../util/tripActionsUtils.js";
 import { logError } from "../../util/logging.js";
 
 export const createDay = async (req, res) => {
-  const { title, dayNumber } = req.body;
-  const { tripID } = req.params;
-
   try {
-    // Check if the referenced trip exists
-    const trip = await Trip.findById(tripID);
-    if (!trip) {
-      return res.status(404).json({ message: "Trip not found" });
+    const { title, dayNumber } = req.body;
+    const { tripId } = req.params;
+    const userId = req.user.userId;
+
+    if (!tripId) {
+      return res.status(400).json({ message: "Trip ID is required" });
     }
 
-    // Check if the dayNumber already exists for this trip
-    const existingDay = await Day.findOne({ tripID, dayNumber });
+    // 👇 Get trip and check ownership
+    const trip = await getTripIfExists(tripId);
+    checkUserIsOwner(trip, userId);
+
+    // 👇 If dayNumber is not specified, set next one (+1)
+    let nextDayNumber = dayNumber;
+    if (!nextDayNumber) {
+      nextDayNumber = await getNextDayNumber(tripId);
+    }
+
+    // 👇 Check if day with such number exists for this trip
+    const existingDay = await Day.findOne({ tripId, dayNumber: nextDayNumber });
     if (existingDay) {
       return res
         .status(400)
         .json({ message: "Day with this number already exists for this trip" });
     }
 
-    // Create a new day linked to the trip
-    const newDay = new Day({ title, dayNumber, tripID });
+    // 👇 Find the largest order number for correct sorting
+    const nextOrder = await getNextDayOrder(tripId);
+
+    // 👇 Create new day
+    const newDay = new Day({
+      title: title || `Day ${nextDayNumber}`,
+      dayNumber: nextDayNumber,
+      tripId,
+      order: nextOrder || nextDayNumber,
+    });
+
     const savedDay = await newDay.save();
 
-    // Push the new day's ID to the trip's days array and save
+    // 👇 Add new day id to days array of a trip, also update duration
     trip.days.push(savedDay._id);
+
+    // 👇 If new day's number is larger then current trip duration, increase duration
+    const currentDaysCount = await Day.countDocuments({ tripId });
+    if (currentDaysCount > trip.duration) {
+      trip.duration = currentDaysCount;
+    }
+
     await trip.save();
 
     res.status(201).json(savedDay);
   } catch (err) {
+    logError(err);
     res
       .status(err.status || 500)
-      .json({ errors: err.errors || "Server error" });
-    logError(err);
+      .json({ message: err.message || "Server error" });
   }
 };

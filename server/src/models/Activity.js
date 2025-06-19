@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import Location from "./Location.js";
+import locationSchema from "./schemas/LocationSchema.js";
 
 const activitySchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true,
     trim: true,
@@ -10,39 +10,39 @@ const activitySchema = new mongoose.Schema({
   day: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "days",
+    required: true,
   },
   notes: {
-    noteNumber: Number,
-    text: String,
+    type: String,
+    trim: true,
   },
   location: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "locations",
+    type: locationSchema,
+    required: true,
   },
   price: {
+    type: String, // To support formats like "150€ per night", "30$ per person", etc.
+    trim: true,
+    default: "",
+  },
+  rating: {
     type: Number,
-    min: 0,
-    // optional: assume free if not provided
-    default: 0,
+    min: 1,
+    max: 5,
   },
 
   activityPhotoUrls: { type: [String], default: [] },
-});
-// to delete the location that is related to the activity
-activitySchema.pre(
-  "deleteOne",
-  { document: true, query: false },
-  async function (next) {
-    try {
-      if (this.location) {
-        await Location.findByIdAndDelete(this.location);
-      }
-      next();
-    } catch (err) {
-      next(err);
-    }
-  },
-);
-const activity = mongoose.model("activities", activitySchema);
 
-export default activity;
+  activityNumber: {
+    type: Number,
+    default: 1,
+  },
+  order: {
+    type: Number,
+    default: 1,
+  },
+});
+
+const Activity = mongoose.model("activities", activitySchema);
+
+export default Activity;

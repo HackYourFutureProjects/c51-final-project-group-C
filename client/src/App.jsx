@@ -4,21 +4,21 @@ import { ErrorProvider } from "./context/ErrorContext";
 import { LoadingProvider } from "./context/LoadingContext";
 import RouteAccessChecker from "./components/RouteAccessChecker";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RequireTripOwnershipRoute from "./components/RequireTripOwnershipRoute";
 import EmailVerification from "./pages/auth/EmailVerification";
 import CompleteProfileModal from "./pages/auth/CompleteProfileModal";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-import Home from "./pages/Home/Home";
+// import Home from "./pages/Home/Home"; << -- temporarily disabled for testing published trips (use HomePageTest instead)
+import HomePageTest from "./pages/Home/HomePageTest";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Layout } from "./components/Layout";
 import CreateTripModal from "./pages/CreateTrip/CreateTripModal";
-import CompleteTripPage from "./pages/CreateTrip/CompleteTripPage";
-import PublishedTripPage from "./pages/TripPages/PublishedTripPage";
+import TripPage from "./pages/TripPage/TripPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorModal from "./components/ErrorModal";
-import FilterPage from "./pages/filters/FilterPage";
 
 const App = () => {
   return (
@@ -30,7 +30,7 @@ const App = () => {
             <ErrorModal />
             <Routes>
               <Route element={<Layout />}>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<HomePageTest />} />
 
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
@@ -43,7 +43,7 @@ const App = () => {
                   element={<ResetPasswordPage />}
                 />
                 <Route path="/verify-email" element={<EmailVerification />} />
-                <Route path="/filters" element={<FilterPage />} />
+
                 <Route
                   path="/create-trip-plan"
                   element={
@@ -73,17 +73,19 @@ const App = () => {
 
                 <Route path="/users/:userId" element={<ProfilePage />} />
 
-                {/* later we will have url like this: /trips/:tripId */}
-                <Route path="/trips/123" element={<PublishedTripPage />} />
+                <Route path="/trips/:tripId" element={<TripPage />} />
+
+                <Route
+                  path="/trips/:tripId/edit"
+                  element={
+                    <ProtectedRoute>
+                      <RequireTripOwnershipRoute>
+                        <TripPage />
+                      </RequireTripOwnershipRoute>
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
-              <Route
-                path="/complete-trip/:tripId"
-                element={
-                  <ProtectedRoute>
-                    <CompleteTripPage />
-                  </ProtectedRoute>
-                }
-              />
             </Routes>
           </RouteAccessChecker>
         </AuthProvider>

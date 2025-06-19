@@ -1,15 +1,32 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const DayAccordionContent = ({ isOpen, children }) => {
+const Content = ({ isOpen, children }) => {
   const contentRef = useRef(null);
   const [contentHeight, setContentHeight] = useState(0);
+  const resizeObserverRef = useRef(null);
 
   useEffect(() => {
-    if (contentRef.current) {
+    if (contentRef.current && isOpen) {
       setContentHeight(contentRef.current.scrollHeight);
+
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          if (contentRef.current) {
+            setContentHeight(contentRef.current.scrollHeight);
+          }
+        });
+      }
+
+      resizeObserverRef.current.observe(contentRef.current);
+
+      return () => {
+        if (resizeObserverRef.current) {
+          resizeObserverRef.current.disconnect();
+        }
+      };
     }
-  }, [children, isOpen]);
+  }, [isOpen, children]);
 
   return (
     <AnimatePresence initial={false}>
@@ -46,4 +63,4 @@ const DayAccordionContent = ({ isOpen, children }) => {
   );
 };
 
-export default DayAccordionContent;
+export default Content;

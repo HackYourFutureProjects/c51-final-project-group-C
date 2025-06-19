@@ -79,9 +79,9 @@ const Modal = ({
             ${showModal ? "scale-100 opacity-100" : "scale-95 opacity-0"}
           `}
         >
-          <div className="modal-window border-0 rounded-2xl shadow-lg relative flex flex-col w-full bg-background outline-none focus:outline-none min-h-[400px]">
+          <div className="modal-window border-0 rounded-2xl shadow-lg relative flex flex-col w-full bg-background outline-none focus:outline-none min-h-[300px]">
             {/* Modal Title */}
-            <div className="modal-header flex items-center p-10 px-10 rounded-t justify-center relative border-b-[1px]">
+            <div className="modal-header flex items-center p-6 pt-8 px-10 rounded-t justify-center relative border-b-[1px]">
               <div className="modal-title text-2xl font-semibold">{title}</div>
               {showCloseButton && (
                 <button
@@ -114,7 +114,7 @@ const Modal = ({
                       w-full
                       py-3
                       text-white
-                      bg-gray-500
+                      bg-[#adacac]
                     `}
                   >
                     {secondaryActionLabel}
@@ -130,7 +130,7 @@ const Modal = ({
                       flex items-center justify-center gap-2
                       disabled:opacity-70
                       disabled:cursor-not-allowed
-                      rounded-2xl
+                      rounded-lg
                       hover:opacity-90
                       transition
                       w-full
@@ -138,7 +138,6 @@ const Modal = ({
                       py-3
                       text-white
                       bg-accent
-                      text-xl
                     `}
                   >
                     {actionLabel}

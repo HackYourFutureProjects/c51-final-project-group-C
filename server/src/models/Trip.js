@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Day from "./Day.js";
 
 const tripSchema = new mongoose.Schema({
   // Basic Info
@@ -20,9 +19,15 @@ const tripSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  cities: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
 
   // User & Trip Content
-  userID: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
@@ -49,7 +54,7 @@ const tripSchema = new mongoose.Schema({
   },
 
   // Status & Metadata
-  published: {
+  isPublished: {
     type: Boolean,
     default: false,
   },
@@ -57,24 +62,33 @@ const tripSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  datePublished: {
+    type: Date,
+    default: null,
+  },
+  lastUpdated: {
+    type: Date,
+    default: Date.now,
+  },
+
+  timesCopied: {
+    type: Number,
+    default: 0,
+  },
+
+  timesBookmarked: {
+    type: Number,
+    default: 0,
+  },
 });
 
-// to delete all the days related to the trip
-tripSchema.pre(
-  "deleteOne",
-  { document: true, query: false },
-  async function (next) {
-    try {
-      const days = await Day.find({ tripID: this._id });
-      for (const day of days) {
-        await day.deleteOne();
-      }
-      next();
-    } catch (err) {
-      next(err);
-    }
-  },
-);
+// To automatically update lastUpdated field everytime the trip is being saved.
+
+tripSchema.pre("save", function (next) {
+  this.lastUpdated = Date.now();
+  next();
+});
+
 const Trip = mongoose.model("trips", tripSchema);
 
 export default Trip;
