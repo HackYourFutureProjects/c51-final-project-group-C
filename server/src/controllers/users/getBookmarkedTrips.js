@@ -1,5 +1,5 @@
-import User from "../../models/User";
-import { logError } from "../../util/logging";
+import User from "../../models/User.js";
+import { logError } from "../../util/logging.js";
 
 export const getBookmarkedTrips = async (req, res) => {
   try {
