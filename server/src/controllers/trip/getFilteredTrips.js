@@ -1,5 +1,5 @@
 import Trip from "../../models/Trip.js";
-import { logError, logInfo } from "../../util/logging.js";
+import { logError } from "../../util/logging.js";
 
 export const getFilteredTrips = async (req, res) => {
   try {
@@ -45,7 +45,6 @@ export const getFilteredTrips = async (req, res) => {
       .populate("userId", "name surname profileImageUrl");
 
     res.json(filteredTrips);
-    logInfo(filteredTrips);
   } catch (error) {
     logError(error);
     res.status(500).json({ error: "Server error" });
