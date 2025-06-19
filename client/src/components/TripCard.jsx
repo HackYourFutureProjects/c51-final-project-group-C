@@ -3,7 +3,9 @@ import {
   LuClock as ClockIcon,
   LuStar as StarIcon,
   LuCopy as CopyIcon,
+  LuBookmark as BookmarkIcon,
 } from "react-icons/lu";
+import Avatar from "./Avatar"; // adjust the path if necessary
 
 const TripCard = ({
   trip = {
@@ -17,19 +19,19 @@ const TripCard = ({
     userId: {
       name: "John",
       surname: "Doe",
+      profileImageUrl: "https://example.com/profile.jpg",
     },
   },
 }) => {
-  // Format full name nicely
   const getFullName = (user) => {
-    if (!user) return "Unknown ";
+    if (!user) return "Unknown";
     const { name, surname } = user;
-    if (!name && !surname) return "Unknown ";
+    if (!name && !surname) return "Unknown";
     return [name, surname].filter(Boolean).join(" ");
   };
 
   return (
-    <div className="trip-card cursor-pointer border-border border rounded-xl overflow-hidden flex flex-col">
+    <div className="trip-card cursor-pointer border border-border rounded-xl overflow-hidden flex flex-col">
       {/* Trip card image */}
       <div className="trip-card-image w-full h-48">
         {trip.coverPhoto ? (
@@ -51,41 +53,43 @@ const TripCard = ({
           {trip.title}
         </h3>
 
-        {/* Creator name */}
-        <div className="text-xs text-gray-500 italic">
-          Created by:{" "}
-          <span className="font-semibold text-gray-700">
-            {getFullName(trip.userId)}
-          </span>
-        </div>
-
-        <div className="trip-card-details">
-          <div className="flex items-center text-gray-600 h-4 mb-1.5 text-xs">
-            <LocationIcon className="w-3 h-3 mr-1 flex-shrink-0" />
-            <span className="trip-card-country">{trip.country}</span>
-          </div>
-
-          <div className="flex items-center text-gray-600 h-4 mb-1.5 text-xs">
-            <ClockIcon className="w-3 h-3 mr-1 flex-shrink-0" />
-            <span className="trip-card-duration">{trip.duration}</span>
-          </div>
-
-          <div className="flex items-center justify-between h-4 text-xs mb-1">
-            <div className="flex items-center text-gray-600">
-              <StarIcon className="w-3 h-3 mr-1 flex-shrink-0" />
-              <span className="trip-card-rating">{trip.rating}/5</span>
-            </div>
-
-            <div className="flex items-center text-gray-600">
-              <CopyIcon className="w-3 h-3 mr-1 flex-shrink-0" />
-              <span className="trip-card-times-copied">
-                Copied {trip.timesCopied} times
+        {/* Creator info with avatar */}
+        {trip.userId?.name || trip.userId?.surname ? (
+          <div className="flex items-center text-xs text-gray-500 italic gap-2">
+            <Avatar size="small" src={trip.userId.profileImageUrl} />
+            <span>
+              <span className="font-semibold text-gray-700">
+                {getFullName(trip.userId)}
               </span>
-            </div>
+            </span>
+          </div>
+        ) : null}
+
+        <div className="trip-card-details text-xs text-gray-600">
+          <div className="flex items-center h-4 mb-1.5">
+            <LocationIcon className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span>{trip.country}</span>
           </div>
 
-          <div className="flex items-center justify-between h-4 text-xs text-gray-600">
-            <span>Bookmarked: {trip.timesBookmarked || 0}</span>
+          <div className="flex items-center h-4 mb-1.5">
+            <ClockIcon className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span>{trip.duration}</span>
+          </div>
+
+          <div className="flex items-center h-4 mb-1 justify-start">
+            <StarIcon className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span>{trip.rating}/5</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-2 min-w-0">
+            <div className="flex items-center space-x-1 whitespace-nowrap">
+              <BookmarkIcon className="w-4 h-4" />
+              <span>Bookmarked: {trip.timesBookmarked || 0}</span>
+            </div>
+            <div className="flex items-center space-x-1 whitespace-nowrap">
+              <CopyIcon className="w-4 h-4" />
+              <span>Copied: {trip.timesCopied || 0} </span>
+            </div>
           </div>
         </div>
       </div>

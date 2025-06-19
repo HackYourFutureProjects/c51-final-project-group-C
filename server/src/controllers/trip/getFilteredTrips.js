@@ -42,7 +42,7 @@ export const getFilteredTrips = async (req, res) => {
       .skip(Number(skip))
       .limit(Number(limit))
       .populate("countries")
-      .populate("userId", "name surname");
+      .populate("userId", "name surname profileImageUrl");
 
     res.json(filteredTrips);
     logInfo(filteredTrips);

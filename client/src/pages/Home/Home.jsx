@@ -123,6 +123,7 @@ const Home = () => {
                 userId: {
                   name: trip.userId.name,
                   surname: trip.userId.surname,
+                  profileImageUrl: trip.userId.profileImageUrl,
                 },
               }}
             />

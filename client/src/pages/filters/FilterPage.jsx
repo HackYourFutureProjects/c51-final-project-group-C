@@ -75,7 +75,7 @@ const FilterPage = () => {
         buildAndNavigateToQuery(durationRange, countries, navigate, cities);
       }}
       footer={
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-4">
           <TripActionButton
             label={"Clear filters"}
             onClick={() => {
