@@ -88,8 +88,6 @@ const Home = () => {
 
   return (
     <div className="relative">
-      <h1 className="home-message flex justify-center mt-20">Welcome!</h1>
-
       <div className="search-container m-10 flex justify-center gap-4 flex-wrap p-4">
         <SearchInput search={search} setSearch={setSearch} />
 

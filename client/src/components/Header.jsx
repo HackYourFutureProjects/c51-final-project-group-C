@@ -22,7 +22,12 @@ const Header = () => {
   return (
     <div className="header-container flex justify-between items-center px-4 py-3 bg-background border-b border-border text-text font-inter relative ">
       {/* Left side ELVA */}
-      <div className="logo text-text font-Lora">ELVA</div>
+      <div
+        className="logo text-text font-roboto font-light cursor-pointer text-3xl"
+        onClick={() => navigate("/")}
+      >
+        ELVA
+      </div>
 
       {/* Center nav links for the desktop screen size */}
       {isAuthenticated && (
