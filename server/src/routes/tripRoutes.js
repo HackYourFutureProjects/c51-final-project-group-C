@@ -14,6 +14,7 @@ import { copyTrip } from "../controllers/trip/copyTrip.js";
 import { deleteTrip } from "../controllers/trip/deleteTrip.js";
 import { getFilteredTrips } from "../controllers/trip/getFilteredTrips.js";
 import { getPublishedTrips } from "../controllers/trip/getPublishedTrips.js";
+import { toggleBookmark } from "../controllers/trip/toggleBookmark.js";
 
 const tripRouter = express.Router();
 
@@ -51,5 +52,8 @@ tripRouter.get("/:tripId", getTripById);
 
 // Get Filtered Trips
 tripRouter.get("/", getFilteredTrips);
+
+// Toggle bookmarks
+tripRouter.post("/:tripId/bookmark", requireAuth, toggleBookmark);
 
 export default tripRouter;
