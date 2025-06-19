@@ -1,5 +1,5 @@
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
-import Cards from "../../components/Cards";
+import { Link, Outlet, useNavigate, useSearchParams } from "react-router-dom";
+
 import useFetch from "../../hooks/useFetch";
 import { useError } from "../../context/ErrorContext";
 
@@ -8,6 +8,7 @@ import FilterButton from "../../components/SearchAndFilter/FilterButton";
 import SearchInput from "../../components/SearchAndFilter/SearchInput";
 import DropDownMenu from "../../components/DropDownMenu";
 import NoResultFound from "../../components/SearchAndFilter/NoResultFound";
+import TripCard from "../../components/TripCard";
 
 const SortBy = ["Rating", "Duration", "Clear"];
 const LIMIT = 20;
@@ -22,7 +23,7 @@ const Home = () => {
   const country = searchParams.get("country");
   const cities = searchParams.get("cities");
   const [trips, setTrips] = useState([]);
-  console.log(trips);
+  console.log(trips.map((t) => t.userId.name));
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const api = useFetch();
@@ -107,7 +108,29 @@ const Home = () => {
         />
       </div>
 
-      <Cards trips={trips} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-20">
+        {trips.map((trip) => (
+          <Link to={`/trips/${trip._id}`} key={trip._id}>
+            <TripCard
+              trip={{
+                title: trip.title,
+                coverPhoto: trip.coverPhotoUrl,
+                country:
+                  trip.countries && trip.countries.length > 0
+                    ? trip.countries[0].name
+                    : "Unknown",
+                duration: `${trip.duration} days`,
+                rating: trip.creatorRating || 0,
+                timesCopied: trip.timesCopied || 0,
+                userId: {
+                  name: trip.userId.name,
+                  surname: trip.userId.surname,
+                },
+              }}
+            />
+          </Link>
+        ))}
+      </div>
       {trips.length === 0 && <NoResultFound />}
 
       {hasMore && (

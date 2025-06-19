@@ -12,7 +12,7 @@ export const getFilteredTrips = async (req, res) => {
       skip = 0,
       limit = 20,
     } = req.query;
-    logInfo(cities);
+
     const filter = { isPublished: true };
 
     if (country) {
@@ -41,9 +41,11 @@ export const getFilteredTrips = async (req, res) => {
       .sort(sortOption)
       .skip(Number(skip))
       .limit(Number(limit))
-      .populate("countries");
+      .populate("countries")
+      .populate("userId", "name surname");
 
     res.json(filteredTrips);
+    logInfo(filteredTrips);
   } catch (error) {
     logError(error);
     res.status(500).json({ error: "Server error" });

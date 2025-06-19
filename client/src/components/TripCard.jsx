@@ -8,17 +8,29 @@ import {
 const TripCard = ({
   trip = {
     title: "Trip Title",
-    coverPhoto: "Photo",
+    coverPhoto: null,
     country: "Country",
     duration: "7 days",
     rating: 8.5,
     timesCopied: 12,
+    timesBookmarked: 5,
+    userId: {
+      name: "John",
+      surname: "Doe",
+    },
   },
 }) => {
+  // Format full name nicely
+  const getFullName = (user) => {
+    if (!user) return "Unknown ";
+    const { name, surname } = user;
+    if (!name && !surname) return "Unknown ";
+    return [name, surname].filter(Boolean).join(" ");
+  };
+
   return (
     <div className="trip-card cursor-pointer border-border border rounded-xl overflow-hidden flex flex-col">
-      {/* Trip cards image */}
-
+      {/* Trip card image */}
       <div className="trip-card-image w-full h-48">
         {trip.coverPhoto ? (
           <img
@@ -34,12 +46,17 @@ const TripCard = ({
       </div>
 
       {/* Bottom section with trip details */}
+      <div className="p-3 bg-background flex flex-col gap-2">
+        <h3 className="trip-card-title font-medium text-base line-clamp-1">
+          {trip.title}
+        </h3>
 
-      <div className="p-3 bg-background">
-        <div className="h-6 mb-2">
-          <h3 className="trip-card-title font-medium text-base line-clamp-1">
-            {trip.title}
-          </h3>
+        {/* Creator name */}
+        <div className="text-xs text-gray-500 italic">
+          Created by:{" "}
+          <span className="font-semibold text-gray-700">
+            {getFullName(trip.userId)}
+          </span>
         </div>
 
         <div className="trip-card-details">
@@ -53,7 +70,7 @@ const TripCard = ({
             <span className="trip-card-duration">{trip.duration}</span>
           </div>
 
-          <div className="flex items-center justify-between h-4 text-xs">
+          <div className="flex items-center justify-between h-4 text-xs mb-1">
             <div className="flex items-center text-gray-600">
               <StarIcon className="w-3 h-3 mr-1 flex-shrink-0" />
               <span className="trip-card-rating">{trip.rating}/5</span>
@@ -65,6 +82,10 @@ const TripCard = ({
                 Copied {trip.timesCopied} times
               </span>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between h-4 text-xs text-gray-600">
+            <span>Bookmarked: {trip.timesBookmarked || 0}</span>
           </div>
         </div>
       </div>
