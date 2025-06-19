@@ -182,6 +182,14 @@ const TripPage = () => {
     try {
       await api.post(`/trips/${tripId}/bookmark`);
       setIsBookmarked((prev) => !prev);
+
+      // Update the info section
+      setTrip((prevTrip) => ({
+        ...prevTrip,
+        timesBookmarked: isBookmarked
+          ? Math.max((prevTrip.timesBookmarked || 1) - 1, 0)
+          : (prevTrip.timesBookmarked || 0) + 1,
+      }));
     } catch (error) {
       console.error("Error toggling bookmark:", error);
       setServerApiError("Failed to toggle bookmark");

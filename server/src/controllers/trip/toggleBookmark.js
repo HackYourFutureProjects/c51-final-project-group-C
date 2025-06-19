@@ -16,13 +16,17 @@ export const toggleBookmark = async (req, res) => {
 
     const alreadyBookmarked = user.bookmarkedTrips.includes(tripId);
 
+    // Removing/adding the trip from user collection and changing the timesBookmarked in the trip data
     if (alreadyBookmarked) {
       user.bookmarkedTrips.pull(tripId);
+      trip.timesBookmarked = Math.max((trip.timesBookmarked || 1) - 1, 0);
     } else {
       user.bookmarkedTrips.push(tripId);
+      trip.timesBookmarked = (trip.timesBookmarked || 0) + 1;
     }
 
     await user.save();
+    await trip.save();
 
     res.status(200).json({
       message: alreadyBookmarked
