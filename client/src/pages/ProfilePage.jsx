@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getUserById } from "../api/users";
+import useFetch from "../hooks/useFetch";
+import { Link } from "react-router-dom";
 import {
   LuMap as MapIcon,
   LuCheck as CheckIcon,
@@ -51,6 +53,10 @@ const ProfilePage = () => {
   // 👇 Depending on this variable we will show different layout/content
   const isOwnProfile = !userId || isOwnProfilePublicUrl;
 
+  const api = useFetch();
+  // States for bookmarked trips
+  const [bookmarkedTrips, setBookmarkedTrips] = useState([]);
+
   const [profileInfo, setProfileInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -90,6 +96,26 @@ const ProfilePage = () => {
     loadProfileInfo();
   }, [userId, isOwnProfile, user, navigate]);
 
+  // Fetch the bookmarked trips
+  useEffect(() => {
+    if (activeTabId === "bookmarks" && isOwnProfile) {
+      const fetchBookmarkedTrips = async () => {
+        try {
+          const data = await api.get(
+            "/users/me/bookmarks",
+            "Fetching bookmarked trips",
+          );
+
+          setBookmarkedTrips(data.trips || []);
+        } catch (err) {
+          console.error("Failed to fetch bookmarked trips:", err);
+        }
+      };
+
+      fetchBookmarkedTrips();
+    }
+  }, [activeTabId, isOwnProfile]);
+
   // 👇 We will have better error/loading handling later on
 
   if (isLoading) {
@@ -104,6 +130,21 @@ const ProfilePage = () => {
     return <div className="text-center py-8">User not found</div>;
   }
 
+  const normalizeTripForCard = (trip) => ({
+    ...trip,
+    coverPhoto: trip.coverPhoto ?? trip.coverPhotoUrl ?? null, // use existing coverPhoto if present
+    country:
+      trip.country ??
+      (trip.countries && trip.countries.length > 0
+        ? trip.countries.map((c) => c.name).join(", ")
+        : undefined),
+    rating:
+      trip.rating ??
+      (trip.creatorRating !== undefined && trip.creatorRating !== null
+        ? trip.creatorRating
+        : undefined),
+  });
+
   // 👇 Private View Layout (how user sees his own profile)
 
   const renderPrivateView = () => {
@@ -111,9 +152,22 @@ const ProfilePage = () => {
       switch (activeTabId) {
         case "settings":
           return <ProfileSettings />;
+        case "bookmarks":
+          return bookmarkedTrips.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-[300px] py-20 text-lg font-medium">
+              You do not have any bookmarked trips yet.
+            </div>
+          ) : (
+            <Grid columns={3}>
+              {bookmarkedTrips.map((trip) => (
+                <Link to={`/trips/${trip._id}`} key={trip._id}>
+                  <TripCard key={trip._id} trip={normalizeTripForCard(trip)} />
+                </Link>
+              ))}
+            </Grid>
+          );
         case "past-trips":
         case "future-trips":
-        case "bookmarks":
         default:
           return (
             <Grid columns={3}>
