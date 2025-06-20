@@ -55,7 +55,7 @@ const Modal = ({
         modal-background
         flex justify-center items-center 
         overflow-x-hidden overflow-y-auto 
-        fixed inset-0 z-50 
+        fixed inset-0 z-[10000] 
         outline-none focus:outline-none
         transition-opacity duration-300
         ${showModal ? "bg-neutral-900/80" : "bg-transparent"}

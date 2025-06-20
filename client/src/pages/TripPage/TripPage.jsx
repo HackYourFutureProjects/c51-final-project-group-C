@@ -65,6 +65,7 @@ const TripPage = () => {
       const allowedFields = {
         title: updatedData.title,
         countries: countriesData,
+        cities: updatedData.cities,
         creatorOverview: updatedData.creatorOverview,
         creatorRating: updatedData.creatorRating,
         coverPhotoUrl: updatedData.coverPhotoUrl,
