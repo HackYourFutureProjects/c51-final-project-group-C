@@ -28,6 +28,7 @@ export const updateTripSchema = z
       .max(60, "Duration must not exceed 60 days")
       .optional(),
     countries: z.array(z.string()).optional(),
+    cities: z.array(z.string()).optional(),
     creatorOverview: z
       .string()
       .trim()
