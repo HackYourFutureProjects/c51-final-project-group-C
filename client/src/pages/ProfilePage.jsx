@@ -27,8 +27,8 @@ const tripsToShow = allTrips.slice(0, 4);
 // 👇 If user is viewing his own profile, we show these tabs:
 
 const tabsForPrivateProfileView = [
-  { id: "past-trips", label: "Past Trips", icon: CheckIcon },
-  { id: "future-trips", label: "Future Trips", icon: CalendarIcon },
+  { id: "published-trips", label: "Published Trips", icon: CheckIcon },
+  { id: "draft-trips", label: "Draft Trips", icon: CalendarIcon },
   { id: "bookmarks", label: "Bookmarks", icon: BookmarkIcon },
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
@@ -38,7 +38,6 @@ const tabsForPrivateProfileView = [
 const tabsForPublicProfileView = [
   { id: "map", label: "Map", icon: MapIcon },
   { id: "published", label: "Published", icon: CheckIcon },
-  { id: "bookmarked", label: "Bookmarked", icon: BookmarkIcon },
 ];
 
 const ProfilePage = () => {
@@ -64,7 +63,7 @@ const ProfilePage = () => {
   // ☝️ Tricky: We don't set active tab here. That's because active tab depends on isOwnProfile variable that can be unavailable at the first render.
   // 👇 So we set active tab in useEffect to wait for isOwnProfile to be initialized.
   useEffect(() => {
-    setActiveTabId(isOwnProfile ? "past-trips" : "published");
+    setActiveTabId(isOwnProfile ? "published-trips" : "published");
   }, [isOwnProfile]);
 
   useEffect(() => {
@@ -166,8 +165,8 @@ const ProfilePage = () => {
               ))}
             </Grid>
           );
-        case "past-trips":
-        case "future-trips":
+        case "published-trips":
+        case "draft-trips":
         default:
           return (
             <Grid columns={3}>
