@@ -1,6 +1,6 @@
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
-function RatingStars({ rating, onRate }) {
+function RatingStars({ rating, onRate, size = 28 }) {
   const totalStars = 5;
 
   return (
@@ -14,11 +14,11 @@ function RatingStars({ rating, onRate }) {
 
         let icon;
         if (full || (i + 1 === Math.ceil(rating) && rating % 1 >= 0.75)) {
-          icon = <FaStar className="text-yellow-400" size={24} />;
+          icon = <FaStar className="text-yellow-400" size={size} />;
         } else if (half) {
-          icon = <FaStarHalfAlt className="text-yellow-400" size={24} />;
+          icon = <FaStarHalfAlt className="text-yellow-400" size={size} />;
         } else {
-          icon = <FaRegStar className="text-gray-300" size={24} />;
+          icon = <FaRegStar className="text-gray-300" size={size} />;
         }
 
         return (

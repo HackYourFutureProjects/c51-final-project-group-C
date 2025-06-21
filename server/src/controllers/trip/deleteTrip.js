@@ -1,6 +1,7 @@
 import Trip from "../../models/Trip.js";
 import Day from "../../models/Day.js";
 import Activity from "../../models/Activity.js";
+import User from "../../models/User.js";
 import {
   getTripIfExists,
   checkUserIsOwner,
@@ -32,6 +33,12 @@ export const deleteTrip = async (req, res) => {
 
     // 👇 Removing the whole trip
     await Trip.findByIdAndDelete(tripId);
+
+    // Remove the trip from users bookmarked trips array
+    await User.updateMany(
+      { bookmarkedTrips: tripId },
+      { $pull: { bookmarkedTrips: tripId } },
+    );
 
     res.status(200).json({
       message: "Trip deleted successfully with all related days and activities",

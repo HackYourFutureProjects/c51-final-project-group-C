@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
     resetTokenExpiresAt: Date,
     profileImage: String,
     profileImageUrl: { type: String, default: null },
+    bookmarkedTrips: [{ type: mongoose.Schema.Types.ObjectId, ref: "trips" }],
   },
   {
     timestamps: true,

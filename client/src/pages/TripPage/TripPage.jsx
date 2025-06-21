@@ -39,6 +39,13 @@ const TripPage = () => {
         if (!tripData.isPublished && userIsOwner && !isEditMode) {
           navigate(`/trips/${tripId}/edit`);
         }
+
+        // Fetch the users bookmarks to compare with current trip
+        if (user) {
+          const bookmarksData = await api.get("/users/me/bookmarks");
+          const bookmarkedTrips = bookmarksData.trips.map((t) => t._id);
+          setIsBookmarked(bookmarkedTrips.includes(tripId));
+        }
       } catch (error) {
         console.error("Error fetching trip:", error);
         setServerApiError("Failed to load trip data");
@@ -173,7 +180,21 @@ const TripPage = () => {
   };
 
   const handleBookmarkToggle = async () => {
-    // not implemented yet
+    try {
+      await api.post(`/trips/${tripId}/bookmark`);
+      setIsBookmarked((prev) => !prev);
+
+      // Update the info section
+      setTrip((prevTrip) => ({
+        ...prevTrip,
+        timesBookmarked: isBookmarked
+          ? Math.max((prevTrip.timesBookmarked || 1) - 1, 0)
+          : (prevTrip.timesBookmarked || 0) + 1,
+      }));
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      setServerApiError("Failed to toggle bookmark");
+    }
   };
 
   if (!trip) {
