@@ -1,5 +1,5 @@
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
-import Cards from "../../components/Cards";
+import { Link, Outlet, useNavigate, useSearchParams } from "react-router-dom";
+
 import useFetch from "../../hooks/useFetch";
 import { useError } from "../../context/ErrorContext";
 
@@ -8,6 +8,7 @@ import FilterButton from "../../components/SearchAndFilter/FilterButton";
 import SearchInput from "../../components/SearchAndFilter/SearchInput";
 import DropDownMenu from "../../components/DropDownMenu";
 import NoResultFound from "../../components/SearchAndFilter/NoResultFound";
+import TripCard from "../../components/TripCard";
 
 const SortBy = ["Rating", "Duration", "Clear"];
 const LIMIT = 20;
@@ -20,6 +21,7 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const duration = searchParams.get("duration");
   const country = searchParams.get("country");
+  const cities = searchParams.get("cities");
   const [trips, setTrips] = useState([]);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -31,8 +33,9 @@ const Home = () => {
     let total = 0;
     if (duration && duration !== "1-50") total += 1;
     if (country) total += 1;
+    if (cities) total += 1;
     setCount(total);
-  }, [duration, country]);
+  }, [duration, country, cities]);
 
   // Debounce the search input
   useEffect(() => {
@@ -47,12 +50,12 @@ const Home = () => {
     setTrips([]);
     setSkip(0);
     setHasMore(true);
-  }, [debouncedSearch, selectedSort, duration, country]);
+  }, [debouncedSearch, selectedSort, duration, country, cities]);
 
   // Fetch trips when skip or filters change
   useEffect(() => {
     fetchTrips();
-  }, [skip, debouncedSearch, selectedSort, duration, country]);
+  }, [skip, debouncedSearch, selectedSort, duration, country, cities]);
 
   const fetchTrips = async () => {
     try {
@@ -63,6 +66,7 @@ const Home = () => {
         params.append("sort", selectedSort.toLowerCase());
       if (duration) params.append("duration", duration);
       if (country) params.append("country", country);
+      if (cities) params.append("cities", cities);
       params.append("limit", LIMIT);
       params.append("skip", skip);
 
@@ -83,8 +87,6 @@ const Home = () => {
 
   return (
     <div className="relative">
-      <h1 className="home-message flex justify-center mt-20">Welcome!</h1>
-
       <div className="search-container m-10 flex justify-center gap-4 flex-wrap p-4">
         <SearchInput search={search} setSearch={setSearch} />
 
@@ -103,7 +105,30 @@ const Home = () => {
         />
       </div>
 
-      <Cards trips={trips} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-20">
+        {trips.map((trip) => (
+          <Link to={`/trips/${trip._id}`} key={trip._id}>
+            <TripCard
+              trip={{
+                title: trip.title,
+                coverPhoto: trip.coverPhotoUrl,
+                country:
+                  trip.countries && trip.countries.length > 0
+                    ? trip.countries[0].name
+                    : "Unknown",
+                duration: `${trip.duration} days`,
+                rating: trip.creatorRating || 0,
+                timesCopied: trip.timesCopied || 0,
+                userId: {
+                  name: trip.userId.name,
+                  surname: trip.userId.surname,
+                  profileImageUrl: trip.userId.profileImageUrl,
+                },
+              }}
+            />
+          </Link>
+        ))}
+      </div>
       {trips.length === 0 && <NoResultFound />}
 
       {hasMore && (

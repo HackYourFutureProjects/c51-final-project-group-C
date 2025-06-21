@@ -15,10 +15,16 @@ const FilterPage = () => {
     : [1, 50];
 
   const countryParam = searchParams.get("country");
-
+  const cityParam = searchParams.get("cities");
   const [durationRange, setDurationRange] = useState(initialDuration);
   const [countries, setCountries] = useState([]);
-  const buildAndNavigateToQuery = (durationRange, countries, navigate) => {
+  const [cities, setCities] = useState([]);
+  const buildAndNavigateToQuery = (
+    durationRange,
+    countries,
+    navigate,
+    cities,
+  ) => {
     const [min, max] = durationRange;
     const durationParam = `duration=${min}-${max}`;
 
@@ -26,8 +32,13 @@ const FilterPage = () => {
       countries.length > 0
         ? `country=${countries.map((c) => c.value).join(",")}`
         : null;
-
-    const query = [durationParam, countryParam].filter(Boolean).join("&");
+    const cityParam =
+      cities.length > 0
+        ? `cities=${cities.map((c) => c.value).join(",")}`
+        : null;
+    const query = [durationParam, countryParam, cityParam]
+      .filter(Boolean)
+      .join("&");
 
     navigate(`/?${query}`);
   };
@@ -47,19 +58,29 @@ const FilterPage = () => {
               onChange={setCountries}
               preSelected={countryParam}
             />
+            <FilterSelect
+              url={"/trips/cities"}
+              placeholder={"Select city/cities"}
+              entity={"City"}
+              value={cities}
+              onChange={setCities}
+              isSimple={true}
+              preSelected={cityParam}
+            />
           </div>
         </div>
       }
       onClose={() => {
-        buildAndNavigateToQuery(durationRange, countries, navigate);
+        buildAndNavigateToQuery(durationRange, countries, navigate, cities);
       }}
       footer={
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-4">
           <TripActionButton
             label={"Clear filters"}
             onClick={() => {
               setDurationRange([1, 50]);
               setCountries([]);
+              setCities([]);
               navigate("/");
             }}
           />
@@ -67,7 +88,12 @@ const FilterPage = () => {
             label={"Show results"}
             isPrimary={true}
             onClick={() =>
-              buildAndNavigateToQuery(durationRange, countries, navigate)
+              buildAndNavigateToQuery(
+                durationRange,
+                countries,
+                navigate,
+                cities,
+              )
             }
           />
         </div>
