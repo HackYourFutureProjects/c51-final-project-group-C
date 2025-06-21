@@ -4,9 +4,13 @@ import Activity from "../../models/Activity.js";
 import imageKitClient from "../../util/imageKitClient.js";
 import { deleteImageFromImageHosting } from "./deleteImage.js";
 import mongoose from "mongoose";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { logError } from "../../util/logging.js";
+import {
+  optimizeProfilePhoto,
+  optimizeTripCover,
+  optimizeActivityPhoto,
+} from "../../util/imageOptimizer.js";
 
 export const uploadImage = async (req, res) => {
   try {
@@ -42,15 +46,31 @@ export const uploadImage = async (req, res) => {
     // 👇 Uploading part
 
     const uploadPromises = req.files.map(async (file) => {
+      // 👇 Optimizing image depending on type
+
+      let optimizedBuffer;
+      switch (type) {
+        case "profilePhoto":
+          optimizedBuffer = await optimizeProfilePhoto(file.buffer);
+          break;
+        case "tripCover":
+          optimizedBuffer = await optimizeTripCover(file.buffer);
+          break;
+        case "activityPhotos":
+          optimizedBuffer = await optimizeActivityPhoto(file.buffer);
+          break;
+        default:
+          optimizedBuffer = file.buffer;
+      }
+
       // 👇 This is to generate a folder on image hosting
       const folderOnImageHosting = `/${type}s/${targetObjectId}`;
 
-      // 👇 To give uploaded file a unique name on image hosting
-      const uploadedFileExtension = path.extname(file.originalname);
-      const fileNameOnImageHosting = `${uuidv4()}${uploadedFileExtension}`;
+      // 👇 To give uploaded file a unique name on image hosting and use webp format
+      const fileNameOnImageHosting = `${uuidv4()}.webp`;
 
       return imageKitClient.upload({
-        file: file.buffer.toString("base64"),
+        file: optimizedBuffer.toString("base64"),
         fileName: fileNameOnImageHosting,
         folder: folderOnImageHosting,
       });

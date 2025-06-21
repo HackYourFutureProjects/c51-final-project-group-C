@@ -29,6 +29,7 @@ const TripCoverSection = ({
               src={coverPhotoUrl}
               alt="Trip cover"
               className="w-full h-[400px] object-cover"
+              loading="lazy"
             />
             {isEditable && (
               <div

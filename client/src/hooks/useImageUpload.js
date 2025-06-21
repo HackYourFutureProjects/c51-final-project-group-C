@@ -20,9 +20,9 @@ const useImageUpload = () => {
       return false;
     }
 
-    // 👇 File size validation (max 5mb)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image size should be less than 5MB");
+    // 👇 File size validation (max 10mb)
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Image size should be less than 10MB");
       return false;
     }
 
@@ -92,6 +92,7 @@ const useImageUpload = () => {
 
   // 👇 Generic function for uploading images for trip cover and activity photos
   // (We use separate one for profile photo as there we also update authContext)
+
   const uploadImage = async (
     file,
     type,

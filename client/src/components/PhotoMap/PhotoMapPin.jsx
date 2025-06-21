@@ -87,6 +87,7 @@ const PhotoMapPin = ({ activity }) => {
                   <img
                     src={photoUrl}
                     alt={`${activity.title} - Photo ${index + 1}`}
+                    loading="lazy"
                   />
                 </SwiperSlide>
               ))}
@@ -115,6 +116,7 @@ const PhotoMapPin = ({ activity }) => {
             src={selectedPhoto}
             alt="Full view"
             className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl"
+            loading="eager"
           />
         </motion.div>
       )}

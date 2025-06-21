@@ -78,6 +78,7 @@ const EventPhotos = ({ photos = [], isEditable, onUpdate, activityId }) => {
                 src={photo}
                 alt={`Event photo ${index + 1}`}
                 className="h-full w-full object-cover"
+                loading="lazy"
               />
               {isEditable && (
                 <button
@@ -148,6 +149,7 @@ const EventPhotos = ({ photos = [], isEditable, onUpdate, activityId }) => {
             src={selectedPhoto}
             alt="Full view"
             className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl"
+            loading="eager"
           />
         </motion.div>
       )}
