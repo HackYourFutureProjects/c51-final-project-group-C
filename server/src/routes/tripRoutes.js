@@ -17,7 +17,6 @@ import { getPublishedTrips } from "../controllers/trip/getPublishedTrips.js";
 import { toggleBookmark } from "../controllers/trip/toggleBookmark.js";
 import { getCities } from "../controllers/trip/getCities.js";
 
-
 const tripRouter = express.Router();
 
 // Get all published trips
