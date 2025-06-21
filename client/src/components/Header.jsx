@@ -71,7 +71,7 @@ const Header = () => {
           <>
             <button
               onClick={handleLogout}
-              className="logout-link hidden md:inline-block text-accent font-semibold px-3 py-1 rounded-lg border border-accent hover:bg-accent hover:text-white transition duration-200 text-sm md:px-4 md:py-1.5 md:text-base lg:px-5 lg:py-2 lg:text-lg"
+              className="logout-link hidden md:inline-block text-accent font-semibold px-3 py-0.5 rounded-lg border border-accent hover:bg-accent hover:text-white transition duration-200 text-sm md:px-4 md:py-1 md:text-base lg:px-5 lg:py-1.5 lg:text-lg"
             >
               Log out
             </button>
@@ -91,25 +91,13 @@ const Header = () => {
           <>
             <button
               onClick={() => navigate("/login")}
-              className="
-      px-3 py-1 rounded-lg border border-accent text-accent 
-      hover:bg-accent hover:text-white transition duration-200 font-medium
-      text-sm
-      sm:px-4 sm:py-1.5 sm:text-base
-      md:px-5 md:py-2 md:text-lg
-    "
+              className="logout-link hidden md:inline-block text-accent font-semibold px-3 py-0.5 rounded-lg border border-accent hover:bg-accent hover:text-white transition duration-200 text-sm md:px-4 md:py-1 md:text-base lg:px-5 lg:py-1.5 lg:text-lg"
             >
               Log in
             </button>
             <button
               onClick={() => navigate("/register")}
-              className="
-      px-3 py-1 rounded-lg border border-accent text-accent 
-      hover:bg-accent hover:text-white transition duration-200 font-medium
-      text-sm
-      sm:px-4 sm:py-1.5 sm:text-base
-      md:px-5 md:py-2 md:text-lg
-    "
+              className="logout-link hidden md:inline-block text-accent font-semibold px-3 py-0.5 rounded-lg border border-accent hover:bg-accent hover:text-white transition duration-200 text-sm md:px-4 md:py-1 md:text-base lg:px-5 lg:py-1.5 lg:text-lg"
             >
               Register
             </button>
