@@ -1,9 +1,7 @@
 import { Link, Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-
 import useFetch from "../../hooks/useFetch";
 import { useError } from "../../context/ErrorContext";
-
 import FilterButton from "../../components/SearchAndFilter/FilterButton";
 import SearchInput from "../../components/SearchAndFilter/SearchInput";
 import DropDownMenu from "../../components/DropDownMenu";
@@ -66,7 +64,6 @@ const Home = () => {
   // Fetch trips when skip or filters change
   useEffect(() => {
     fetchTrips();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, debouncedSearch, selectedSort, duration, country, cities]);
 
   const fetchTrips = async () => {
@@ -98,7 +95,7 @@ const Home = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative mt-4">
       <HeroSection />
 
       <section className="max-w-screen-xl mx-auto px-4 py-8 sm:px-6 lg:px-8 text-center">

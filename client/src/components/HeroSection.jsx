@@ -1,5 +1,4 @@
-import heroVideo from "../assets/hero.mp4";
-
+import heroImage from "../assets/hero-image.jpg";
 const HeroSection = () => {
   return (
     <section className="bg-background">
@@ -33,15 +32,14 @@ const HeroSection = () => {
             </a>
           </div>
         </div>
-        <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
-          <video
-            src={heroVideo}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-auto rounded-lg shadow-lg"
-          />
+        <div className="hidden lg:flex lg:col-span-5 justify-center items-center">
+          <div className="max-w-xl">
+            <img
+              src={heroImage}
+              alt="Scenic destination preview"
+              className="w-full h-auto rounded-xl shadow-md object-cover"
+            />
+          </div>
         </div>
       </div>
     </section>
