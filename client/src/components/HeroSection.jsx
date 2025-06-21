@@ -1,5 +1,19 @@
 import heroImage from "../assets/hero-image.jpg";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 const HeroSection = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleGetStartedClick = () => {
+    if (isAuthenticated) {
+      navigate("/create-trip-plan");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <section className="bg-background">
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
@@ -12,8 +26,8 @@ const HeroSection = () => {
             locations, and explore journeys you can copy and make your own.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="#"
+            <button
+              onClick={handleGetStartedClick}
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-white bg-accent rounded-lg hover:opacity-90 focus:ring-4 focus:ring-accent/50"
             >
               Get started
@@ -29,7 +43,7 @@ const HeroSection = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-            </a>
+            </button>
           </div>
         </div>
         <div className="hidden lg:flex lg:col-span-5 justify-center items-center">
