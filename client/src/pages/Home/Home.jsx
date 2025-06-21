@@ -1,14 +1,15 @@
 import { Link, Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 
 import useFetch from "../../hooks/useFetch";
 import { useError } from "../../context/ErrorContext";
 
-import { useEffect, useState } from "react";
 import FilterButton from "../../components/SearchAndFilter/FilterButton";
 import SearchInput from "../../components/SearchAndFilter/SearchInput";
 import DropDownMenu from "../../components/DropDownMenu";
 import NoResultFound from "../../components/SearchAndFilter/NoResultFound";
-import TripCard from "../../components/TripCard";
+import HeroSection from "../../components/HeroSection";
+import Cards from "../../components/Cards";
 
 const SortBy = ["Rating", "Duration", "Clear"];
 const LIMIT = 20;
@@ -28,6 +29,9 @@ const Home = () => {
   const api = useFetch();
   const setServerApiError = useError();
   const [count, setCount] = useState();
+
+  const searchBarRef = useRef(null);
+
   // to calculate the filters numbers
   useEffect(() => {
     let total = 0;
@@ -52,9 +56,17 @@ const Home = () => {
     setHasMore(true);
   }, [debouncedSearch, selectedSort, duration, country, cities]);
 
+  // Scroll to search bar when filters or search change
+  useEffect(() => {
+    if (searchBarRef.current) {
+      searchBarRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [debouncedSearch, selectedSort, duration, country, cities]);
+
   // Fetch trips when skip or filters change
   useEffect(() => {
     fetchTrips();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, debouncedSearch, selectedSort, duration, country, cities]);
 
   const fetchTrips = async () => {
@@ -87,9 +99,24 @@ const Home = () => {
 
   return (
     <div className="relative">
-      <div className="search-container m-10 flex justify-center gap-4 flex-wrap p-4">
-        <SearchInput search={search} setSearch={setSearch} />
+      <HeroSection />
 
+      <section className="max-w-screen-xl mx-auto px-4 py-8 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-extrabold text-text mb-3">
+          Where will your next trip be?
+        </h2>
+        <p className="max-w-2xl mx-auto text-text/70 text-lg font-light">
+          See all the trips, get inspired, and maybe even copy one to start your
+          own adventure.
+        </p>
+      </section>
+
+      {/* Search & Filter Bar */}
+      <div
+        ref={searchBarRef}
+        className="flex flex-wrap items-center justify-center gap-4 px-4 py-4 sm:px-6 lg:px-8"
+      >
+        <SearchInput search={search} setSearch={setSearch} />
         <FilterButton
           onClick={() => {
             const params = new URLSearchParams(window.location.search);
@@ -97,7 +124,6 @@ const Home = () => {
           }}
           count={count}
         />
-
         <DropDownMenu
           name={"Sort by"}
           items={SortBy}
@@ -105,36 +131,36 @@ const Home = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-20">
+      {/* Trip Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 py-8">
         {trips.map((trip) => (
           <Link to={`/trips/${trip._id}`} key={trip._id}>
-            <TripCard
+            <Cards
               trip={{
-                title: trip.title,
+                ...trip,
                 coverPhoto: trip.coverPhotoUrl,
-                country:
-                  trip.countries && trip.countries.length > 0
-                    ? trip.countries[0].name
-                    : "Unknown",
+                country: trip.countries?.[0]?.name || "Unknown",
                 duration: `${trip.duration} days`,
-                rating: trip.creatorRating || 0,
-                timesCopied: trip.timesCopied || 0,
+                rating: trip.creatorRating ?? 0,
+                timesCopied: trip.timesCopied ?? 0,
+                timesBookmarked: trip.timesBookmarked ?? 0,
                 userId: {
-                  name: trip.userId.name,
-                  surname: trip.userId.surname,
-                  profileImageUrl: trip.userId.profileImageUrl,
+                  name: trip.userId?.name,
+                  surname: trip.userId?.surname,
+                  profileImageUrl: trip.userId?.profileImageUrl,
                 },
               }}
             />
           </Link>
         ))}
       </div>
+
       {trips.length === 0 && <NoResultFound />}
 
       {hasMore && (
         <span
           onClick={handleShowMore}
-          className=" show-more block text-center mt-4 cursor-pointer text-accent hover:underline"
+          className="block text-center mt-4 cursor-pointer text-accent hover:underline"
         >
           Show more
         </span>

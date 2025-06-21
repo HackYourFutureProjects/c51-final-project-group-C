@@ -1,43 +1,83 @@
-function Cards({ trips }) {
+import {
+  LuMapPin as LocationIcon,
+  LuClock as ClockIcon,
+  LuStar as StarIcon,
+  LuCopy as CopyIcon,
+  LuBookmark as BookmarkIcon,
+} from "react-icons/lu";
+import Avatar from "./Avatar";
+
+const Cards = ({ trip }) => {
+  const getFullName = (user) => {
+    if (!user) return "Unknown";
+    const { name, surname } = user;
+    if (!name && !surname) return "Unknown";
+    return [name, surname].filter(Boolean).join(" ");
+  };
+
   return (
-    <div className="cards-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-9 m-20 mt-2">
-      {trips.map((trip) => (
-        <div
-          key={trip.ID}
-          className="card w-68 p-4 rounded-xl border border-border transform transition-all hover:-translate-y-2 duration-300 shadow-xl hover:shadow-2xl"
-        >
+    <div className="trip-card cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col bg-white border border-gray-200">
+      {/* Image */}
+      <div className="relative w-full h-52 overflow-hidden rounded-t-xl">
+        {trip.coverPhoto ? (
           <img
-            className="card-image h-40 object-cover rounded-xl mx-auto"
-            src={trip.coverPhotoUrl}
-            alt={`${trip.title} cover`}
+            src={trip.coverPhoto}
+            alt={trip.title}
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            loading="lazy"
           />
-
-          <header className="mt-2 mb-3">
-            <h2 className="card-title font-bold text-text text-lg">
-              {trip.title}
-            </h2>
-            <p className="text-sm text-muted">{trip.duration} days</p>
-          </header>
-
-          <div className="card-details mb-3 text-sm text-text">
-            <p>Created by: {trip.userId}</p>
-            <p>
-              Rating: {trip.creatorRating}/5{" "}
-              {/* You could render stars here if you want */}
-              {/* <RatingStars rating={trip.creatorRating} /> */}
-            </p>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 font-semibold">
+            No Photo
           </div>
+        )}
+      </div>
 
-          <footer className="text-xs text-muted">
-            <p>
-              Copied by {trip.timesCopied} traveler
-              {trip.timesCopied !== 1 ? "s" : ""}
-            </p>
-          </footer>
+      {/* Content */}
+      <div className="p-4 flex flex-col flex-grow">
+        {/* Title */}
+        <h3 className="trip-card-title font-semibold text-lg truncate mb-2">
+          {trip.title || "Trip Title"}
+        </h3>
+
+        {/* Creator info under title */}
+        {trip.userId?.name || trip.userId?.surname ? (
+          <div className="flex items-center gap-2 text-sm text-gray-600 italic mb-4">
+            <Avatar size="small" src={trip.userId.profileImageUrl} />
+            <span>{getFullName(trip.userId)}</span>
+          </div>
+        ) : null}
+
+        {/* Trip details */}
+        <div className="flex flex-wrap gap-4 text-xs text-gray-600 mb-4">
+          <div className="flex items-center gap-1">
+            <LocationIcon className="w-4 h-4 text-accent" />
+            <span>{trip.country || "Unknown"}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <ClockIcon className="w-4 h-4 text-accent" />
+            <span>{trip.duration || "N/A"}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <StarIcon className="w-4 h-4 text-accent" />
+            <span>{trip.rating ?? 0}/5</span>
+          </div>
         </div>
-      ))}
+
+        {/* Footer stats */}
+        <div className="mt-auto flex justify-between text-xs text-gray-500 border-t pt-3">
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <BookmarkIcon className="w-4 h-4" />
+            <span>Bookmarked: {trip.timesBookmarked || 0}</span>
+          </div>
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <CopyIcon className="w-4 h-4" />
+            <span>Copied: {trip.timesCopied || 0}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default Cards;

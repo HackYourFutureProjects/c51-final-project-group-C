@@ -5,46 +5,52 @@ const FilterButton = ({ onClick, count }) => {
     <button
       onClick={onClick}
       className="
-        relative
-        flex 
-        items-center 
-        gap-2 
-        px-4 
-        py-2 
-        h-9
-        rounded-md
-        border 
-        border-border
-        bg-background
-        hover:bg-accent/10 
-        transition 
-        duration-300
-        focus:outline-none
-        focus:border-accent
-        focus:ring-accent
-      "
+    relative
+    flex 
+    items-center
+    mt-5 
+    gap-3 
+    px-6 
+    py-3 
+    rounded-lg
+    border 
+    border-border
+    bg-accent
+    text-white
+   hover:opacity-90
+    transition 
+    duration-300
+    focus:outline-none
+    focus:ring-2
+    focus:ring-accent
+    focus:border-accent
+    font-medium
+    select-none
+    text-lg
+  "
       aria-label="Filter"
     >
       Filters
-      <FaSliders className="w-5 h-5 text-accent" />
+      <FaSliders className="w-5 h-5 text-white" />
       {count > 0 && (
         <span
           className="
-            absolute 
-            -top-3
-            -right-2
-            text-xs 
-            bg-accent 
-            text-white 
-            w-5 
-            h-5
-            flex 
-            items-center 
-            justify-center 
-            rounded-full 
-            border-2 
-            border-white
-          "
+        absolute 
+        -top-4
+        -right-2
+        text-sm 
+       bg-background
+        text-accent
+        w-8
+        h-8
+        flex 
+        items-center 
+        justify-center 
+        rounded-full 
+        border-2 
+        border-accent
+        font-semibold
+      "
         >
           {count}
         </span>

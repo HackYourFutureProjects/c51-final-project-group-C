@@ -1,49 +1,52 @@
 import { FiSearch } from "react-icons/fi";
+
 const SearchInput = ({ search, setSearch }) => {
   const handleChange = (e) => {
-    const value = e.target.value;
-    setSearch(value);
+    setSearch(e.target.value);
   };
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full max-w-md mt-6">
       <input
         value={search || ""}
         onChange={handleChange}
         type="text"
         placeholder="Search trips by title"
         className="
-          w-full 
-          pr-12 
-          py-2 
-          pl-4 
-          border 
+          w-full
+          py-3
+          pl-4
+          pr-12
+          rounded-lg
+          border
           border-border
-          rounded-md
-          focus:outline-none 
-          text-sm
+          bg-background
+          text-text
+          placeholder:text-border
+          focus:outline-none
+          focus:ring-2
           focus:ring-accent
           focus:border-accent
+          shadow-sm
           transition
           duration-300
         "
       />
       <span
-        type="submit"
         aria-label="Search"
         className="
-          absolute 
-          right-3 
-          top-1/2 
-          transform 
-          -translate-y-1/2 
-          text-border 
-          hover:text-accent/80 
-          transition 
+          absolute
+          right-4
+          top-1/2
+          transform
+          -translate-y-1/2
+          text-border
+          hover:text-accent
+          transition
           duration-300
         "
       >
-        <FiSearch className="w-6 h-6" />
+        <FiSearch className="w-5 h-5" />
       </span>
     </div>
   );
