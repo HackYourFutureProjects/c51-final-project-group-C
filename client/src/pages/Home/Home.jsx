@@ -95,7 +95,7 @@ const Home = () => {
   };
 
   return (
-    <div className="relative pt-16 sm:pt-20 md:pt-24 lg:pt-28 xl:pt-32">
+    <div className="relative  sm:pt-20 md:pt-24 lg:pt-28 xl:pt-11">
       <HeroSection />
 
       <section className="max-w-screen-xl mx-auto px-4 py-8 sm:px-6 lg:px-8 text-center">
