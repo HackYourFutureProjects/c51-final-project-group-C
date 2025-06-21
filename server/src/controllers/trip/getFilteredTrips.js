@@ -5,7 +5,7 @@ export const getFilteredTrips = async (req, res) => {
   try {
     const {
       country,
-      city,
+      cities,
       duration,
       title,
       sort,
@@ -13,16 +13,15 @@ export const getFilteredTrips = async (req, res) => {
       limit = 20,
     } = req.query;
 
-    const filter = { published: true };
+    const filter = { isPublished: true };
 
     if (country) {
       const countryIDs = country.split(",");
       filter.countries = { $in: countryIDs };
     }
-
-    if (city) {
-      const cities = city.split(",");
-      filter.city = { $in: cities };
+    if (cities) {
+      const citiesArray = cities.split(",").map((c) => c.trim());
+      filter.cities = { $in: citiesArray };
     }
 
     if (duration) {
@@ -42,7 +41,8 @@ export const getFilteredTrips = async (req, res) => {
       .sort(sortOption)
       .skip(Number(skip))
       .limit(Number(limit))
-      .populate("countries");
+      .populate("countries")
+      .populate("userId", "name surname profileImageUrl");
 
     res.json(filteredTrips);
   } catch (error) {

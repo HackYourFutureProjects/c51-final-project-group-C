@@ -14,6 +14,7 @@ import { copyTrip } from "../controllers/trip/copyTrip.js";
 import { deleteTrip } from "../controllers/trip/deleteTrip.js";
 import { getFilteredTrips } from "../controllers/trip/getFilteredTrips.js";
 import { getPublishedTrips } from "../controllers/trip/getPublishedTrips.js";
+import { getCities } from "../controllers/trip/getCities.js";
 
 const tripRouter = express.Router();
 
@@ -45,7 +46,8 @@ tripRouter.post("/:tripId/copy", requireAuth, copyTrip);
 
 // Delete trip
 tripRouter.delete("/:tripId", requireAuth, deleteTrip);
-
+// Get unique city names from the 'cities' field
+tripRouter.get("/cities", getCities);
 // Get specific trip
 tripRouter.get("/:tripId", getTripById);
 
