@@ -2,7 +2,7 @@ import { useState } from "react";
 import Modal from "../../../components/Modal";
 import TripHeaderSection from "../../../components/TripPageComponents/TripHeaderSection";
 import TripActionsSection from "../../../components/TripPageComponents/TripActionsSection";
-import TripCoverSection from "../../../components/TripPageComponents/TripCoverSection";
+import TripCoverOrPhotoMapSection from "../../../components/TripPageComponents/TripCoverOrPhotoMapSection";
 import TripDaysSection from "../../../components/TripPageComponents/TripDaysSection";
 import TripAuthorReviewSection from "../../../components/TripPageComponents/TripAuthorReviewSection";
 import OtherTravelersReviews from "../../../components/TripPageComponents/OtherTravelersReviews";
@@ -37,8 +37,9 @@ const PublishedTripLayout = ({
           onBookmarkToggle={onBookmarkToggle}
         />
 
-        <TripCoverSection
+        <TripCoverOrPhotoMapSection
           coverPhotoUrl={trip.coverPhotoUrl}
+          days={trip.days}
           isEditable={false}
         />
 

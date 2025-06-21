@@ -17,6 +17,7 @@ export const createTrip = async (req, res) => {
       title,
       duration,
       countries,
+      cities: [],
       userId,
     });
 

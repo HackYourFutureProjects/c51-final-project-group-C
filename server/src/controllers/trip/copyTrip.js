@@ -27,6 +27,7 @@ export const copyTrip = async (req, res) => {
       title: `Copy of ${originalTrip.title}`,
       duration: originalTrip.duration,
       countries: originalTrip.countries.map((country) => country._id),
+      cities: originalTrip.cities,
       userId: userId,
       isPublished: false,
       coverPhotoUrl: originalTrip.coverPhotoUrl,

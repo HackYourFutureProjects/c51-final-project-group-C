@@ -10,8 +10,14 @@ export const updateTrip = async (req, res) => {
   try {
     const { tripId } = req.params;
 
-    const { title, countries, creatorOverview, creatorRating, coverPhotoUrl } =
-      req.body;
+    const {
+      title,
+      countries,
+      cities,
+      creatorOverview,
+      creatorRating,
+      coverPhotoUrl,
+    } = req.body;
 
     const userId = req.user.userId;
 
@@ -28,6 +34,7 @@ export const updateTrip = async (req, res) => {
     const updateFields = {};
     if (title) updateFields.title = title;
     if (countries && countries.length > 0) updateFields.countries = countries;
+    if (cities !== undefined) updateFields.cities = req.body.cities;
     if (creatorOverview !== undefined)
       updateFields.creatorOverview = creatorOverview;
     if (creatorRating !== undefined) updateFields.creatorRating = creatorRating;

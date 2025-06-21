@@ -6,7 +6,7 @@ import useImageUpload from "../../../hooks/useImageUpload";
 import Modal from "../../../components/Modal";
 import TripHeaderSection from "../../../components/TripPageComponents/TripHeaderSection";
 import TripActionsSection from "../../../components/TripPageComponents/TripActionsSection";
-import TripCoverSection from "../../../components/TripPageComponents/TripCoverSection";
+import TripCoverOrPhotoMapSection from "../../../components/TripPageComponents/TripCoverOrPhotoMapSection";
 import TripDaysSection from "../../../components/TripPageComponents/TripDaysSection";
 import TripAuthorReviewSection from "../../../components/TripPageComponents/TripAuthorReviewSection";
 import { getUniqueCitiesFromDays } from "../../../util/utils";
@@ -161,6 +161,8 @@ const EditableTripLayout = ({
         duration: newDuration,
       }));
 
+      updateCities(reorderedDays);
+
       if (onUpdate) {
         onUpdate({
           ...editedTrip,
@@ -289,8 +291,10 @@ const EditableTripLayout = ({
         "Deleting activity...",
       );
 
+      let updatedDays;
+
       setEditedTrip((prev) => {
-        const updatedDays = prev.days.map((day) => {
+        updatedDays = prev.days.map((day) => {
           if (day._id === dayId) {
             const remainingActivities = day.activities.filter(
               (a) => a._id !== activityId,
@@ -317,6 +321,8 @@ const EditableTripLayout = ({
           days: updatedDays,
         };
       });
+
+      updateCities(updatedDays);
 
       return true;
     } catch (error) {
@@ -496,8 +502,9 @@ const EditableTripLayout = ({
           onDelete={() => setShowDeleteModal(true)}
         />
 
-        <TripCoverSection
+        <TripCoverOrPhotoMapSection
           coverPhotoUrl={editedTrip.coverPhotoUrl}
+          days={editedTrip.days}
           isEditable={true}
           onCoverPhotoUpload={handleCoverPhotoUpload}
         />

@@ -1,0 +1,140 @@
+.photo-map-container {
+  width: 100%;
+  height: 28.125rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* 👇 This to quickly fix some z-index issues we had */
+
+.leaflet-container {
+  background-color: transparent !important;
+}
+
+.leaflet-map-pane {
+  z-index: 0 !important;
+}
+
+.leaflet-marker-pane {
+  z-index: 600 !important;
+}
+.leaflet-popup-pane {
+  z-index: 700 !important;
+}
+
+.leaflet-overlay-pane {
+  z-index: 400 !important;
+}
+
+/* 👇 Styles for custom photo map pin */
+
+.photo-map-pin {
+  border-radius: 50%;
+  border: 3px solid;
+  border-color: var(--color-background);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.photo-map-pin:hover {
+  border-color: var(--color-accent);
+  transform: scale(1.1);
+  z-index: 1000;
+}
+
+.photo-map-pin img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 👇 Styles for popup that appears on click on map pin */
+
+.leaflet-popup-content-wrapper {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 0.8rem rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  width: 250px;
+  height: 250px;
+}
+
+.leaflet-popup-tip-container {
+  display: none;
+}
+
+.photo-map-popup {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.photo-map-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  color: var(--color-background);
+  text-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.photo-map-popup-close:hover {
+  opacity: 0.7;
+}
+
+/* 👇 Styles for image slider inside popup */
+
+.photo-map-popup .swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.photo-map-popup .swiper-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-map-popup .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-map-popup .swiper-button-next,
+.photo-map-popup .swiper-button-prev {
+  color: var(--color-background);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  transform: scale(0.7);
+}
+
+.photo-map-popup .swiper-pagination-bullet {
+  background-color: var(--color-background);
+  opacity: 0.7;
+}
+
+.photo-map-popup .swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+.photomap-fullscreen-viewer {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: auto;
+}
