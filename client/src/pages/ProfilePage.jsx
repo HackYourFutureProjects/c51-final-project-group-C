@@ -13,6 +13,7 @@ import {
   LuBookmark as BookmarkIcon,
   LuCalendarClock as CalendarIcon,
   LuSettings as SettingsIcon,
+  LuX as XIcon,
 } from "react-icons/lu";
 import Tabs from "../components/Tabs";
 import Grid from "../components/Grid";
@@ -28,7 +29,7 @@ const tripsToShow = allTrips.slice(0, 4);
 
 const tabsForPrivateProfileView = [
   { id: "published-trips", label: "Published Trips", icon: CheckIcon },
-  { id: "draft-trips", label: "Draft Trips", icon: CalendarIcon },
+  { id: "draft-trips", label: "Unpublished Drafts", icon: CalendarIcon },
   { id: "bookmarks", label: "Bookmarks", icon: BookmarkIcon },
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
@@ -53,8 +54,10 @@ const ProfilePage = () => {
   const isOwnProfile = !userId || isOwnProfilePublicUrl;
 
   const api = useFetch();
-  // States for bookmarked trips
+
   const [bookmarkedTrips, setBookmarkedTrips] = useState([]);
+  const [publishedTrips, setPublishedTrips] = useState([]);
+  const [draftTrips, setDraftTrips] = useState([]);
 
   const [profileInfo, setProfileInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,6 +118,57 @@ const ProfilePage = () => {
     }
   }, [activeTabId, isOwnProfile]);
 
+  // Fetch published and draft trips
+  useEffect(() => {
+    if (!profileInfo) return;
+
+    if (isOwnProfile) {
+      if (activeTabId === "published-trips") {
+        const fetchPublishedTrips = async () => {
+          try {
+            const data = await api.get(
+              `/users/${user.id}/trips`,
+              "Fetching published trips",
+            );
+            setPublishedTrips(data.trips || []);
+          } catch (err) {
+            console.error("Failed to fetch published trips:", err);
+          }
+        };
+
+        fetchPublishedTrips();
+      } else if (activeTabId === "draft-trips") {
+        const fetchDraftTrips = async () => {
+          try {
+            const data = await api.get(
+              "/users/me/drafts",
+              "Fetching draft trips",
+            );
+            setDraftTrips(data.trips || []);
+          } catch (err) {
+            console.error("Failed to fetch draft trips:", err);
+          }
+        };
+
+        fetchDraftTrips();
+      }
+    } else if (userId && activeTabId === "published") {
+      const fetchUserPublishedTrips = async () => {
+        try {
+          const data = await api.get(
+            `/users/${userId}/trips`,
+            "Fetching user's published trips",
+          );
+          setPublishedTrips(data.trips || []);
+        } catch (err) {
+          console.error("Failed to fetch user published trips:", err);
+        }
+      };
+
+      fetchUserPublishedTrips();
+    }
+  }, [activeTabId, isOwnProfile, profileInfo, userId, user]);
+
   // 👇 We will have better error/loading handling later on
 
   if (isLoading) {
@@ -153,8 +207,11 @@ const ProfilePage = () => {
           return <ProfileSettings />;
         case "bookmarks":
           return bookmarkedTrips.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-[300px] py-20 text-lg font-medium">
-              You do not have any bookmarked trips yet.
+            <div className="flex flex-col items-center justify-center h-[300px] py-20 text-center">
+              <BookmarkIcon className="w-12 h-12 mb-4 text-gray-400" />
+              <p className="text-gray-400 font-sm mb-6">
+                You do not have any bookmarked trips yet.
+              </p>
             </div>
           ) : (
             <Grid columns={3}>
@@ -166,7 +223,39 @@ const ProfilePage = () => {
             </Grid>
           );
         case "published-trips":
+          return publishedTrips.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-[300px] py-20 text-center">
+              <XIcon className="w-12 h-12 mb-4 text-gray-400" />
+              <p className="text-gray-400  font-sm mb-6">
+                You do not have any published trips yet.
+              </p>
+            </div>
+          ) : (
+            <Grid columns={3}>
+              {publishedTrips.map((trip) => (
+                <Link to={`/trips/${trip._id}`} key={trip._id}>
+                  <TripCard key={trip._id} trip={normalizeTripForCard(trip)} />
+                </Link>
+              ))}
+            </Grid>
+          );
         case "draft-trips":
+          return draftTrips.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-[300px] py-20 text-center">
+              <CalendarIcon className="w-12 h-12 mb-4 text-gray-400" />
+              <p className="text-gray-400 font-sm mb-6">
+                You do not have any draft trips yet.
+              </p>
+            </div>
+          ) : (
+            <Grid columns={3}>
+              {draftTrips.map((trip) => (
+                <Link to={`/trips/${trip._id}`} key={trip._id}>
+                  <TripCard key={trip._id} trip={normalizeTripForCard(trip)} />
+                </Link>
+              ))}
+            </Grid>
+          );
         default:
           return (
             <Grid columns={3}>
@@ -208,10 +297,23 @@ const ProfilePage = () => {
         );
       }
 
+      if (activeTabId === "published" && publishedTrips.length === 0) {
+        return (
+          <div className="flex flex-col items-center justify-center h-[300px] py-20 text-center">
+            <CheckIcon className="w-12 h-12 mb-4 text-gray-400" />
+            <p className="text-gray-400 font-medium mb-6">
+              {profileInfo.name || "This user"} has not published any trips yet.
+            </p>
+          </div>
+        );
+      }
+
       return (
         <Grid columns={4}>
-          {tripsToShow.map((trip) => (
-            <TripCard key={trip._id} trip={trip} />
+          {publishedTrips.map((trip) => (
+            <Link to={`/trips/${trip._id}`} key={trip._id}>
+              <TripCard key={trip._id} trip={normalizeTripForCard(trip)} />
+            </Link>
           ))}
         </Grid>
       );
