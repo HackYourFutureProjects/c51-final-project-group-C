@@ -19,6 +19,7 @@ import TripPage from "./pages/TripPage/TripPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorModal from "./components/ErrorModal";
 import FilterPage from "./pages/filters/FilterPage";
+import RequireAuthModal from "./components/RequireAuthModal";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <RouteAccessChecker>
             <LoadingSpinner />
             <ErrorModal />
+            <RequireAuthModal />
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />

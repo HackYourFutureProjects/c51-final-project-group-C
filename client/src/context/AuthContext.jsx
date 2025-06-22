@@ -8,6 +8,7 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [showRequireAuth, setShowRequireAuth] = useState(false);
   const { isLoading } = useLoading();
   const { clearAllServerErrors } = useError();
   const api = useFetch();
@@ -51,6 +52,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const openRequireAuth = () => {
+    setShowRequireAuth(true);
+  };
+
+  const closeRequireAuth = () => {
+    setShowRequireAuth(false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -63,6 +72,9 @@ export const AuthProvider = ({ children }) => {
         checkAuth,
         login,
         logout,
+        showRequireAuth,
+        openRequireAuth,
+        closeRequireAuth,
       }}
     >
       {children}

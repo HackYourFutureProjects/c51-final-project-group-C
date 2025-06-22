@@ -12,7 +12,7 @@ const TripPage = () => {
   const navigate = useNavigate();
   const isEditMode = location.pathname.endsWith("/edit");
   const api = useFetch();
-  const { user } = useAuth();
+  const { user, isAuthenticated, openRequireAuth } = useAuth();
   const { setServerApiError } = useError();
 
   const [trip, setTrip] = useState(null);
@@ -143,6 +143,13 @@ const TripPage = () => {
   };
 
   const handleCopyTrip = async () => {
+    // 👇 If user is not authenticated, we open the require auth modal
+
+    if (!isAuthenticated) {
+      openRequireAuth();
+      return false;
+    }
+
     try {
       const response = await api.post(
         `/trips/${tripId}/copy`,
@@ -180,6 +187,13 @@ const TripPage = () => {
   };
 
   const handleBookmarkToggle = async () => {
+    // 👇 If user is not authenticated, we open the require auth modal
+
+    if (!isAuthenticated) {
+      openRequireAuth();
+      return;
+    }
+
     try {
       await api.post(`/trips/${tripId}/bookmark`);
       setIsBookmarked((prev) => !prev);
@@ -201,26 +215,30 @@ const TripPage = () => {
     return <div className="text-center py-10">Loading trip...</div>;
   }
 
-  return isEditMode ? (
-    <EditableTripLayout
-      trip={trip}
-      isOwner={isOwner}
-      onUpdate={handleTripUpdate}
-      onPublish={handlePublishTrip}
-      onUnpublish={handleUnpublishTrip}
-      onDelete={handleDeleteTrip}
-    />
-  ) : (
-    <PublishedTripLayout
-      trip={trip}
-      isOwner={isOwner}
-      isBookmarked={isBookmarked}
-      onCopy={handleCopyTrip}
-      onEdit={() => navigate(`/trips/${tripId}/edit`)}
-      onUnpublish={handleUnpublishTrip}
-      onDelete={handleDeleteTrip}
-      onBookmarkToggle={handleBookmarkToggle}
-    />
+  return (
+    <>
+      {isEditMode ? (
+        <EditableTripLayout
+          trip={trip}
+          isOwner={isOwner}
+          onUpdate={handleTripUpdate}
+          onPublish={handlePublishTrip}
+          onUnpublish={handleUnpublishTrip}
+          onDelete={handleDeleteTrip}
+        />
+      ) : (
+        <PublishedTripLayout
+          trip={trip}
+          isOwner={isOwner}
+          isBookmarked={isBookmarked}
+          onCopy={handleCopyTrip}
+          onEdit={() => navigate(`/trips/${tripId}/edit`)}
+          onUnpublish={handleUnpublishTrip}
+          onDelete={handleDeleteTrip}
+          onBookmarkToggle={handleBookmarkToggle}
+        />
+      )}
+    </>
   );
 };
 
