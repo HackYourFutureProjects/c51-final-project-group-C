@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   LuCalendar as CalendarIcon,
   LuSave as SaveIcon,
@@ -39,6 +40,26 @@ const TripHeaderSection = ({
 
   const isPublished = trip.isPublished || trip.datePublished;
   const dateToShow = isPublished ? trip.datePublished : trip.createdAt;
+
+  // 👇 To add correct hyperlink to trip creator's profile
+
+  let profileUrl = null;
+  if (isOwner) {
+    profileUrl = "/users/me";
+  } else {
+    const userId = trip.user?.id || trip.userId;
+    if (userId) {
+      profileUrl = `/users/${userId}`;
+    }
+  }
+
+  let displayName = "Unknown Author";
+  if (trip.user?.name || trip.user?.surname) {
+    displayName = `${trip.user.name || ""} ${trip.user.surname || ""}`.trim();
+    if (isOwner) {
+      displayName += " (You)";
+    }
+  }
 
   return (
     <section className="trip-header-section mb-8">
@@ -104,13 +125,25 @@ const TripHeaderSection = ({
           <span className="">
             {isPublished ? "Published by" : "Created by"}
           </span>
-          <Avatar size="small" src={trip.user?.profileImageUrl} />
-          <span>
-            {trip.user?.name || trip.user?.surname
-              ? `${trip.user.name || ""} ${trip.user.surname || ""}`.trim() +
-                (isOwner ? " (You)" : "")
-              : "Unknown Author"}
-          </span>
+
+          {/* User Avatar and Name with Link */}
+          <div className="flex items-center">
+            {profileUrl ? (
+              <Link
+                to={profileUrl}
+                className="flex items-center gap-2 text-accent hover:underline"
+              >
+                <Avatar size="small" src={trip.user?.profileImageUrl} />
+                <span>{displayName}</span>
+              </Link>
+            ) : (
+              <>
+                <Avatar size="small" src={trip.user?.profileImageUrl} />
+                <span>{displayName}</span>
+              </>
+            )}
+          </div>
+
           <div className="published-date flex items-center whitespace-nowrap">
             <CalendarIcon className="w-5 h-5 mx-2" />
             <span>

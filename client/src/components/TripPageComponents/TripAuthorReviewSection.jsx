@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { LuPencil as EditIcon } from "react-icons/lu";
 import Avatar from "../../components/Avatar";
 import RatingStars from "../RatingStars";
@@ -24,6 +25,29 @@ const TripAuthorReviewSection = ({
       setEditingOverview(false);
     }
   };
+
+  // 👇 To add correct hyperlink to trip creator's profile
+
+  const isOwner = trip.user?.id === (trip.userId || "");
+
+  let profileUrl = null;
+  if (isOwner) {
+    profileUrl = "/users/me";
+  } else {
+    const userId = trip.user?.id || trip.userId;
+    if (userId) {
+      profileUrl = `/users/${userId}`;
+    }
+  }
+
+  let displayName = "Unknown Author"; // Fallback if user is not found (just in case)
+  if (trip.user) {
+    const formattedName =
+      `${trip.user.name || ""} ${trip.user.surname || ""}`.trim();
+    if (formattedName) {
+      displayName = formattedName;
+    }
+  }
 
   return (
     <section className="trip-author-review-section mb-16 p-12 mt-16 rounded-lg border border-border">
@@ -81,15 +105,24 @@ const TripAuthorReviewSection = ({
         <div className="flex flex-col gap-8">
           {/* Trip Author info */}
           <div className="flex items-center gap-4">
-            <Avatar size="large" src={trip.user?.profileImageUrl} />
-            <div>
-              <h3 className="font-medium">
-                {trip.user
-                  ? `${trip.user.name || ""} ${trip.user.surname || ""}`.trim() ||
-                    "Unknown Author"
-                  : "Unknown Author"}
-              </h3>
-            </div>
+            {profileUrl ? (
+              <Link
+                to={profileUrl}
+                className="flex items-center gap-4 text-accent hover:underline"
+              >
+                <Avatar size="large" src={trip.user?.profileImageUrl} />
+                <div>
+                  <h3 className="font-medium">{displayName}</h3>
+                </div>
+              </Link>
+            ) : (
+              <>
+                <Avatar size="large" src={trip.user?.profileImageUrl} />
+                <div>
+                  <h3 className="font-medium">{displayName}</h3>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Rating stars */}
