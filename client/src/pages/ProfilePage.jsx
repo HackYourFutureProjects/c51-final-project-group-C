@@ -179,7 +179,7 @@ const ProfilePage = () => {
     };
 
     return (
-      <div className="profile-layout grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="profile-layout pt-16 grid grid-cols-1 lg:grid-cols-4 gap-8">
         <ProfilePageSidebar
           profileInfo={profileInfo}
           activeTabId={activeTabId}

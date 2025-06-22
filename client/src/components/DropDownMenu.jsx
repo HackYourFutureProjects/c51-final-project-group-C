@@ -30,48 +30,90 @@ function DropDownMenu({ name, items, onClick }) {
   };
 
   return (
-    <div ref={menuRef} className="relative inline-block text-right ">
+    <div ref={menuRef} className="relative inline-block text-left">
       <button
         onClick={() => setOpen(!open)}
         className="
           flex 
           items-center 
-          gap-2 
-          px-4 
-          py-2 
-          h-9
-          rounded-md
+          gap-3 
+          px-6 
+          py-3 
+          rounded-lg
           border 
           border-border
           bg-background
-          hover:bg-accent/10 
+          text-accent
+          hover:border-accent
           transition 
           duration-300
           focus:outline-none
-          focus:border-accent
+          focus:ring-2
           focus:ring-accent
-         
+          focus:border-accent
+          select-none
+          text-lg
+          font-medium
+          h-auto
+          mt-5
         "
+        aria-haspopup="true"
+        aria-expanded={open}
       >
-        <span className="text-base font-medium">
+        <span>
           {name}
           {selected && (
-            <span className=" font-normal text-sm text-gray-500">
+            <span className="font-normal  text-border text-lg ">
               : {selected}
             </span>
           )}
         </span>
-        <HiChevronDown className="w-5 h-5 text-accent" />
+        <HiChevronDown className="w-7 h-6 text-accent" />
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-2 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-          <ul className="py-1 text-sm">
+        <div
+          className="
+            absolute 
+            z-10 
+            w-full 
+            origin-top-right 
+            rounded-lg 
+            bg-background 
+            border 
+            border-border
+            shadow-lg 
+            ring-1 
+            ring-black 
+            ring-opacity-5
+            
+          "
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="options-menu"
+        >
+          <ul className="py-2 text-base">
             {items.map((item, index) => (
-              <li key={index}>
+              <li key={index} role="none">
                 <button
                   onClick={() => handleSelect(item)}
-                  className="block w-full px-4 py-2 text-base text-left text-accent rounded hover:bg-accent hover:text-white transition-colors duration-200"
+                  className="
+                    block 
+                    w-full 
+                    px-6 
+                    py-3 
+                    text-text 
+                    text-left 
+                    rounded-lg 
+                    hover:bg-accent 
+                    hover:text-background 
+                    transition-colors 
+                    duration-200
+                    focus:outline-none
+                    focus:bg-accent
+                    focus:text-background
+                  "
+                  role="menuitem"
                 >
                   {item}
                 </button>
