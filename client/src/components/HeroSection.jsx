@@ -13,6 +13,7 @@ const HeroSection = () => {
       navigate("/login");
     }
   };
+  const name = isAuthenticated ? "Create trip" : "Get started";
 
   return (
     <section className="bg-background">
@@ -30,7 +31,7 @@ const HeroSection = () => {
               onClick={handleGetStartedClick}
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-white bg-accent rounded-lg hover:opacity-90 focus:ring-4 focus:ring-accent/50"
             >
-              Get started
+              {name}
               <svg
                 className="w-5 h-5 ml-2 -mr-1"
                 fill="currentColor"

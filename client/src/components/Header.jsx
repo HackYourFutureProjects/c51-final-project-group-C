@@ -37,10 +37,10 @@ const Header = () => {
 
       {/* Desktop Links */}
       <nav className="nav-links">
-        <ul className="link-list hidden md:flex gap-6 list-none items-center">
+        <ul className="link-list hidden md:flex gap-6 list-none items-center justify-center">
           <li>
             <button
-              onClick={() => handleProtectedNavigation("/")}
+              onClick={() => navigate("/")}
               className="px-4 py-2 text-sm font-medium rounded-md text-text hover:text-white hover:bg-accent transition"
             >
               Home
@@ -54,14 +54,16 @@ const Header = () => {
               Create Trip
             </button>
           </li>
-          <li>
-            <button
-              onClick={() => handleProtectedNavigation("/users/me")}
-              className="px-4 py-2 text-sm font-medium rounded-md text-text hover:text-white hover:bg-accent transition"
-            >
-              Profile
-            </button>
-          </li>
+          {isAuthenticated && (
+            <li>
+              <button
+                onClick={() => navigate("/users/me")}
+                className="px-4 py-2 text-sm font-medium rounded-md text-text hover:text-white hover:bg-accent transition"
+              >
+                Profile
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
 
@@ -91,7 +93,7 @@ const Header = () => {
           <>
             <button
               onClick={() => navigate("/login")}
-              className="logout-link hidden md:inline-block text-accent font-semibold px-3 py-0.5 rounded-lg border border-accent hover:bg-accent hover:text-white transition duration-200 text-sm md:px-4 md:py-1 md:text-base lg:px-5 lg:py-1.5 lg:text-lg"
+              className="login-link hidden md:inline-block text-accent font-semibold px-3 py-0.5 rounded-lg border border-accent hover:bg-accent hover:text-white transition duration-200 text-sm md:px-4 md:py-1 md:text-base lg:px-5 lg:py-1.5 lg:text-lg"
             >
               Log in
             </button>
@@ -138,7 +140,7 @@ const Header = () => {
         <div className="mobile-menu absolute top-full left-0 w-full bg-background shadow-md flex flex-col items-start gap-4 px-4 py-3 md:hidden z-50">
           <button
             onClick={() => {
-              handleProtectedNavigation("/");
+              navigate("/");
               toggleMenu();
             }}
             className="mobile-link-home hover:text-accent font-medium"
