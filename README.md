@@ -1,4 +1,5 @@
-`TODO: Add a nice screenshot of the app!`
+![Screenshot 2025-07-07 at 20 11 13](https://github.com/user-attachments/assets/2035ef0f-a976-45e4-8b19-5ba455db1184)
+![Screenshot 2025-07-07 at 20 12 57](https://github.com/user-attachments/assets/2149cfdb-4c81-4b7e-ab0b-daccc665e756)
 
 # Cohort 51 final project - ELVA (Trip Planner)
 
