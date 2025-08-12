@@ -1,12 +1,43 @@
-`TODO: Add a nice screenshot of the app!`
+![Screenshot 2025-07-07 at 20 11 13](https://github.com/user-attachments/assets/2035ef0f-a976-45e4-8b19-5ba455db1184)
+![Screenshot 2025-07-07 at 20 12 57](https://github.com/user-attachments/assets/2149cfdb-4c81-4b7e-ab0b-daccc665e756)
 
-# Cohort XX final project
+# Cohort 51 final project - ELVA (Trip Planner)
 
 This is the final project for the HackYourFuture curriculum we did as a cohort using the [MERN stack](https://www.mongodb.com/resources/languages/mern-stack) by following the agile methodology with our team and a group of mentors. A quick guide to what we built:
 
-> TODO: Add short description of the app
+## 📝 Description
+ELVA is a trip planning tool that helps travelers organize their trips by adding daily activities with details like name, location, price, ratings, notes, and photos, as well as an overall review and rating for each trip. It also allows users to copy existing trips and customize them to their preferences, making trip planning easier without needing to search across multiple apps for activity ideas along their chosen routes.
 
-`[Click here for the Demo version](TODO: add link)`
+Main features: 
+- Registration & Login
+    - Includes "Forgot Password" functionality
+- Browse Trips
+    - View trip details
+- Create Trip
+    - Add cover photo
+    - Organize by days and activities
+    - Activity details include: Name, Location, Price, Rating, Notes, Photos
+    - Add overall review and rating
+- See Trip Map
+    - Displays activity photos on the map
+- Copy Trip
+    - Duplicate an existing trip
+- Add to Bookmarks
+    - Save trips for later
+- Edit Trip Details
+    - Modify trip content
+- Delete Trip / Trip Details
+    - Remove trip or specific activities
+- Manage Profile
+    - Upload profile photo
+- Trip Management Sections
+    - View Published Trips
+    - View Draft Trips
+    - Access Bookmarks
+- View Other Travellers’ Profiles
+    - See their published trips
+
+[Click here for the Demo version](https://c51c.hyf.dev/)
 
 ## 1. Setup
 
@@ -32,7 +63,10 @@ client
 └── src
 |   └── __tests__
 |   └── __testUtils__
+|   └── api
+|   └── assets
 |   └── components
+|   └── context
 |   └── hooks
 |   └── pages
 |       └── __tests__
@@ -50,9 +84,11 @@ server
     └── __testUtils__
     └── controllers
     └── db
+    └── middleware
     └── models
     └── routes
     └── util
+    └── validation
     index.js
 ```
 
@@ -61,7 +97,9 @@ server
 - `public` || public facing client code
 - `__tests__` || any `jest` tests for specific components will be in a `__tests__` folder on the same level
 - `__testUtils__` || any code that is only being used in the tests is put in the `__testUtils__` folder to separate that away from the rest of the code
+- `api` || fetches user data by ID from the API
 - `components` || all of our shared components that are used over multiple pages
+- `context` || React Context providers for managing global auth, error, and loading state
 - `hooks` || all of our custom hooks
 - `pages` || the page components of our app, any routing will go between these components
 - `pages/components` || components used specifically on those pages
@@ -82,9 +120,11 @@ server
 - `__testUtils__` || any code that is only being used in the tests is put in the `__testUtils__` folder to separate that away from the rest of the code
 - `controllers` || all of our controller functions that interact with the database
 - `db` || all of our configuration for the database
+- `middleware` || all of our middleware functions like auth, validation
 - `models` || all of our `mongoose` models will be placed here
 - `routes` || code to match up the API with our controllers
 - `util` || any utility functions that can be used anywhere on the server side
+- `validation` || all of our validation schemas for data
 - `index.js` || the start point of the server
 
 ## 3. Stack / external libraries
@@ -108,6 +148,10 @@ For more information on how these work together including the automatic deployme
 - `jest` || To run our tests and coverage. See [docs](https://jestjs.io/)
 - `jest-fetch-mock` || To mock out the backend for our testing purposes. See [docs](https://github.com/jefflau/jest-fetch-mock#readme)
 - `prop-types` || To type-check our components. See [docs](https://github.com/facebook/prop-types)
+- `tailwindcss` || To style our application using utility-first CSS. See [docs](https://tailwindcss.com/docs/installation)
+- `leaflet` || To display interactive maps in our app. See [docs](https://leafletjs.com/reference.html)
+- `react-icons` || To use popular icon sets as React components. See [docs](https://react-icons.github.io/react-icons/)
+- `react-select` || To use customizable dropdown/select components. See [docs](https://react-select.com/home)
 
 ### 3.3 Server-side libraries
 
@@ -117,3 +161,12 @@ For more information on how these work together including the automatic deployme
 - `mongodb-memory-server` || To mock out our database in our backend tests. See [docs](https://github.com/nodkz/mongodb-memory-server)
 - `cors` || To open up our API. See [docs](https://github.com/expressjs/cors#readme)
 - `mongoose` || To add schemas to our database. See [docs](https://mongoosejs.com/)
+- `bcrypt` || To securely hash and compare passwords. See [docs](https://github.com/kelektiv/node.bcrypt.js#readme)
+- `cookie-parser` || To parse cookies from incoming requests. See [docs](https://github.com/expressjs/cookie-parser)
+- `googleapis` || To interact with Google services like OAuth. See [docs](https://github.com/googleapis/google-api-nodejs-client)
+- `imagekit` || To handle image uploading, optimization, and CDN delivery. See [docs](https://imagekit.io/docs)
+- `jsonwebtoken` || To generate and verify JSON Web Tokens for authentication. See [docs](https://www.npmjs.com/package/jsonwebtoken)
+- `multer` || To handle multipart/form-data for file uploads. See [docs](https://www.npmjs.com/package/multer)
+- `nodemailer` || To send emails from the server (e.g. for password resets). See [docs](https://nodemailer.com/about/)
+- `uuid` || To generate unique IDs. See [docs](https://github.com/uuidjs/uuid)
+- `zod` || To validate and parse server-side request data using schemas. See [docs](https://zod.dev/)
